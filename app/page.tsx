@@ -5,6 +5,7 @@ import CategoriesSection from "@/components/home/CategoriesSection";
 import FeaturedBooks from "@/components/home/FeaturedBooks";
 import GadgetsSection from "@/components/home/GadgetsSection";
 import ComboSection from "@/components/home/ComboSection";
+import TestimonialsSection from "@/components/home/TestimonialsSection";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
          <FeaturedBooks />
           <GadgetsSection />
            <ComboSection />
+            <TestimonialsSection />
       </main>
       <Footer />
     </>
