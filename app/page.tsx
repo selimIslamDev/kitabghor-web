@@ -3,6 +3,7 @@ import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/home/HeroSection";
 import CategoriesSection from "@/components/home/CategoriesSection";
 import FeaturedBooks from "@/components/home/FeaturedBooks";
+import GadgetsSection from "@/components/home/GadgetsSection";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
         <HeroSection />
          <CategoriesSection />
          <FeaturedBooks />
+          <GadgetsSection />
       </main>
       <Footer />
     </>

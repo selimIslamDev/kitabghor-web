@@ -1,0 +1,172 @@
+"use client";
+
+import Link from "next/link";
+import { ShoppingCart, Star, ArrowRight, Zap } from "lucide-react";
+import { useCartStore } from "@/store/cart.store";
+import toast from "react-hot-toast";
+
+const gadgets = [
+  {
+    id: "g1",
+    name: "Casio FX-991EX Calculator",
+    brand: "Casio",
+    price: 1200,
+    discountPrice: 1050,
+    rating: 4.9,
+    reviews: 203,
+    image: "🔢",
+    badge: "Best Seller",
+    stock: 25,
+  },
+  {
+    id: "g2",
+    name: "Scientific Geometry Box",
+    brand: "Staedtler",
+    price: 450,
+    discountPrice: 380,
+    rating: 4.7,
+    reviews: 89,
+    image: "📐",
+    badge: "Popular",
+    stock: 40,
+  },
+  {
+    id: "g3",
+    name: "Premium Pen Set (12pcs)",
+    brand: "Pilot",
+    price: 350,
+    discountPrice: 299,
+    rating: 4.6,
+    reviews: 156,
+    image: "✏️",
+    badge: "New",
+    stock: 100,
+  },
+  {
+    id: "g4",
+    name: "Art Color Set (24pcs)",
+    brand: "Faber-Castell",
+    price: 800,
+    discountPrice: 699,
+    rating: 4.8,
+    reviews: 67,
+    image: "🎨",
+    badge: "Top Rated",
+    stock: 30,
+  },
+];
+
+const badgeColors: Record<string, string> = {
+  "Best Seller": "bg-amber-500",
+  "Popular": "bg-blue-500",
+  "New": "bg-green-500",
+  "Top Rated": "bg-purple-500",
+};
+
+export default function GadgetsSection() {
+  const { addItem } = useCartStore();
+
+  const handleAddToCart = (gadget: typeof gadgets[0]) => {
+    addItem({
+      id: gadget.id,
+      name: gadget.name,
+      price: gadget.price,
+      discountPrice: gadget.discountPrice,
+      image: gadget.image,
+      stock: gadget.stock,
+    });
+    toast.success(`${gadget.name} added to cart!`);
+  };
+
+  return (
+    <section className="py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-sm font-medium mb-3">
+              <Zap className="w-3 h-3" />
+              Educational Gadgets
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>
+              Top Gadgets for Students
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400">Essential tools to boost your learning</p>
+          </div>
+          <Link
+            href="/products?type=GADGET"
+            className="hidden sm:flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+          >
+            View All <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {gadgets.map((gadget) => (
+            <div
+              key={gadget.id}
+              className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group"
+            >
+              {/* Gadget Image */}
+              <div className="relative bg-gradient-to-br from-amber-50 to-orange-100 dark:from-slate-700 dark:to-slate-600 h-48 flex items-center justify-center">
+                <span className="text-7xl group-hover:scale-110 transition-transform duration-200">
+                  {gadget.image}
+                </span>
+                <div className={`absolute top-3 left-3 ${badgeColors[gadget.badge]} text-white text-xs font-bold px-2 py-1 rounded-lg`}>
+                  {gadget.badge}
+                </div>
+                {gadget.discountPrice && (
+                  <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
+                    {Math.round(((gadget.price - gadget.discountPrice) / gadget.price) * 100)}% OFF
+                  </div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="p-4">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{gadget.brand}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 text-sm">
+                  {gadget.name}
+                </h3>
+
+                {/* Rating */}
+                <div className="flex items-center gap-1 mb-3">
+                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{gadget.rating}</span>
+                  <span className="text-xs text-gray-400">({gadget.reviews})</span>
+                </div>
+
+                {/* Price */}
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                    ৳{gadget.discountPrice || gadget.price}
+                  </span>
+                  {gadget.discountPrice && (
+                    <span className="text-sm text-gray-400 line-through">৳{gadget.price}</span>
+                  )}
+                </div>
+
+                {/* Button */}
+                <button
+                  onClick={() => handleAddToCart(gadget)}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold text-sm transition"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile View All */}
+        <div className="sm:hidden mt-6 text-center">
+          <Link href="/products?type=GADGET" className="inline-flex items-center gap-2 text-blue-600 font-semibold">
+            View All Gadgets <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
