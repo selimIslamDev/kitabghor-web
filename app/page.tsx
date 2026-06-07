@@ -6,6 +6,7 @@ import FeaturedBooks from "@/components/home/FeaturedBooks";
 import GadgetsSection from "@/components/home/GadgetsSection";
 import ComboSection from "@/components/home/ComboSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
+import NewsletterSection from "@/components/home/NewsletterSection";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
           <GadgetsSection />
            <ComboSection />
             <TestimonialsSection />
+            <NewsletterSection />
       </main>
       <Footer />
     </>
