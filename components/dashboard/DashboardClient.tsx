@@ -8,23 +8,11 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import { useRouter } from "next/navigation";
+import { useMyOrders, useWishlist } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
 type Tab = "overview" | "orders" | "wishlist" | "addresses" | "profile";
-
-const mockOrders = [
-  { id: "ORD-001", date: "2024-01-15", total: 780, status: "DELIVERED", items: ["SSC Physics Guide", "Casio Calculator"], trackingId: "KB-2024-001" },
-  { id: "ORD-002", date: "2024-01-20", total: 290, status: "SHIPPED", items: ["HSC Higher Math"], trackingId: "KB-2024-002" },
-  { id: "ORD-003", date: "2024-01-25", total: 499, status: "CONFIRMED", items: ["Geometry Box", "Pen Set"], trackingId: null },
-  { id: "ORD-004", date: "2024-01-28", total: 250, status: "PENDING", items: ["SSC English Grammar"], trackingId: null },
-];
-
-const mockWishlist = [
-  { id: "1", name: "University Calculus", price: 850, discountPrice: 750, image: "📙", rating: 4.9 },
-  { id: "2", name: "HSC Biology Guide", price: 280, discountPrice: 250, image: "📗", rating: 4.7 },
-  { id: "3", name: "Faber-Castell Color Set", price: 800, discountPrice: 699, image: "🎨", rating: 4.8 },
-];
 
 const statusConfig = {
   PENDING: { label: "Pending", icon: <Clock className="w-3 h-3" />, color: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300" },
@@ -47,6 +35,9 @@ export default function DashboardClient() {
   const { user, logout } = useAuthStore();
   const router = useRouter();
 
+  const { data: orders, isLoading: ordersLoading } = useMyOrders();
+  const { data: wishlist, isLoading: wishlistLoading } = useWishlist();
+
   const handleLogout = () => {
     logout();
     toast.success("Logged out successfully!");
@@ -59,11 +50,8 @@ export default function DashboardClient() {
 
         {/* Sidebar */}
         <aside className="lg:col-span-1">
-          {/* Profile Card */}
           <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white mb-4">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl mb-4">
-              👤
-            </div>
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl mb-4">👤</div>
             <h2 className="font-bold text-lg">{user?.name || "Student"}</h2>
             <p className="text-blue-200 text-sm">{user?.email}</p>
             <div className="mt-4 flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2">
@@ -75,8 +63,8 @@ export default function DashboardClient() {
           {/* Stats */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             {[
-              { label: "Orders", value: mockOrders.length, icon: "📦" },
-              { label: "Wishlist", value: mockWishlist.length, icon: "❤️" },
+              { label: "Orders", value: orders?.length || 0, icon: "📦" },
+              { label: "Wishlist", value: wishlist?.length || 0, icon: "❤️" },
             ].map((stat) => (
               <div key={stat.label} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-4 text-center">
                 <div className="text-2xl mb-1">{stat.icon}</div>
@@ -86,7 +74,6 @@ export default function DashboardClient() {
             ))}
           </div>
 
-          {/* Nav */}
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden">
             {tabs.map((tab) => (
               <button
@@ -109,7 +96,7 @@ export default function DashboardClient() {
           </div>
         </aside>
 
-        {/* Main Content */}
+        {/* Main */}
         <main className="lg:col-span-3">
 
           {/* Overview */}
@@ -123,50 +110,68 @@ export default function DashboardClient() {
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-bold text-gray-900 dark:text-white">Recent Orders</h2>
-                  <button onClick={() => setActiveTab("orders")} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                    View All
-                  </button>
+                  <button onClick={() => setActiveTab("orders")} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">View All</button>
                 </div>
-                <div className="space-y-3">
-                  {mockOrders.slice(0, 3).map((order) => {
-                    const status = statusConfig[order.status as keyof typeof statusConfig];
-                    return (
-                      <div key={order.id} className="flex items-center justify-between p-3 bg-[var(--muted)] rounded-xl">
-                        <div>
-                          <p className="font-medium text-gray-900 dark:text-white text-sm">{order.id}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{order.items[0]}{order.items.length > 1 ? ` +${order.items.length - 1} more` : ""}</p>
+                {ordersLoading ? (
+                  <div className="space-y-3">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="h-16 bg-[var(--muted)] rounded-xl animate-pulse" />
+                    ))}
+                  </div>
+                ) : orders?.length === 0 ? (
+                  <p className="text-center text-gray-500 dark:text-gray-400 py-6">No orders yet.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {orders?.slice(0, 3).map((order: any) => {
+                      const status = statusConfig[order.status as keyof typeof statusConfig];
+                      return (
+                        <div key={order.id} className="flex items-center justify-between p-3 bg-[var(--muted)] rounded-xl">
+                          <div>
+                            <p className="font-medium text-gray-900 dark:text-white text-sm">{order.id}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {order.items?.[0]?.productName}{order.items?.length > 1 ? ` +${order.items.length - 1} more` : ""}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${status?.color}`}>
+                              {status?.icon} {status?.label}
+                            </span>
+                            <p className="text-sm font-bold text-blue-600 dark:text-blue-400 mt-1">৳{order.finalAmount}</p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${status.color}`}>
-                            {status.icon} {status.label}
-                          </span>
-                          <p className="text-sm font-bold text-blue-600 dark:text-blue-400 mt-1">৳{order.total}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Wishlist Preview */}
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-bold text-gray-900 dark:text-white">Wishlist</h2>
-                  <button onClick={() => setActiveTab("wishlist")} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                    View All
-                  </button>
+                  <button onClick={() => setActiveTab("wishlist")} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">View All</button>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {mockWishlist.map((item) => (
-                    <div key={item.id} className="flex items-center gap-3 p-3 bg-[var(--muted)] rounded-xl">
-                      <span className="text-2xl">{item.image}</span>
-                      <div className="min-w-0">
-                        <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
-                        <p className="text-xs text-blue-600 dark:text-blue-400 font-bold">৳{item.discountPrice}</p>
+                {wishlistLoading ? (
+                  <div className="grid grid-cols-3 gap-3">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="h-16 bg-[var(--muted)] rounded-xl animate-pulse" />
+                    ))}
+                  </div>
+                ) : wishlist?.length === 0 ? (
+                  <p className="text-center text-gray-500 dark:text-gray-400 py-6">No items in wishlist.</p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {wishlist?.slice(0, 3).map((item: any) => (
+                      <div key={item.id} className="flex items-center gap-3 p-3 bg-[var(--muted)] rounded-xl">
+                        <span className="text-2xl">{item.images?.[0] || "📚"}</span>
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400 font-bold">৳{item.discountPrice || item.price}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -174,136 +179,111 @@ export default function DashboardClient() {
           {/* Orders Tab */}
           {activeTab === "orders" && (
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>
-                My Orders
-              </h1>
-              <div className="space-y-4">
-                {mockOrders.map((order) => {
-                  const status = statusConfig[order.status as keyof typeof statusConfig];
-                  return (
-                    <div key={order.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-5">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <p className="font-bold text-gray-900 dark:text-white">{order.id}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Ordered on {order.date}</p>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>My Orders</h1>
+              {ordersLoading ? (
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => <div key={i} className="h-32 bg-[var(--muted)] rounded-2xl animate-pulse" />)}
+                </div>
+              ) : orders?.length === 0 ? (
+                <div className="text-center py-20">
+                  <span className="text-6xl mb-4 block">📦</span>
+                  <p className="text-gray-500 dark:text-gray-400">No orders yet.</p>
+                  <Link href="/products" className="mt-4 inline-block px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">
+                    Start Shopping
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {orders?.map((order: any) => {
+                    const status = statusConfig[order.status as keyof typeof statusConfig];
+                    return (
+                      <div key={order.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <p className="font-bold text-gray-900 dark:text-white">{order.id}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {new Date(order.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium ${status?.color}`}>
+                            {status?.icon} {status?.label}
+                          </span>
                         </div>
-                        <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium ${status.color}`}>
-                          {status.icon} {status.label}
-                        </span>
-                      </div>
-                      <div className="bg-[var(--muted)] rounded-xl p-3 mb-3">
-                        {order.items.map((item) => (
-                          <p key={item} className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
-                            <Package className="w-3 h-3" /> {item}
-                          </p>
-                        ))}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-lg font-bold text-blue-600 dark:text-blue-400">৳{order.total}</span>
-                          {order.trackingId && (
-                            <p className="text-xs text-gray-500 mt-0.5">Tracking: {order.trackingId}</p>
-                          )}
+                        <div className="bg-[var(--muted)] rounded-xl p-3 mb-3">
+                          {order.items?.map((item: any) => (
+                            <p key={item.id} className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                              <Package className="w-3 h-3" /> {item.productName} x{item.quantity}
+                            </p>
+                          ))}
                         </div>
-                        <Link href={`/orders/${order.id}`} className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">
-                          View Details →
-                        </Link>
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-bold text-blue-600 dark:text-blue-400">৳{order.finalAmount}</span>
+                          <Link href={`/orders/${order.id}`} className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                            View Details →
+                          </Link>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
           {/* Wishlist Tab */}
           {activeTab === "wishlist" && (
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>
-                My Wishlist
-              </h1>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {mockWishlist.map((item) => (
-                  <div key={item.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 rounded-xl h-32 flex items-center justify-center text-5xl mb-3">
-                      {item.image}
-                    </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{item.name}</h3>
-                    <div className="flex items-center gap-1 mb-2">
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                      <span className="text-xs text-gray-500">{item.rating}</span>
-                    </div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="font-bold text-blue-600 dark:text-blue-400">৳{item.discountPrice}</span>
-                      <span className="text-xs text-gray-400 line-through">৳{item.price}</span>
-                    </div>
-                    <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition">
-                      Add to Cart
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Addresses Tab */}
-          {activeTab === "addresses" && (
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>
-                My Addresses
-              </h1>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-blue-500 p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium px-2 py-1 rounded-lg">Default</span>
-                    <button className="text-xs text-blue-600 dark:text-blue-400 hover:underline">Edit</button>
-                  </div>
-                  <p className="font-semibold text-gray-900 dark:text-white mb-1">{user?.name}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">123 Mirpur Road</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Dhaka, Dhaka — 1216</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">01712345678</p>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>My Wishlist</h1>
+              {wishlistLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[...Array(3)].map((_, i) => <div key={i} className="h-48 bg-[var(--muted)] rounded-2xl animate-pulse" />)}
                 </div>
-
-                <button className="bg-[var(--muted)] rounded-2xl border-2 border-dashed border-[var(--border)] p-5 flex flex-col items-center justify-center gap-2 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition">
-                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Add New Address</span>
-                </button>
-              </div>
+              ) : wishlist?.length === 0 ? (
+                <div className="text-center py-20">
+                  <span className="text-6xl mb-4 block">❤️</span>
+                  <p className="text-gray-500 dark:text-gray-400">No items in wishlist.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {wishlist?.map((item: any) => (
+                    <div key={item.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-4">
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 rounded-xl h-32 flex items-center justify-center text-5xl mb-3">
+                        {item.images?.[0] || "📚"}
+                      </div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">{item.name}</h3>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="font-bold text-blue-600 dark:text-blue-400">৳{item.discountPrice || item.price}</span>
+                        {item.discountPrice && <span className="text-xs text-gray-400 line-through">৳{item.price}</span>}
+                      </div>
+                      <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition">
+                        Add to Cart
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
           {/* Profile Tab */}
           {activeTab === "profile" && (
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>
-                Profile Settings
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>Profile Settings</h1>
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6">
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-4xl">
-                    👤
-                  </div>
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-4xl">👤</div>
                   <div>
                     <h2 className="font-bold text-gray-900 dark:text-white">{user?.name}</h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
-                    <button className="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1">
-                      Change Avatar
-                    </button>
                   </div>
                 </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
                     { label: "Full Name", value: user?.name || "", placeholder: "Your name" },
-                    { label: "Email", value: user?.email || "", placeholder: "your@email.com" },
                     { label: "Phone", value: "", placeholder: "01XXXXXXXXX" },
                   ].map((field) => (
-                    <div key={field.label} className={field.label === "Email" ? "sm:col-span-2" : ""}>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                        {field.label}
-                      </label>
+                    <div key={field.label}>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{field.label}</label>
                       <input
                         type="text"
                         defaultValue={field.value}
@@ -312,13 +292,42 @@ export default function DashboardClient() {
                       />
                     </div>
                   ))}
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+                    <input
+                      type="email"
+                      defaultValue={user?.email || ""}
+                      disabled
+                      className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] opacity-60 text-sm"
+                    />
+                  </div>
                 </div>
-
                 <button
                   onClick={() => toast.success("Profile updated!")}
                   className="mt-6 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition"
                 >
                   Save Changes
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Addresses Tab */}
+          {activeTab === "addresses" && (
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>My Addresses</h1>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-blue-500 p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium px-2 py-1 rounded-lg">Default</span>
+                    <button className="text-xs text-blue-600 dark:text-blue-400 hover:underline">Edit</button>
+                  </div>
+                  <p className="font-semibold text-gray-900 dark:text-white mb-1">{user?.name}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Dhaka, Bangladesh</p>
+                </div>
+                <button className="bg-[var(--muted)] rounded-2xl border-2 border-dashed border-[var(--border)] p-5 flex flex-col items-center justify-center gap-2 hover:border-blue-400 transition">
+                  <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Add New Address</span>
                 </button>
               </div>
             </div>

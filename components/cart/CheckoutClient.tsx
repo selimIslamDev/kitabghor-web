@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { useCartStore } from "@/store/cart.store";
 import { useAuthStore } from "@/store/auth.store";
+import { useCreateOrder } from "@/lib/hooks";
 import { MapPin, CreditCard, Smartphone, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 
 type Step = "address" | "payment" | "confirm";
 
@@ -17,33 +16,25 @@ const paymentMethods = [
 ];
 
 export default function CheckoutClient() {
-  const { items, totalAmount, clearCart } = useCartStore();
+  const { items, totalAmount } = useCartStore();
   const { isAuthenticated } = useAuthStore();
-  const router = useRouter();
+  const createOrder = useCreateOrder();
 
   const [step, setStep] = useState<Step>("address");
   const [paymentMethod, setPaymentMethod] = useState("sslcommerz");
-  const [loading, setLoading] = useState(false);
-
   const [address, setAddress] = useState({
-    fullName: "",
-    phone: "",
-    address: "",
-    city: "",
-    district: "",
-    postalCode: "",
+    fullName: "", phone: "", address: "", city: "", district: "", postalCode: "",
   });
 
   const shipping = totalAmount > 500 ? 0 : 60;
   const finalAmount = totalAmount + shipping;
 
-  const handlePlaceOrder = async () => {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 2000));
-    clearCart();
-    toast.success("Order placed successfully! 🎉");
-    router.push("/orders/success");
-    setLoading(false);
+  const handlePlaceOrder = () => {
+    createOrder.mutate({
+      items: items.map((item) => ({ productId: item.id, quantity: item.quantity })),
+      shippingAddress: address,
+      paymentMethod,
+    });
   };
 
   if (items.length === 0) {
@@ -60,27 +51,20 @@ export default function CheckoutClient() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
       <div className="mb-8">
         <Link href="/cart" className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:underline mb-4">
           <ArrowLeft className="w-4 h-4" />
           Back to Cart
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white" style={{ fontFamily: "Poppins, sans-serif" }}>
-          Checkout
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white" style={{ fontFamily: "Poppins, sans-serif" }}>Checkout</h1>
       </div>
 
-      {/* Progress Steps */}
+      {/* Progress */}
       <div className="flex items-center gap-2 mb-10">
         {(["address", "payment", "confirm"] as Step[]).map((s, i) => (
           <div key={s} className="flex items-center gap-2">
-            <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${step === s ? "bg-blue-600 text-white" : i < ["address", "payment", "confirm"].indexOf(step) ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400" : "bg-[var(--muted)] text-gray-400"}`}>
-              {i < ["address", "payment", "confirm"].indexOf(step) ? (
-                <CheckCircle className="w-4 h-4" />
-              ) : (
-                <span>{i + 1}</span>
-              )}
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${step === s ? "bg-blue-600 text-white" : i < ["address", "payment", "confirm"].indexOf(step) ? "bg-green-100 dark:bg-green-900/30 text-green-600" : "bg-[var(--muted)] text-gray-400"}`}>
+              {i < ["address", "payment", "confirm"].indexOf(step) ? <CheckCircle className="w-4 h-4" /> : <span>{i + 1}</span>}
               <span className="capitalize hidden sm:block">{s}</span>
             </div>
             {i < 2 && <div className="w-8 h-0.5 bg-[var(--border)]" />}
@@ -89,10 +73,9 @@ export default function CheckoutClient() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left — Steps */}
         <div className="lg:col-span-2">
 
-          {/* Step 1 — Address */}
+          {/* Step 1 */}
           {step === "address" && (
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6">
               <div className="flex items-center gap-3 mb-6">
@@ -101,20 +84,17 @@ export default function CheckoutClient() {
                 </div>
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Shipping Address</h2>
               </div>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { key: "fullName", label: "Full Name", placeholder: "Your full name", col: 1 },
-                  { key: "phone", label: "Phone Number", placeholder: "01XXXXXXXXX", col: 1 },
+                  { key: "phone", label: "Phone", placeholder: "01XXXXXXXXX", col: 1 },
                   { key: "address", label: "Address", placeholder: "House, Road, Area", col: 2 },
                   { key: "city", label: "City", placeholder: "Dhaka", col: 1 },
                   { key: "district", label: "District", placeholder: "Dhaka", col: 1 },
                   { key: "postalCode", label: "Postal Code", placeholder: "1200", col: 1 },
                 ].map((field) => (
                   <div key={field.key} className={field.col === 2 ? "sm:col-span-2" : ""}>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      {field.label}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{field.label}</label>
                     <input
                       type="text"
                       placeholder={field.placeholder}
@@ -125,24 +105,21 @@ export default function CheckoutClient() {
                   </div>
                 ))}
               </div>
-
               <button
                 onClick={() => {
                   if (!address.fullName || !address.phone || !address.address || !address.city || !address.district) {
-                    toast.error("Please fill all required fields!");
                     return;
                   }
                   setStep("payment");
                 }}
                 className="w-full mt-6 flex items-center justify-center gap-2 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition"
               >
-                Continue to Payment
-                <ArrowRight className="w-4 h-4" />
+                Continue to Payment <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}
 
-          {/* Step 2 — Payment */}
+          {/* Step 2 */}
           {step === "payment" && (
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6">
               <div className="flex items-center gap-3 mb-6">
@@ -151,7 +128,6 @@ export default function CheckoutClient() {
                 </div>
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Payment Method</h2>
               </div>
-
               <div className="space-y-3 mb-6">
                 {paymentMethods.map((method) => (
                   <button
@@ -166,32 +142,20 @@ export default function CheckoutClient() {
                       <p className="font-semibold text-gray-900 dark:text-white text-sm">{method.name}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{method.description}</p>
                     </div>
-                    {paymentMethod === method.id && (
-                      <CheckCircle className="w-5 h-5 text-blue-600 ml-auto" />
-                    )}
+                    {paymentMethod === method.id && <CheckCircle className="w-5 h-5 text-blue-600 ml-auto" />}
                   </button>
                 ))}
               </div>
-
               <div className="flex gap-3">
-                <button
-                  onClick={() => setStep("address")}
-                  className="flex-1 py-4 border border-[var(--border)] text-gray-600 dark:text-gray-300 rounded-xl font-semibold hover:bg-[var(--muted)] transition"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={() => setStep("confirm")}
-                  className="flex-1 flex items-center justify-center gap-2 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition"
-                >
-                  Review Order
-                  <ArrowRight className="w-4 h-4" />
+                <button onClick={() => setStep("address")} className="flex-1 py-4 border border-[var(--border)] text-gray-600 dark:text-gray-300 rounded-xl font-semibold hover:bg-[var(--muted)] transition">Back</button>
+                <button onClick={() => setStep("confirm")} className="flex-1 flex items-center justify-center gap-2 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition">
+                  Review Order <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 3 — Confirm */}
+          {/* Step 3 */}
           {step === "confirm" && (
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6">
               <div className="flex items-center gap-3 mb-6">
@@ -201,7 +165,6 @@ export default function CheckoutClient() {
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Review & Confirm</h2>
               </div>
 
-              {/* Address Summary */}
               <div className="bg-[var(--muted)] rounded-xl p-4 mb-4">
                 <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Shipping To</p>
                 <p className="font-medium text-gray-900 dark:text-white">{address.fullName}</p>
@@ -209,15 +172,13 @@ export default function CheckoutClient() {
                 <p className="text-sm text-gray-600 dark:text-gray-300">{address.address}, {address.city}, {address.district}</p>
               </div>
 
-              {/* Payment Summary */}
-              <div className="bg-[var(--muted)] rounded-xl p-4 mb-6">
-                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Payment Method</p>
+              <div className="bg-[var(--muted)] rounded-xl p-4 mb-4">
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Payment</p>
                 <p className="font-medium text-gray-900 dark:text-white">
                   {paymentMethods.find((m) => m.id === paymentMethod)?.name}
                 </p>
               </div>
 
-              {/* Items */}
               <div className="space-y-3 mb-6">
                 {items.map((item) => (
                   <div key={item.id} className="flex items-center gap-3">
@@ -234,27 +195,16 @@ export default function CheckoutClient() {
               </div>
 
               <div className="flex gap-3">
-                <button
-                  onClick={() => setStep("payment")}
-                  className="flex-1 py-4 border border-[var(--border)] text-gray-600 dark:text-gray-300 rounded-xl font-semibold hover:bg-[var(--muted)] transition"
-                >
-                  Back
-                </button>
+                <button onClick={() => setStep("payment")} className="flex-1 py-4 border border-[var(--border)] text-gray-600 dark:text-gray-300 rounded-xl font-semibold hover:bg-[var(--muted)] transition">Back</button>
                 <button
                   onClick={handlePlaceOrder}
-                  disabled={loading}
+                  disabled={createOrder.isPending}
                   className="flex-1 flex items-center justify-center gap-2 py-4 bg-green-600 hover:bg-green-700 disabled:opacity-70 text-white rounded-xl font-semibold transition"
                 >
-                  {loading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Placing Order...
-                    </>
+                  {createOrder.isPending ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    <>
-                      <CheckCircle className="w-4 h-4" />
-                      Place Order
-                    </>
+                    <><CheckCircle className="w-4 h-4" /> Place Order</>
                   )}
                 </button>
               </div>
@@ -262,11 +212,10 @@ export default function CheckoutClient() {
           )}
         </div>
 
-        {/* Right — Order Summary */}
+        {/* Order Summary */}
         <div className="lg:col-span-1">
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6 sticky top-20">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Order Summary</h2>
-
             <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
               {items.map((item) => (
                 <div key={item.id} className="flex items-center gap-3">
@@ -281,7 +230,6 @@ export default function CheckoutClient() {
                 </div>
               ))}
             </div>
-
             <div className="border-t border-[var(--border)] pt-4 space-y-2">
               <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
                 <span>Subtotal</span>

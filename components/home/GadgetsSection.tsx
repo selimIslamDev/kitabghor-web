@@ -3,76 +3,29 @@
 import Link from "next/link";
 import { ShoppingCart, Star, ArrowRight, Zap } from "lucide-react";
 import { useCartStore } from "@/store/cart.store";
+import { useFeaturedProducts } from "@/lib/hooks";
 import toast from "react-hot-toast";
 
-const gadgets = [
-  {
-    id: "g1",
-    name: "Casio FX-991EX Calculator",
-    brand: "Casio",
-    price: 1200,
-    discountPrice: 1050,
-    rating: 4.9,
-    reviews: 203,
-    image: "🔢",
-    badge: "Best Seller",
-    stock: 25,
-  },
-  {
-    id: "g2",
-    name: "Scientific Geometry Box",
-    brand: "Staedtler",
-    price: 450,
-    discountPrice: 380,
-    rating: 4.7,
-    reviews: 89,
-    image: "📐",
-    badge: "Popular",
-    stock: 40,
-  },
-  {
-    id: "g3",
-    name: "Premium Pen Set (12pcs)",
-    brand: "Pilot",
-    price: 350,
-    discountPrice: 299,
-    rating: 4.6,
-    reviews: 156,
-    image: "✏️",
-    badge: "New",
-    stock: 100,
-  },
-  {
-    id: "g4",
-    name: "Art Color Set (24pcs)",
-    brand: "Faber-Castell",
-    price: 800,
-    discountPrice: 699,
-    rating: 4.8,
-    reviews: 67,
-    image: "🎨",
-    badge: "Top Rated",
-    stock: 30,
-  },
-];
-
-const badgeColors: Record<string, string> = {
-  "Best Seller": "bg-amber-500",
-  "Popular": "bg-blue-500",
-  "New": "bg-green-500",
-  "Top Rated": "bg-purple-500",
+const badgeColors: Record<number, string> = {
+  0: "bg-amber-500",
+  1: "bg-blue-500",
+  2: "bg-green-500",
+  3: "bg-purple-500",
 };
 
 export default function GadgetsSection() {
   const { addItem } = useCartStore();
+  const { data: products, isLoading } = useFeaturedProducts();
 
-  const handleAddToCart = (gadget: typeof gadgets[0]) => {
+  const gadgets = products?.filter((p: any) => p.productType === "GADGET").slice(0, 4) || [];
+
+  const handleAddToCart = (gadget: any) => {
     addItem({
       id: gadget.id,
       name: gadget.name,
       price: gadget.price,
       discountPrice: gadget.discountPrice,
-      image: gadget.image,
+      image: gadget.images?.[0] || "🔧",
       stock: gadget.stock,
     });
     toast.success(`${gadget.name} added to cart!`);
@@ -93,74 +46,80 @@ export default function GadgetsSection() {
             </h2>
             <p className="text-gray-500 dark:text-gray-400">Essential tools to boost your learning</p>
           </div>
-          <Link
-            href="/products?type=GADGET"
-            className="hidden sm:flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:underline"
-          >
+          <Link href="/products?type=GADGET" className="hidden sm:flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:underline">
             View All <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {gadgets.map((gadget) => (
-            <div
-              key={gadget.id}
-              className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group"
-            >
-              {/* Gadget Image */}
-              <div className="relative bg-gradient-to-br from-amber-50 to-orange-100 dark:from-slate-700 dark:to-slate-600 h-48 flex items-center justify-center">
-                <span className="text-7xl group-hover:scale-110 transition-transform duration-200">
-                  {gadget.image}
-                </span>
-                <div className={`absolute top-3 left-3 ${badgeColors[gadget.badge]} text-white text-xs font-bold px-2 py-1 rounded-lg`}>
-                  {gadget.badge}
+        {/* Skeleton */}
+        {isLoading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden animate-pulse">
+                <div className="h-48 bg-[var(--muted)]" />
+                <div className="p-4 space-y-3">
+                  <div className="h-3 bg-[var(--muted)] rounded w-1/3" />
+                  <div className="h-4 bg-[var(--muted)] rounded w-3/4" />
+                  <div className="h-8 bg-[var(--muted)] rounded" />
                 </div>
-                {gadget.discountPrice && (
-                  <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
-                    {Math.round(((gadget.price - gadget.discountPrice) / gadget.price) * 100)}% OFF
-                  </div>
-                )}
               </div>
+            ))}
+          </div>
+        )}
 
-              {/* Info */}
-              <div className="p-4">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{gadget.brand}</p>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 text-sm">
-                  {gadget.name}
-                </h3>
-
-                {/* Rating */}
-                <div className="flex items-center gap-1 mb-3">
-                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{gadget.rating}</span>
-                  <span className="text-xs text-gray-400">({gadget.reviews})</span>
-                </div>
-
-                {/* Price */}
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                    ৳{gadget.discountPrice || gadget.price}
+        {/* Grid */}
+        {!isLoading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {gadgets.length > 0 ? gadgets.map((gadget: any, index: number) => (
+              <div key={gadget.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
+                <div className="relative bg-gradient-to-br from-amber-50 to-orange-100 dark:from-slate-700 dark:to-slate-600 h-48 flex items-center justify-center">
+                  <span className="text-7xl group-hover:scale-110 transition-transform duration-200">
+                    {gadget.images?.[0] || "🔧"}
                   </span>
+                  <div className={`absolute top-3 left-3 ${badgeColors[index % 4]} text-white text-xs font-bold px-2 py-1 rounded-lg`}>
+                    {index === 0 ? "Best Seller" : index === 1 ? "Popular" : index === 2 ? "New" : "Top Rated"}
+                  </div>
                   {gadget.discountPrice && (
-                    <span className="text-sm text-gray-400 line-through">৳{gadget.price}</span>
+                    <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
+                      {Math.round(((gadget.price - gadget.discountPrice) / gadget.price) * 100)}% OFF
+                    </div>
                   )}
                 </div>
-
-                {/* Button */}
-                <button
-                  onClick={() => handleAddToCart(gadget)}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold text-sm transition"
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                  Add to Cart
-                </button>
+                <div className="p-4">
+                  {gadget.brand && <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{gadget.brand}</p>}
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 text-sm">{gadget.name}</h3>
+                  <div className="flex items-center gap-1 mb-3">
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {gadget._count?.reviews > 0 ? "4.8" : "New"}
+                    </span>
+                    <span className="text-xs text-gray-400">({gadget._count?.reviews || 0})</span>
+                  </div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                      ৳{gadget.discountPrice || gadget.price}
+                    </span>
+                    {gadget.discountPrice && (
+                      <span className="text-sm text-gray-400 line-through">৳{gadget.price}</span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => handleAddToCart(gadget)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold text-sm transition"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    Add to Cart
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            )) : (
+              <div className="col-span-4 text-center py-10 text-gray-500 dark:text-gray-400">
+                No gadgets available yet.
+              </div>
+            )}
+          </div>
+        )}
 
-        {/* Mobile View All */}
         <div className="sm:hidden mt-6 text-center">
           <Link href="/products?type=GADGET" className="inline-flex items-center gap-2 text-blue-600 font-semibold">
             View All Gadgets <ArrowRight className="w-4 h-4" />
