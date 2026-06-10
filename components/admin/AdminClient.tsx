@@ -8,6 +8,7 @@ import {
   CheckCircle, Eye, Edit, Trash2,
   Plus, Search,
 } from "lucide-react";
+import AdminNotifications from "./AdminNotifications";
 import { useAuthStore } from "@/store/auth.store";
 import { useRouter } from "next/navigation";
 import {
@@ -126,25 +127,29 @@ export default function AdminClient() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <header className="bg-white dark:bg-slate-800 border-b border-[var(--border)] px-6 py-4 flex items-center gap-4">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-gray-900 dark:hover:text-white">
-            <Menu className="w-5 h-5" />
-          </button>
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div className="ml-auto text-sm text-gray-500 dark:text-gray-400 hidden sm:block">
-            {new Date().toLocaleDateString("en-BD", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-          </div>
-        </header>
+       {/* Top Bar */}
+<header className="bg-white dark:bg-slate-800 border-b border-[var(--border)] px-6 py-4 flex items-center gap-4">
+  <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-gray-900 dark:hover:text-white">
+    <Menu className="w-5 h-5" />
+  </button>
+  <div className="relative flex-1 max-w-md">
+    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+    <input
+      type="text"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      placeholder="Search..."
+      className="w-full pl-9 pr-4 py-2 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+  <div className="ml-auto flex items-center gap-3">
+    <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:block">
+      {new Date().toLocaleDateString("en-BD", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+    </span>
+    {/* Notification Bell */}
+    <AdminNotifications />
+  </div>
+</header>
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-6">

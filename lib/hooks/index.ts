@@ -7,3 +7,4 @@ export * from "./useWishlist";
 export * from "./useCoupon";
 export * from "./useAdmin";
 export * from "./useProfile";
+export * from "./useAdminNotifications";
