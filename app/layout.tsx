@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${poppins.variable} font-sans bg-[var(--background)] text-[var(--foreground)]`}>
+      <body className={`${inter.variable} ${poppins.variable} font-sans`}>
         <Providers>{children}</Providers>
       </body>
     </html>
