@@ -8,3 +8,4 @@ export * from "./useCoupon";
 export * from "./useAdmin";
 export * from "./useProfile";
 export * from "./useAdminNotifications";
+export * from "./useProtectedRoute";
