@@ -6,6 +6,7 @@ export function useProtectedRoute(requireAdmin = false) {
   const { isAuthenticated, user } = useAuthStore();
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
@@ -13,14 +14,18 @@ export function useProtectedRoute(requireAdmin = false) {
 
   useEffect(() => {
     if (!hydrated) return;
-    if (!isAuthenticated) {
-      router.push("/login");
-      return;
-    }
-    if (requireAdmin && user?.role !== "ADMIN") {
-      router.push("/");
-    }
+
+    const timer = setTimeout(() => {
+      if (!isAuthenticated) {
+        router.push("/login");
+      } else if (requireAdmin && user?.role !== "ADMIN") {
+        router.push("/");
+      }
+      setChecked(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [hydrated, isAuthenticated, user, router, requireAdmin]);
 
-  return { hydrated, isAuthenticated, user };
+  return { hydrated, checked, isAuthenticated, user };
 }

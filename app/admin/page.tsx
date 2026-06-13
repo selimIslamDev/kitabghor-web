@@ -4,9 +4,9 @@ import { useProtectedRoute } from "@/lib/hooks";
 import AdminClient from "@/components/admin/AdminClient";
 
 export default function AdminPage() {
-  const { hydrated, isAuthenticated, user } = useProtectedRoute(true);
+  const { hydrated, checked, isAuthenticated, user } = useProtectedRoute(true);
 
-  if (!hydrated || !isAuthenticated || user?.role !== "ADMIN") {
+  if (!hydrated || !checked) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -16,6 +16,8 @@ export default function AdminPage() {
       </div>
     );
   }
+
+  if (!isAuthenticated || user?.role !== "ADMIN") return null;
 
   return <AdminClient />;
 }

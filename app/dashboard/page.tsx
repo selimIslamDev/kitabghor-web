@@ -1,29 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/auth.store";
+import { useProtectedRoute } from "@/lib/hooks";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import DashboardClient from "@/components/dashboard/DashboardClient";
 
 export default function DashboardPage() {
-  const { isAuthenticated } = useAuthStore();
-  const router = useRouter();
-  const [hydrated, setHydrated] = useState(false);
+  const { hydrated, checked, isAuthenticated } = useProtectedRoute(false);
 
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    if (!isAuthenticated) {
-      router.push("/login");
-    }
-  }, [hydrated, isAuthenticated, router]);
-
-  if (!hydrated) {
+  if (!hydrated || !checked) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -34,13 +19,7 @@ export default function DashboardPage() {
     );
   }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (!isAuthenticated) return null;
 
   return (
     <>
