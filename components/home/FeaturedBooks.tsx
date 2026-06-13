@@ -12,7 +12,9 @@ export default function FeaturedBooks() {
 
   const books = products?.filter((p: any) => p.productType === "BOOK").slice(0, 4) || [];
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+    e.preventDefault();
+    e.stopPropagation();
     addItem({
       id: product.id,
       name: product.name,
@@ -27,7 +29,6 @@ export default function FeaturedBooks() {
   return (
     <section className="py-16 bg-[var(--card)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>
@@ -49,7 +50,6 @@ export default function FeaturedBooks() {
                 <div className="p-4 space-y-3">
                   <div className="h-3 bg-[var(--muted)] rounded w-1/3" />
                   <div className="h-4 bg-[var(--muted)] rounded w-3/4" />
-                  <div className="h-3 bg-[var(--muted)] rounded w-1/2" />
                   <div className="h-8 bg-[var(--muted)] rounded" />
                 </div>
               </div>
@@ -57,11 +57,14 @@ export default function FeaturedBooks() {
           </div>
         )}
 
-        {/* Grid */}
         {!isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {books.length > 0 ? books.map((book: any) => (
-              <div key={book.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
+              <Link
+                key={book.id}
+                href={`/products/${book.id}`}
+                className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group block"
+              >
                 <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 h-48 flex items-center justify-center">
                   <span className="text-7xl group-hover:scale-110 transition-transform duration-200">
                     {book.images?.[0] || "📚"}
@@ -97,14 +100,14 @@ export default function FeaturedBooks() {
                     )}
                   </div>
                   <button
-                    onClick={() => handleAddToCart(book)}
+                    onClick={(e) => handleAddToCart(e, book)}
                     className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition"
                   >
                     <ShoppingCart className="w-4 h-4" />
                     Add to Cart
                   </button>
                 </div>
-              </div>
+              </Link>
             )) : (
               <div className="col-span-4 text-center py-10 text-gray-500 dark:text-gray-400">
                 No books available yet.

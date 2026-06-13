@@ -13,13 +13,22 @@ const badgeColors: Record<number, string> = {
   3: "bg-purple-500",
 };
 
+const badgeLabels: Record<number, string> = {
+  0: "Best Seller",
+  1: "Popular",
+  2: "New",
+  3: "Top Rated",
+};
+
 export default function GadgetsSection() {
   const { addItem } = useCartStore();
   const { data: products, isLoading } = useFeaturedProducts();
 
   const gadgets = products?.filter((p: any) => p.productType === "GADGET").slice(0, 4) || [];
 
-  const handleAddToCart = (gadget: any) => {
+  const handleAddToCart = (e: React.MouseEvent, gadget: any) => {
+    e.preventDefault();
+    e.stopPropagation();
     addItem({
       id: gadget.id,
       name: gadget.name,
@@ -34,7 +43,6 @@ export default function GadgetsSection() {
   return (
     <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
             <div className="inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-sm font-medium mb-3">
@@ -67,17 +75,20 @@ export default function GadgetsSection() {
           </div>
         )}
 
-        {/* Grid */}
         {!isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {gadgets.length > 0 ? gadgets.map((gadget: any, index: number) => (
-              <div key={gadget.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
+              <Link
+                key={gadget.id}
+                href={`/products/${gadget.id}`}
+                className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group block"
+              >
                 <div className="relative bg-gradient-to-br from-amber-50 to-orange-100 dark:from-slate-700 dark:to-slate-600 h-48 flex items-center justify-center">
                   <span className="text-7xl group-hover:scale-110 transition-transform duration-200">
                     {gadget.images?.[0] || "🔧"}
                   </span>
                   <div className={`absolute top-3 left-3 ${badgeColors[index % 4]} text-white text-xs font-bold px-2 py-1 rounded-lg`}>
-                    {index === 0 ? "Best Seller" : index === 1 ? "Popular" : index === 2 ? "New" : "Top Rated"}
+                    {badgeLabels[index % 4]}
                   </div>
                   {gadget.discountPrice && (
                     <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
@@ -104,14 +115,14 @@ export default function GadgetsSection() {
                     )}
                   </div>
                   <button
-                    onClick={() => handleAddToCart(gadget)}
+                    onClick={(e) => handleAddToCart(e, gadget)}
                     className="w-full flex items-center justify-center gap-2 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold text-sm transition"
                   >
                     <ShoppingCart className="w-4 h-4" />
                     Add to Cart
                   </button>
                 </div>
-              </div>
+              </Link>
             )) : (
               <div className="col-span-4 text-center py-10 text-gray-500 dark:text-gray-400">
                 No gadgets available yet.

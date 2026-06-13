@@ -5,6 +5,7 @@ import { Search, SlidersHorizontal, X, ShoppingCart, Star, ChevronDown } from "l
 import { useCartStore } from "@/store/cart.store";
 import { useProducts } from "@/lib/hooks";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const sortOptions = ["Newest", "Price: Low to High", "Price: High to Low", "Most Popular"];
 const classLevels = ["All", "Class 8-9", "SSC", "HSC", "University"];
@@ -43,7 +44,9 @@ export default function ProductsClient() {
   const products = data?.data || [];
   const total = data?.pagination?.total || 0;
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+    e.preventDefault();
+    e.stopPropagation();
     addItem({
       id: product.id,
       name: product.name,
@@ -227,7 +230,11 @@ export default function ProductsClient() {
           {!isLoading && !isError && products.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product: any) => (
-                <div key={product.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
+                <Link
+                  key={product.id}
+                  href={`/products/${product.id}`}
+                  className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group block"
+                >
                   <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 h-44 flex items-center justify-center">
                     <span className="text-6xl group-hover:scale-110 transition-transform duration-200">
                       {product.images?.[0] || (product.productType === "BOOK" ? "📚" : "🔧")}
@@ -265,14 +272,14 @@ export default function ProductsClient() {
                       )}
                     </div>
                     <button
-                      onClick={() => handleAddToCart(product)}
+                      onClick={(e) => handleAddToCart(e, product)}
                       className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add to Cart
                     </button>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
@@ -281,8 +288,6 @@ export default function ProductsClient() {
     </div>
   );
 }
-
-
 
 
 
