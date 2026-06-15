@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingCart, Star, Heart, ArrowLeft, Plus, Minus, CheckCircle, Truck, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart.store";
+import { useAuthStore } from "@/store/auth.store";
 import { useProduct, useProductReviews, useAddToWishlist } from "@/lib/hooks";
 import toast from "react-hot-toast";
 
@@ -15,11 +17,27 @@ export default function ProductDetailClient({ id }: { id: string }) {
   const { data: product, isLoading } = useProduct(id);
   const { data: reviewData } = useProductReviews(id);
   const { addItem } = useCartStore();
+  const { isAuthenticated } = useAuthStore();
   const addToWishlist = useAddToWishlist();
+  const router = useRouter();
 
   const reviews = reviewData?.data || [];
 
+  useEffect(() => {
+    const handleRequireLogin = () => {
+      toast.error("Please login to add items to cart!");
+      router.push("/login");
+    };
+    window.addEventListener("require-login", handleRequireLogin);
+    return () => window.removeEventListener("require-login", handleRequireLogin);
+  }, [router]);
+
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      toast.error("Please login to add items to cart!");
+      router.push("/login");
+      return;
+    }
     if (!product) return;
     for (let i = 0; i < quantity; i++) {
       addItem({
@@ -35,6 +53,11 @@ export default function ProductDetailClient({ id }: { id: string }) {
   };
 
   const handleWishlist = () => {
+    if (!isAuthenticated) {
+      toast.error("Please login to add to wishlist!");
+      router.push("/login");
+      return;
+    }
     if (!product) return;
     addToWishlist.mutate(product.id);
     setWishlisted(!wishlisted);

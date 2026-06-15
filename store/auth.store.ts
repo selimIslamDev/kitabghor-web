@@ -32,6 +32,8 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         localStorage.removeItem("token");
         set({ user: null, token: null, isAuthenticated: false });
+        const { useCartStore } = require("@/store/cart.store");
+        useCartStore.getState().clearCart();
       },
     }),
     { name: "kitabghor-auth" }

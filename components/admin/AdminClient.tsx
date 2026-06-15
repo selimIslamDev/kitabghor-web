@@ -17,7 +17,7 @@ import {
   useDeleteProduct,
 } from "@/lib/hooks";
 import toast from "react-hot-toast";
-
+import ProductModal from "./ProductModal";
 type Tab = "dashboard" | "orders" | "products" | "users" | "analytics";
 
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -40,6 +40,8 @@ export default function AdminClient() {
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [productModalOpen, setProductModalOpen] = useState(false);
+const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const { user, logout } = useAuthStore();
   const router = useRouter();
 
@@ -305,75 +307,87 @@ export default function AdminClient() {
             </div>
           )}
 
-          {/* Products Tab */}
-          {activeTab === "products" && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white" style={{ fontFamily: "Poppins, sans-serif" }}>Products</h1>
-                <button
-                  onClick={() => toast.success("Add product — coming soon!")}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Product
-                </button>
-              </div>
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden">
-                {productsLoading ? (
-                  <div className="p-6 space-y-3">{[...Array(5)].map((_, i) => <div key={i} className="h-12 bg-[var(--muted)] rounded-xl animate-pulse" />)}</div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead className="bg-[var(--muted)]">
-                        <tr>
-                          {["Product", "Type", "Category", "Price", "Stock", "Actions"].map((h) => (
-                            <th key={h} className="text-left py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {products.map((product: any) => (
-                          <tr key={product.id} className="border-t border-[var(--border)] hover:bg-[var(--muted)] transition">
-                            <td className="py-3 px-4 font-medium text-gray-900 dark:text-white">{product.name}</td>
-                            <td className="py-3 px-4">
-                              <span className={`px-2 py-1 rounded-lg text-xs font-medium ${product.productType === "BOOK" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300" : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"}`}>
-                                {product.productType}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-gray-600 dark:text-gray-300">{product.category?.name}</td>
-                            <td className="py-3 px-4 font-semibold text-blue-600 dark:text-blue-400">৳{product.price}</td>
-                            <td className="py-3 px-4">
-                              <span className={`font-medium ${product.stock <= 5 ? "text-red-500" : "text-green-600 dark:text-green-400"}`}>
-                                {product.stock}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-1">
-                                <button className="p-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition">
-                                  <Edit className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    if (confirm("Delete this product?")) {
-                                      deleteProduct.mutate(product.id);
-                                    }
-                                  }}
-                                  className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition"
-                                >
-                                  <Trash2 className="w-4 h-4 text-red-500" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+     {/* Products Tab */}
+{activeTab === "products" && (
+  <div className="space-y-6">
+    <div className="flex items-center justify-between">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white" style={{ fontFamily: "Poppins, sans-serif" }}>Products</h1>
+      <button
+        onClick={() => { setSelectedProduct(null); setProductModalOpen(true); }}
+        className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition"
+      >
+        <Plus className="w-4 h-4" />
+        Add Product
+      </button>
+    </div>
 
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden">
+      {productsLoading ? (
+        <div className="p-6 space-y-3">{[...Array(5)].map((_, i) => <div key={i} className="h-12 bg-[var(--muted)] rounded-xl animate-pulse" />)}</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-[var(--muted)]">
+              <tr>
+                {["Product", "Type", "Category", "Price", "Stock", "Actions"].map((h) => (
+                  <th key={h} className="text-left py-3 px-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product: any) => (
+                <tr key={product.id} className="border-t border-[var(--border)] hover:bg-[var(--muted)] transition">
+                  <td className="py-3 px-4 font-medium text-gray-900 dark:text-white">{product.name}</td>
+                  <td className="py-3 px-4">
+                    <span className={`px-2 py-1 rounded-lg text-xs font-medium ${product.productType === "BOOK" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300" : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"}`}>
+                      {product.productType}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-gray-600 dark:text-gray-300">{product.category?.name}</td>
+                  <td className="py-3 px-4">
+                    <div>
+                      <span className="font-semibold text-blue-600 dark:text-blue-400">৳{product.discountPrice || product.price}</span>
+                      {product.discountPrice && (
+                        <span className="text-xs text-gray-400 line-through ml-1">৳{product.price}</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className={`font-medium ${product.stock <= 5 ? "text-red-500" : product.stock <= 10 ? "text-amber-500" : "text-green-600 dark:text-green-400"}`}>
+                      {product.stock}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => { setSelectedProduct(product); setProductModalOpen(true); }}
+                        className="p-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition"
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Delete "${product.name}"?`)) {
+                            deleteProduct.mutate(product.id);
+                          }
+                        }}
+                        className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  </div>
+)}
           {/* Users Tab */}
           {activeTab === "users" && (
             <div className="space-y-6">
@@ -496,6 +510,12 @@ export default function AdminClient() {
           )}
         </main>
       </div>
+      {/* Product Modal */}
+<ProductModal
+  open={productModalOpen}
+  onClose={() => { setProductModalOpen(false); setSelectedProduct(null); }}
+  product={selectedProduct}
+/>
     </div>
   );
 }

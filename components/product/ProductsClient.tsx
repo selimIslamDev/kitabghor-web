@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, SlidersHorizontal, X, ShoppingCart, Star, ChevronDown } from "lucide-react";
 import { useCartStore } from "@/store/cart.store";
+import { useAuthStore } from "@/store/auth.store";
 import { useProducts } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const sortOptions = ["Newest", "Price: Low to High", "Price: High to Low", "Most Popular"];
 const classLevels = ["All", "Class 8-9", "SSC", "HSC", "University"];
@@ -28,6 +30,8 @@ export default function ProductsClient() {
   const [maxPrice, setMaxPrice] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const { addItem } = useCartStore();
+  const { isAuthenticated } = useAuthStore();
+  const router = useRouter();
 
   const { data, isLoading, isError } = useProducts({
     type: type === "ALL" ? undefined : type,
@@ -44,9 +48,25 @@ export default function ProductsClient() {
   const products = data?.data || [];
   const total = data?.pagination?.total || 0;
 
+  useEffect(() => {
+    const handleRequireLogin = () => {
+      toast.error("Please login to add items to cart!");
+      router.push("/login");
+    };
+    window.addEventListener("require-login", handleRequireLogin);
+    return () => window.removeEventListener("require-login", handleRequireLogin);
+  }, [router]);
+
   const handleAddToCart = (e: React.MouseEvent, product: any) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!isAuthenticated) {
+      toast.error("Please login to add items to cart!");
+      router.push("/login");
+      return;
+    }
+
     addItem({
       id: product.id,
       name: product.name,
@@ -188,7 +208,6 @@ export default function ProductsClient() {
 
         {/* Products Grid */}
         <div className="flex-1">
-          {/* Loading */}
           {isLoading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
@@ -205,7 +224,6 @@ export default function ProductsClient() {
             </div>
           )}
 
-          {/* Error */}
           {isError && (
             <div className="text-center py-20">
               <span className="text-6xl mb-4 block">⚠️</span>
@@ -214,7 +232,6 @@ export default function ProductsClient() {
             </div>
           )}
 
-          {/* Empty */}
           {!isLoading && !isError && products.length === 0 && (
             <div className="text-center py-20">
               <span className="text-6xl mb-4 block">📭</span>
@@ -226,7 +243,6 @@ export default function ProductsClient() {
             </div>
           )}
 
-          {/* Grid */}
           {!isLoading && !isError && products.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product: any) => (
@@ -288,9 +304,6 @@ export default function ProductsClient() {
     </div>
   );
 }
-
-
-
 
 
 
