@@ -110,16 +110,27 @@ export default function ProductDetailClient({ id }: { id: string }) {
       {/* Product Main */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
         {/* Image */}
-        <div>
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 rounded-2xl h-96 flex items-center justify-center relative">
-            <span className="text-9xl">{product.images?.[0] || "📚"}</span>
-            {product.discountPrice && (
-              <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-xl">
-                {Math.round(((product.price - product.discountPrice) / product.price) * 100)}% OFF
-              </div>
-            )}
-          </div>
-        </div>
+       {/* Image */}
+<div>
+  <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 rounded-2xl h-96 flex items-center justify-center relative overflow-hidden">
+    {product.images?.[0] && product.images[0].startsWith("http") ? (
+      <img
+        src={product.images[0]}
+        alt={product.name}
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <span className="text-9xl">
+        {product.productType === "BOOK" ? "📚" : "🔧"}
+      </span>
+    )}
+    {product.discountPrice && (
+      <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-xl">
+        {Math.round(((product.price - product.discountPrice) / product.price) * 100)}% OFF
+      </div>
+    )}
+  </div>
+</div>
 
         {/* Info */}
         <div>
