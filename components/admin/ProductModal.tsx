@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { X, Plus } from "lucide-react";
-import { useCreateProduct, useUpdateProduct, useCategories } from "@/lib/hooks";
+import { useState, useEffect, useRef } from "react";
+import { X, Upload, Trash2, ImagePlus } from "lucide-react";
+import { useCreateProduct, useUpdateProduct, useCategories, useUploadImage } from "@/lib/hooks";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 interface ProductModalProps {
   open: boolean;
@@ -32,9 +33,12 @@ const initialForm = {
 
 export default function ProductModal({ open, onClose, product }: ProductModalProps) {
   const [form, setForm] = useState(initialForm);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const { data: categories } = useCategories();
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
+  const { uploadImage, uploading, progress } = useUploadImage();
 
   useEffect(() => {
     if (product) {
@@ -61,6 +65,33 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
     }
   }, [product, open]);
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    if (form.images.length >= 4) {
+      toast.error("Maximum 4 images allowed!");
+      return;
+    }
+
+    const file = files[0];
+    const url = await uploadImage(file);
+    if (url) {
+      setForm((prev) => ({ ...prev, images: [...prev.images, url] }));
+      toast.success("Image uploaded!");
+    }
+
+    // Reset file input
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -78,7 +109,7 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
 
     if (product) {
       updateProduct.mutate({ id: product.id, ...data }, {
-        onSuccess: () => { onClose(); },
+        onSuccess: () => onClose(),
       });
     } else {
       createProduct.mutate(data, {
@@ -87,31 +118,26 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
     }
   };
 
-  const filteredCategories = categories?.filter((c: any) =>
-    c.type === form.productType
-  ) || [];
+  const filteredCategories = categories?.filter((c: any) => c.type === form.productType) || [];
 
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal */}
       <div className="relative bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)] sticky top-0 bg-white dark:bg-slate-800 z-10">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-            {product ? "Edit Product" : "Add New Product"}
+            {product ? "✏️ Edit Product" : "➕ Add New Product"}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-[var(--muted)] rounded-xl transition">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
 
           {/* Product Type */}
           <div>
@@ -128,6 +154,69 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Product Images ({form.images.length}/4)
+            </label>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+              {form.images.map((img, index) => (
+                <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-[var(--border)]">
+                  <Image
+                    src={img}
+                    alt={`Product ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                  {index === 0 && (
+                    <span className="absolute bottom-1 left-1 bg-blue-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                      Main
+                    </span>
+                  )}
+                </div>
+              ))}
+
+              {form.images.length < 4 && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="aspect-square rounded-xl border-2 border-dashed border-[var(--border)] hover:border-blue-400 flex flex-col items-center justify-center gap-2 transition disabled:opacity-50"
+                >
+                  {uploading ? (
+                    <>
+                      <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-xs text-blue-600">{progress}%</span>
+                    </>
+                  ) : (
+                    <>
+                      <ImagePlus className="w-6 h-6 text-gray-400" />
+                      <span className="text-xs text-gray-400">Add Image</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+
+            <p className="text-xs text-gray-400">Max 4 images, 5MB each. JPG, PNG, WEBP supported.</p>
           </div>
 
           {/* Basic Info */}
@@ -295,7 +384,7 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
             </button>
             <button
               type="submit"
-              disabled={createProduct.isPending || updateProduct.isPending}
+              disabled={createProduct.isPending || updateProduct.isPending || uploading}
               className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-70 text-white rounded-xl font-semibold transition"
             >
               {createProduct.isPending || updateProduct.isPending ? (
