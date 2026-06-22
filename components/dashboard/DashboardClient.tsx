@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useMyOrders, useWishlist } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import ProfileTab from "./ProfileTab";
 
 type Tab = "overview" | "orders" | "wishlist" | "addresses" | "profile";
 
@@ -265,52 +266,10 @@ export default function DashboardClient() {
             </div>
           )}
 
-          {/* Profile Tab */}
-          {activeTab === "profile" && (
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>Profile Settings</h1>
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-4xl">👤</div>
-                  <div>
-                    <h2 className="font-bold text-gray-900 dark:text-white">{user?.name}</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[
-                    { label: "Full Name", value: user?.name || "", placeholder: "Your name" },
-                    { label: "Phone", value: "", placeholder: "01XXXXXXXXX" },
-                  ].map((field) => (
-                    <div key={field.label}>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{field.label}</label>
-                      <input
-                        type="text"
-                        defaultValue={field.value}
-                        placeholder={field.placeholder}
-                        className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                      />
-                    </div>
-                  ))}
-                  <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
-                    <input
-                      type="email"
-                      defaultValue={user?.email || ""}
-                      disabled
-                      className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] opacity-60 text-sm"
-                    />
-                  </div>
-                </div>
-                <button
-                  onClick={() => toast.success("Profile updated!")}
-                  className="mt-6 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          )}
+        {/* Profile Tab */}
+{activeTab === "profile" && (
+  <ProfileTab user={user} />
+)}
 
           {/* Addresses Tab */}
           {activeTab === "addresses" && (

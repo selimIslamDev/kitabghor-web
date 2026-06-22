@@ -2,28 +2,27 @@
 
 import Link from "next/link";
 import { ShoppingCart, Star, ArrowRight } from "lucide-react";
-import { useCartStore } from "@/store/cart.store";
-import { useFeaturedProducts } from "@/lib/hooks";
+import { useCartWithAuth, useFeaturedProducts } from "@/lib/hooks";
 import toast from "react-hot-toast";
 
 export default function FeaturedBooks() {
-  const { addItem } = useCartStore();
+  const { addItem } = useCartWithAuth();
   const { data: products, isLoading } = useFeaturedProducts();
 
   const books = products?.filter((p: any) => p.productType === "BOOK").slice(0, 4) || [];
 
-  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+  const handleAddToCart = (e: React.MouseEvent, book: any) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      discountPrice: product.discountPrice,
-      image: product.images?.[0] || "📚",
-      stock: product.stock,
+    const success = addItem({
+      id: book.id,
+      name: book.name,
+      price: book.price,
+      discountPrice: book.discountPrice,
+      image: book.images?.[0] || "📚",
+      stock: book.stock,
     });
-    toast.success(`${product.name} added to cart!`);
+    if (success) toast.success(`${book.name} added to cart!`);
   };
 
   return (
@@ -65,10 +64,19 @@ export default function FeaturedBooks() {
                 href={`/products/${book.id}`}
                 className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group block"
               >
-                <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 h-48 flex items-center justify-center">
-                  <span className="text-7xl group-hover:scale-110 transition-transform duration-200">
-                    {book.images?.[0] || "📚"}
-                  </span>
+                {/* Image */}
+                <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 h-48 flex items-center justify-center overflow-hidden">
+                  {book.images?.[0] && book.images[0].startsWith("http") ? (
+                    <img
+                      src={book.images[0]}
+                      alt={book.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    />
+                  ) : (
+                    <span className="text-7xl group-hover:scale-110 transition-transform duration-200">
+                      {book.images?.[0] || "📚"}
+                    </span>
+                  )}
                   {book.discountPrice && (
                     <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
                       {Math.round(((book.price - book.discountPrice) / book.price) * 100)}% OFF
@@ -80,6 +88,8 @@ export default function FeaturedBooks() {
                     </div>
                   )}
                 </div>
+
+                {/* Info */}
                 <div className="p-4">
                   {book.subject && <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{book.subject}</p>}
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-1 line-clamp-1">{book.name}</h3>

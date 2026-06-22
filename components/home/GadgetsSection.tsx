@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { ShoppingCart, Star, ArrowRight, Zap } from "lucide-react";
-import { useCartStore } from "@/store/cart.store";
-import { useFeaturedProducts } from "@/lib/hooks";
+import { useCartWithAuth, useFeaturedProducts } from "@/lib/hooks";
 import toast from "react-hot-toast";
 
 const badgeColors: Record<number, string> = {
@@ -21,7 +20,7 @@ const badgeLabels: Record<number, string> = {
 };
 
 export default function GadgetsSection() {
-  const { addItem } = useCartStore();
+  const { addItem } = useCartWithAuth();
   const { data: products, isLoading } = useFeaturedProducts();
 
   const gadgets = products?.filter((p: any) => p.productType === "GADGET").slice(0, 4) || [];
@@ -29,7 +28,7 @@ export default function GadgetsSection() {
   const handleAddToCart = (e: React.MouseEvent, gadget: any) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem({
+    const success = addItem({
       id: gadget.id,
       name: gadget.name,
       price: gadget.price,
@@ -37,7 +36,7 @@ export default function GadgetsSection() {
       image: gadget.images?.[0] || "🔧",
       stock: gadget.stock,
     });
-    toast.success(`${gadget.name} added to cart!`);
+    if (success) toast.success(`${gadget.name} added to cart!`);
   };
 
   return (
@@ -83,10 +82,19 @@ export default function GadgetsSection() {
                 href={`/products/${gadget.id}`}
                 className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group block"
               >
-                <div className="relative bg-gradient-to-br from-amber-50 to-orange-100 dark:from-slate-700 dark:to-slate-600 h-48 flex items-center justify-center">
-                  <span className="text-7xl group-hover:scale-110 transition-transform duration-200">
-                    {gadget.images?.[0] || "🔧"}
-                  </span>
+                {/* Image */}
+                <div className="relative bg-gradient-to-br from-amber-50 to-orange-100 dark:from-slate-700 dark:to-slate-600 h-48 flex items-center justify-center overflow-hidden">
+                  {gadget.images?.[0] && gadget.images[0].startsWith("http") ? (
+                    <img
+                      src={gadget.images[0]}
+                      alt={gadget.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    />
+                  ) : (
+                    <span className="text-7xl group-hover:scale-110 transition-transform duration-200">
+                      {gadget.images?.[0] || "🔧"}
+                    </span>
+                  )}
                   <div className={`absolute top-3 left-3 ${badgeColors[index % 4]} text-white text-xs font-bold px-2 py-1 rounded-lg`}>
                     {badgeLabels[index % 4]}
                   </div>
@@ -96,6 +104,8 @@ export default function GadgetsSection() {
                     </div>
                   )}
                 </div>
+
+                {/* Info */}
                 <div className="p-4">
                   {gadget.brand && <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{gadget.brand}</p>}
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 text-sm">{gadget.name}</h3>

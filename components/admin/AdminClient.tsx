@@ -6,7 +6,7 @@ import {
   BarChart2, LogOut, Menu, X,
   TrendingUp, TrendingDown, AlertCircle,
   CheckCircle, Eye, Edit, Trash2,
-  Plus, Search,
+  Plus, Search, Tag,
 } from "lucide-react";
 import AdminNotifications from "./AdminNotifications";
 import { useAuthStore } from "@/store/auth.store";
@@ -18,7 +18,8 @@ import {
 } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import ProductModal from "./ProductModal";
-type Tab = "dashboard" | "orders" | "products" | "users" | "analytics";
+import CouponsTab from "./CouponsTab";
+type Tab = "dashboard" | "orders" | "products" | "users" | "coupons" | "analytics";
 
 const statusConfig: Record<string, { label: string; color: string }> = {
   PENDING: { label: "Pending", color: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300" },
@@ -33,6 +34,7 @@ const navItems = [
   { id: "orders", label: "Orders", icon: <ShoppingBag className="w-4 h-4" /> },
   { id: "products", label: "Products", icon: <BookOpen className="w-4 h-4" /> },
   { id: "users", label: "Users", icon: <Users className="w-4 h-4" /> },
+   { id: "coupons", label: "Coupons", icon: <Tag className="w-4 h-4" /> },
   { id: "analytics", label: "Analytics", icon: <BarChart2 className="w-4 h-4" /> },
 ];
 
@@ -435,6 +437,10 @@ const [selectedProduct, setSelectedProduct] = useState<any>(null);
               </div>
             </div>
           )}
+          {/* Coupons Tab */}
+{activeTab === "coupons" && (
+  <CouponsTab />
+)}
 
           {/* Analytics Tab */}
           {activeTab === "analytics" && (
