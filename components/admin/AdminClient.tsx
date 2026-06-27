@@ -19,7 +19,8 @@ import {
 import toast from "react-hot-toast";
 import ProductModal from "./ProductModal";
 import CouponsTab from "./CouponsTab";
-type Tab = "dashboard" | "orders" | "products" | "users" | "coupons" | "analytics";
+import CategoriesTab from "./CategoriesTab";
+type Tab = "dashboard" | "orders" | "products" | "users" | "coupons" | "categories" | "analytics";
 
 const statusConfig: Record<string, { label: string; color: string }> = {
   PENDING: { label: "Pending", color: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300" },
@@ -36,6 +37,7 @@ const navItems = [
   { id: "users", label: "Users", icon: <Users className="w-4 h-4" /> },
    { id: "coupons", label: "Coupons", icon: <Tag className="w-4 h-4" /> },
   { id: "analytics", label: "Analytics", icon: <BarChart2 className="w-4 h-4" /> },
+  { id: "categories", label: "Categories", icon: <Tag className="w-4 h-4" /> },
 ];
 
 export default function AdminClient() {
@@ -437,6 +439,8 @@ const [selectedProduct, setSelectedProduct] = useState<any>(null);
               </div>
             </div>
           )}
+
+          {activeTab === "categories" && <CategoriesTab />}
           {/* Coupons Tab */}
 {activeTab === "coupons" && (
   <CouponsTab />
