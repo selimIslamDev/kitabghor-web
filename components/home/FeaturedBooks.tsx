@@ -14,6 +14,10 @@ export default function FeaturedBooks() {
   const handleAddToCart = (e: React.MouseEvent, book: any) => {
     e.preventDefault();
     e.stopPropagation();
+    if (book.stock === 0) {
+      toast.error("This product is out of stock!");
+      return;
+    }
     const success = addItem({
       id: book.id,
       name: book.name,
@@ -77,11 +81,31 @@ export default function FeaturedBooks() {
                       {book.images?.[0] || "📚"}
                     </span>
                   )}
+
+                  {/* Out of Stock Overlay */}
+                  {book.stock === 0 && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <span className="bg-red-500 text-white text-sm font-bold px-4 py-2 rounded-xl">
+                        Out of Stock
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Low Stock Badge */}
+                  {book.stock <= 5 && book.stock > 0 && (
+                    <div className="absolute bottom-3 left-3 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
+                      Only {book.stock} left!
+                    </div>
+                  )}
+
+                  {/* Discount Badge */}
                   {book.discountPrice && (
                     <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
                       {Math.round(((book.price - book.discountPrice) / book.price) * 100)}% OFF
                     </div>
                   )}
+
+                  {/* Class Level Badge */}
                   {book.classLevel && (
                     <div className="absolute top-3 right-3 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-medium px-2 py-1 rounded-lg">
                       {book.classLevel}
@@ -111,10 +135,15 @@ export default function FeaturedBooks() {
                   </div>
                   <button
                     onClick={(e) => handleAddToCart(e, book)}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition"
+                    disabled={book.stock === 0}
+                    className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm transition ${
+                      book.stock === 0
+                        ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                    }`}
                   >
                     <ShoppingCart className="w-4 h-4" />
-                    Add to Cart
+                    {book.stock === 0 ? "Out of Stock" : "Add to Cart"}
                   </button>
                 </div>
               </Link>

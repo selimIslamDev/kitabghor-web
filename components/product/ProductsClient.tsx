@@ -1,17 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { Search, SlidersHorizontal, X, ShoppingCart, Star, ChevronDown } from "lucide-react";
+import {
+  Search,
+  SlidersHorizontal,
+  X,
+  ShoppingCart,
+  Star,
+  ChevronDown,
+} from "lucide-react";
 import { useCartWithAuth, useProducts } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
-const sortOptions = ["Newest", "Price: Low to High", "Price: High to Low", "Most Popular"];
+const sortOptions = [
+  "Newest",
+  "Price: Low to High",
+  "Price: High to Low",
+  "Most Popular",
+];
 const classLevels = ["All", "Class 8-9", "SSC", "HSC", "University"];
 const subjects = ["All", "Math", "Physics", "Chemistry", "English", "Biology"];
 
 const sortMap: Record<string, string> = {
-  "Newest": "newest",
+  Newest: "newest",
   "Price: Low to High": "price_asc",
   "Price: High to Low": "price_desc",
   "Most Popular": "popular",
@@ -58,8 +70,12 @@ export default function ProductsClient() {
   };
 
   const clearFilters = () => {
-    setSearch(""); setType("ALL"); setClassLevel("All");
-    setSubject("All"); setMinPrice(""); setMaxPrice("");
+    setSearch("");
+    setType("ALL");
+    setClassLevel("All");
+    setSubject("All");
+    setMinPrice("");
+    setMaxPrice("");
   };
 
   const getProductImage = (product: any) => {
@@ -72,10 +88,15 @@ export default function ProductsClient() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>
+        <h1
+          className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
+          style={{ fontFamily: "Poppins, sans-serif" }}
+        >
           Shop
         </h1>
-        <p className="text-gray-500 dark:text-gray-400">{total} products found</p>
+        <p className="text-gray-500 dark:text-gray-400">
+          {total} products found
+        </p>
       </div>
 
       {/* Search + Sort */}
@@ -96,7 +117,9 @@ export default function ProductsClient() {
             onChange={(e) => setSort(e.target.value)}
             className="appearance-none pl-4 pr-10 py-3 rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           >
-            {sortOptions.map((o) => <option key={o}>{o}</option>)}
+            {sortOptions.map((o) => (
+              <option key={o}>{o}</option>
+            ))}
           </select>
           <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
         </div>
@@ -111,18 +134,27 @@ export default function ProductsClient() {
 
       <div className="flex gap-8">
         {/* Sidebar */}
-        <aside className={`${showFilter ? "block" : "hidden"} sm:block w-full sm:w-64 flex-shrink-0`}>
+        <aside
+          className={`${showFilter ? "block" : "hidden"} sm:block w-full sm:w-64 flex-shrink-0`}
+        >
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6 sticky top-20">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-gray-900 dark:text-white">Filters</h3>
-              <button onClick={clearFilters} className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+              <h3 className="font-bold text-gray-900 dark:text-white">
+                Filters
+              </h3>
+              <button
+                onClick={clearFilters}
+                className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+              >
                 <X className="w-3 h-3" /> Clear All
               </button>
             </div>
 
             {/* Type */}
             <div className="mb-6">
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Product Type</p>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                Product Type
+              </p>
               <div className="flex flex-col gap-2">
                 {["ALL", "BOOK", "GADGET"].map((t) => (
                   <button
@@ -130,7 +162,11 @@ export default function ProductsClient() {
                     onClick={() => setType(t)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium text-left transition ${type === t ? "bg-blue-600 text-white" : "bg-[var(--muted)] text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20"}`}
                   >
-                    {t === "ALL" ? "All Products" : t === "BOOK" ? "📚 Books" : "🔧 Gadgets"}
+                    {t === "ALL"
+                      ? "All Products"
+                      : t === "BOOK"
+                        ? "📚 Books"
+                        : "🔧 Gadgets"}
                   </button>
                 ))}
               </div>
@@ -138,7 +174,9 @@ export default function ProductsClient() {
 
             {/* Class Level */}
             <div className="mb-6">
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Class Level</p>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                Class Level
+              </p>
               <div className="flex flex-col gap-2">
                 {classLevels.map((c) => (
                   <button
@@ -154,7 +192,9 @@ export default function ProductsClient() {
 
             {/* Subject */}
             <div className="mb-6">
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Subject</p>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                Subject
+              </p>
               <div className="flex flex-col gap-2">
                 {subjects.map((s) => (
                   <button
@@ -170,7 +210,9 @@ export default function ProductsClient() {
 
             {/* Price Range */}
             <div>
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Price Range (৳)</p>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                Price Range (৳)
+              </p>
               <div className="flex gap-2">
                 <input
                   type="number"
@@ -197,7 +239,10 @@ export default function ProductsClient() {
           {isLoading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden animate-pulse">
+                <div
+                  key={i}
+                  className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden animate-pulse"
+                >
                   <div className="h-44 bg-[var(--muted)]" />
                   <div className="p-4 space-y-3">
                     <div className="h-3 bg-[var(--muted)] rounded w-1/3" />
@@ -214,8 +259,12 @@ export default function ProductsClient() {
           {isError && (
             <div className="text-center py-20">
               <span className="text-6xl mb-4 block">⚠️</span>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Failed to load products</h3>
-              <p className="text-gray-500 dark:text-gray-400">Please check if the backend is running.</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Failed to load products
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400">
+                Please check if the backend is running.
+              </p>
             </div>
           )}
 
@@ -223,9 +272,16 @@ export default function ProductsClient() {
           {!isLoading && !isError && products.length === 0 && (
             <div className="text-center py-20">
               <span className="text-6xl mb-4 block">📭</span>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No products found</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">Try adjusting your filters</p>
-              <button onClick={clearFilters} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                No products found
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                Try adjusting your filters
+              </p>
+              <button
+                onClick={clearFilters}
+                className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition"
+              >
                 Clear Filters
               </button>
             </div>
@@ -257,7 +313,24 @@ export default function ProductsClient() {
                       )}
                       {product.discountPrice && (
                         <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
-                          {Math.round(((product.price - product.discountPrice) / product.price) * 100)}% OFF
+                          {Math.round(
+                            ((product.price - product.discountPrice) /
+                              product.price) *
+                              100,
+                          )}
+                          % OFF
+                        </div>
+                      )}
+                      {product.stock <= 5 && product.stock > 0 && (
+                        <div className="absolute bottom-3 left-3 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
+                          Only {product.stock} left!
+                        </div>
+                      )}
+                      {product.stock === 0 && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-2xl">
+                          <span className="bg-red-500 text-white text-sm font-bold px-4 py-2 rounded-xl">
+                            Out of Stock
+                          </span>
                         </div>
                       )}
                       {product.classLevel && (
@@ -270,7 +343,9 @@ export default function ProductsClient() {
                     {/* Info */}
                     <div className="p-4">
                       {product.subject && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{product.subject}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                          {product.subject}
+                        </p>
                       )}
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-1 line-clamp-1">
                         {product.name}
@@ -283,22 +358,31 @@ export default function ProductsClient() {
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           {product._count?.reviews > 0 ? "4.8" : "New"}
                         </span>
-                        <span className="text-xs text-gray-400">({product._count?.reviews || 0})</span>
+                        <span className="text-xs text-gray-400">
+                          ({product._count?.reviews || 0})
+                        </span>
                       </div>
                       <div className="flex items-center gap-2 mb-4">
                         <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
                           ৳{product.discountPrice || product.price}
                         </span>
                         {product.discountPrice && (
-                          <span className="text-sm text-gray-400 line-through">৳{product.price}</span>
+                          <span className="text-sm text-gray-400 line-through">
+                            ৳{product.price}
+                          </span>
                         )}
                       </div>
                       <button
                         onClick={(e) => handleAddToCart(e, product)}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition"
+                        disabled={product.stock === 0}
+                        className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm transition ${
+                          product.stock === 0
+                            ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                            : "bg-blue-600 hover:bg-blue-700 text-white"
+                        }`}
                       >
                         <ShoppingCart className="w-4 h-4" />
-                        Add to Cart
+                        {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
                       </button>
                     </div>
                   </Link>
