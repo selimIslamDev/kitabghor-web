@@ -25,15 +25,21 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       setAuth: (user, token) => {
-        localStorage.setItem("token", token);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("token", token);
+        }
         set({ user, token, isAuthenticated: true });
       },
 
       logout: () => {
-        localStorage.removeItem("token");
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("token");
+        }
+        // Cart clear করো
+        try {
+          localStorage.removeItem("kitabghor-cart");
+        } catch (e) {}
         set({ user: null, token: null, isAuthenticated: false });
-        const { useCartStore } = require("@/store/cart.store");
-        useCartStore.getState().clearCart();
       },
     }),
     { name: "kitabghor-auth" }

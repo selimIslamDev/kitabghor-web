@@ -35,16 +35,13 @@ export const useCartStore = create<CartState>()(
       totalItems: 0,
 
       addItem: (newItem) => {
-        const { useAuthStore } = require("@/store/auth.store");
-        const isAuthenticated = useAuthStore.getState().isAuthenticated;
-
-        if (!isAuthenticated) {
-          window.dispatchEvent(new CustomEvent("require-login"));
-          return;
-        }
-
         const items = get().items;
         const existing = items.find((i) => i.id === newItem.id);
+
+        // Stock check
+        if (existing && existing.quantity >= newItem.stock) {
+          return;
+        }
 
         const updated = existing
           ? items.map((i) =>
