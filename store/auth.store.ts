@@ -1,7 +1,5 @@
-
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { useCartStore } from "./cart.store"; // 👈 কার্ট স্টোরটি ইমপোর্ট করো
 
 interface User {
   id: string;
@@ -37,19 +35,13 @@ export const useAuthStore = create<AuthState>()(
         if (typeof window !== "undefined") {
           localStorage.removeItem("token");
         }
-        
-        // 🛠️ ফিক্স: ম্যানুয়াল রিমুভ না করে Zustand-এর মেথড দিয়ে কার্ট পুরোপুরি ক্লিয়ার করো
-        useCartStore.getState().clearCart(); 
-
+        // Cart clear করো না — user আবার login করলে cart থাকবে
         set({ user: null, token: null, isAuthenticated: false });
       },
     }),
     { name: "kitabghor-auth" }
   )
 );
-
-
-
 
 
 
