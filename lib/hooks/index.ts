@@ -11,3 +11,4 @@ export * from "./useAdminNotifications";
 export * from "./useProtectedRoute";
 export * from "./useCartWithAuth";
 export * from "./useUpload";
+export * from "./useBundles";
