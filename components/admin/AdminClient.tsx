@@ -485,16 +485,7 @@ export default function AdminClient() {
 
           {activeTab === "categories" && <CategoriesTab />}
           {activeTab === "coupons" && <CouponsTab />}
-          {activeTab === "bundles" && <BundlesTabgit add .
-git commit -m "feat: bundle system complete 📦✨
-
-- Backend: Bundle & BundleItem model, controller, routes with auto price calculation
-- Frontend: bundle detail page with 'Get this Bundle' add-to-cart flow
-- Admin: create/edit/delete bundles with product picker UI
-- Fixed TypeScript any-types and React setState-in-effect warnings
-
-Students can now grab discounted book combos in one click 🎓"
-git push />}
+          {activeTab === "bundles" && <BundlesTab />}
 
           {/* Analytics Tab */}
           {activeTab === "analytics" && (
