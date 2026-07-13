@@ -1,18 +1,58 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X, Upload, Trash2, ImagePlus } from "lucide-react";
+import { X, ImagePlus } from "lucide-react";
 import { useCreateProduct, useUpdateProduct, useCategories, useUploadImage } from "@/lib/hooks";
+import { Category } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import Image from "next/image";
 
 interface ProductModalProps {
   open: boolean;
   onClose: () => void;
-  product?: any;
+  product?: {
+    id: string;
+    name?: string;
+    description?: string;
+    price?: number;
+    discountPrice?: number;
+    stock?: number;
+    productType?: "BOOK" | "GADGET";
+    categoryId?: string;
+    images?: string[];
+    author?: string;
+    publisher?: string;
+    edition?: string;
+    classLevel?: string;
+    subject?: string;
+    isbn?: string;
+    brand?: string;
+    model?: string;
+  };
 }
 
-const initialForm = {
+type ProductType = "BOOK" | "GADGET";
+
+interface FormState {
+  name: string;
+  description: string;
+  price: string;
+  discountPrice: string;
+  stock: string;
+  productType: ProductType;
+  categoryId: string;
+  images: string[];
+  author: string;
+  publisher: string;
+  edition: string;
+  classLevel: string;
+  subject: string;
+  isbn: string;
+  brand: string;
+  model: string;
+}
+
+const initialForm: FormState = {
   name: "",
   description: "",
   price: "",
@@ -20,7 +60,7 @@ const initialForm = {
   stock: "",
   productType: "BOOK",
   categoryId: "",
-  images: [] as string[],
+  images: [],
   author: "",
   publisher: "",
   edition: "",
@@ -31,8 +71,15 @@ const initialForm = {
   model: "",
 };
 
+const bookFields: { key: keyof FormState; label: string; placeholder: string }[] = [
+  { key: "author", label: "Author", placeholder: "Author name" },
+  { key: "publisher", label: "Publisher", placeholder: "Publisher name" },
+  { key: "edition", label: "Edition", placeholder: "e.g. 2024" },
+  { key: "isbn", label: "ISBN", placeholder: "ISBN number" },
+];
+
 export default function ProductModal({ open, onClose, product }: ProductModalProps) {
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState<FormState>(initialForm);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: categories } = useCategories();
@@ -43,22 +90,22 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
   useEffect(() => {
     if (product) {
       setForm({
-        name: product.name || "",
-        description: product.description || "",
-        price: String(product.price || ""),
-        discountPrice: String(product.discountPrice || ""),
-        stock: String(product.stock || ""),
-        productType: product.productType || "BOOK",
-        categoryId: product.categoryId || "",
-        images: product.images || [],
-        author: product.author || "",
-        publisher: product.publisher || "",
-        edition: product.edition || "",
-        classLevel: product.classLevel || "",
-        subject: product.subject || "",
-        isbn: product.isbn || "",
-        brand: product.brand || "",
-        model: product.model || "",
+        name: product.name ?? "",
+        description: product.description ?? "",
+        price: String(product.price ?? ""),
+        discountPrice: String(product.discountPrice ?? ""),
+        stock: String(product.stock ?? ""),
+        productType: product.productType === "GADGET" ? "GADGET" : "BOOK",
+        categoryId: product.categoryId ?? "",
+        images: product.images ?? [],
+        author: product.author ?? "",
+        publisher: product.publisher ?? "",
+        edition: product.edition ?? "",
+        classLevel: product.classLevel ?? "",
+        subject: product.subject ?? "",
+        isbn: product.isbn ?? "",
+        brand: product.brand ?? "",
+        model: product.model ?? "",
       });
     } else {
       setForm(initialForm);
@@ -74,14 +121,12 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
       return;
     }
 
-    const file = files[0];
-    const url = await uploadImage(file);
+    const url = await uploadImage(files[0]);
     if (url) {
       setForm((prev) => ({ ...prev, images: [...prev.images, url] }));
       toast.success("Image uploaded!");
     }
 
-    // Reset file input
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -101,24 +146,42 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
     }
 
     const data = {
-      ...form,
+      name: form.name,
+      description: form.description,
       price: Number(form.price),
       discountPrice: form.discountPrice ? Number(form.discountPrice) : undefined,
       stock: Number(form.stock),
+      productType: form.productType,
+      categoryId: form.categoryId,
+      images: form.images,
+      author: form.author,
+      publisher: form.publisher,
+      edition: form.edition,
+      classLevel: form.classLevel,
+      subject: form.subject,
+      isbn: form.isbn,
+      brand: form.brand,
+      model: form.model,
     };
 
     if (product) {
-      updateProduct.mutate({ id: product.id, ...data }, {
-        onSuccess: () => onClose(),
-      });
+      updateProduct.mutate(
+        { id: product.id, ...data },
+        { onSuccess: () => onClose() }
+      );
     } else {
       createProduct.mutate(data, {
-        onSuccess: () => { onClose(); setForm(initialForm); },
+        onSuccess: () => {
+          onClose();
+          setForm(initialForm);
+        },
       });
     }
   };
 
-  const filteredCategories = categories?.filter((c: any) => c.type === form.productType) || [];
+  const filteredCategories = (categories ?? []).filter(
+    (c: Category) => c.type === form.productType
+  );
 
   if (!open) return null;
 
@@ -141,14 +204,20 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
 
           {/* Product Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Product Type *</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Product Type *
+            </label>
             <div className="flex gap-3">
-              {["BOOK", "GADGET"].map((type) => (
+              {(["BOOK", "GADGET"] as ProductType[]).map((type) => (
                 <button
                   key={type}
                   type="button"
                   onClick={() => setForm({ ...form, productType: type, categoryId: "" })}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition border-2 ${form.productType === type ? "border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" : "border-[var(--border)] text-gray-500 hover:border-blue-300"}`}
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition border-2 ${
+                    form.productType === type
+                      ? "border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                      : "border-[var(--border)] text-gray-500 hover:border-blue-300"
+                  }`}
                 >
                   {type === "BOOK" ? "📚 Book" : "🔧 Gadget"}
                 </button>
@@ -161,16 +230,10 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Product Images ({form.images.length}/4)
             </label>
-
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
               {form.images.map((img, index) => (
                 <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-[var(--border)]">
-                  <Image
-                    src={img}
-                    alt={`Product ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={img} alt={`Product ${index + 1}`} fill className="object-cover" />
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(index)}
@@ -207,7 +270,6 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
                 </button>
               )}
             </div>
-
             <input
               ref={fileInputRef}
               type="file"
@@ -215,14 +277,15 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
               onChange={handleImageUpload}
               className="hidden"
             />
-
             <p className="text-xs text-gray-400">Max 4 images, 5MB each. JPG, PNG, WEBP supported.</p>
           </div>
 
           {/* Basic Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Product Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                Product Name *
+              </label>
               <input
                 type="text"
                 value={form.name}
@@ -234,7 +297,9 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                Description *
+              </label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -246,7 +311,9 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Price (৳) *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                Price (৳) *
+              </label>
               <input
                 type="number"
                 value={form.price}
@@ -258,7 +325,9 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Discount Price (৳)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                Discount Price (৳)
+              </label>
               <input
                 type="number"
                 value={form.discountPrice}
@@ -269,7 +338,9 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Stock *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                Stock *
+              </label>
               <input
                 type="number"
                 value={form.stock}
@@ -281,7 +352,9 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Category *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                Category *
+              </label>
               <select
                 value={form.categoryId}
                 onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
@@ -289,7 +362,7 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
                 className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               >
                 <option value="">Select Category</option>
-                {filteredCategories.map((cat: any) => (
+                {filteredCategories.map((cat: Category) => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
@@ -300,17 +373,14 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
           {form.productType === "BOOK" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-200 dark:border-blue-800">
               <p className="sm:col-span-2 text-sm font-semibold text-blue-700 dark:text-blue-300">📚 Book Details</p>
-              {[
-                { key: "author", label: "Author", placeholder: "Author name" },
-                { key: "publisher", label: "Publisher", placeholder: "Publisher name" },
-                { key: "edition", label: "Edition", placeholder: "e.g. 2024" },
-                { key: "isbn", label: "ISBN", placeholder: "ISBN number" },
-              ].map((field) => (
+              {bookFields.map((field) => (
                 <div key={field.key}>
-                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{field.label}</label>
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    {field.label}
+                  </label>
                   <input
                     type="text"
-                    value={form[field.key as keyof typeof form] as string}
+                    value={form[field.key] as string}
                     onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
                     placeholder={field.placeholder}
                     className="w-full px-3 py-2.5 rounded-lg border border-[var(--border)] bg-white dark:bg-slate-700 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
