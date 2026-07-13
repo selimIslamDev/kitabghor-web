@@ -562,7 +562,11 @@ export default function AdminClient() {
       <ProductModal
         open={productModalOpen}
         onClose={() => { setProductModalOpen(false); setSelectedProduct(null); }}
-        product={selectedProduct}
+        product={
+          selectedProduct
+            ? { ...selectedProduct, discountPrice: selectedProduct.discountPrice ?? undefined }
+            : undefined
+        }
       />
     </div>
   );
