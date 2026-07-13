@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { X, ImagePlus } from "lucide-react";
 import { useCreateProduct, useUpdateProduct, useCategories, useUploadImage } from "@/lib/hooks";
 import { Category } from "@/lib/hooks";
@@ -78,39 +78,49 @@ const bookFields: { key: keyof FormState; label: string; placeholder: string }[]
   { key: "isbn", label: "ISBN", placeholder: "ISBN number" },
 ];
 
+function mapProductToForm(product: ProductModalProps["product"]): FormState {
+  if (!product) return initialForm;
+  return {
+    name: product.name ?? "",
+    description: product.description ?? "",
+    price: String(product.price ?? ""),
+    discountPrice: String(product.discountPrice ?? ""),
+    stock: String(product.stock ?? ""),
+    productType: product.productType === "GADGET" ? "GADGET" : "BOOK",
+    categoryId: product.categoryId ?? "",
+    images: product.images ?? [],
+    author: product.author ?? "",
+    publisher: product.publisher ?? "",
+    edition: product.edition ?? "",
+    classLevel: product.classLevel ?? "",
+    subject: product.subject ?? "",
+    isbn: product.isbn ?? "",
+    brand: product.brand ?? "",
+    model: product.model ?? "",
+  };
+}
+
 export default function ProductModal({ open, onClose, product }: ProductModalProps) {
-  const [form, setForm] = useState<FormState>(initialForm);
+  const [form, setForm] = useState<FormState>(() => mapProductToForm(product));
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Track which product/modal-state the form was last synced to.
+  // We compare on every render (not inside useEffect) and adjust state
+  // directly during render if it's out of date — this is React's
+  // recommended pattern for resetting state when a prop changes,
+  // and it avoids the "setState in effect" cascading-render warning.
+  const [syncedKey, setSyncedKey] = useState<string | null>(open ? (product?.id ?? "new") : null);
+  const currentKey = open ? (product?.id ?? "new") : null;
+
+  if (open && currentKey !== syncedKey) {
+    setSyncedKey(currentKey);
+    setForm(mapProductToForm(product));
+  }
 
   const { data: categories } = useCategories();
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
   const { uploadImage, uploading, progress } = useUploadImage();
-
-  useEffect(() => {
-    if (product) {
-      setForm({
-        name: product.name ?? "",
-        description: product.description ?? "",
-        price: String(product.price ?? ""),
-        discountPrice: String(product.discountPrice ?? ""),
-        stock: String(product.stock ?? ""),
-        productType: product.productType === "GADGET" ? "GADGET" : "BOOK",
-        categoryId: product.categoryId ?? "",
-        images: product.images ?? [],
-        author: product.author ?? "",
-        publisher: product.publisher ?? "",
-        edition: product.edition ?? "",
-        classLevel: product.classLevel ?? "",
-        subject: product.subject ?? "",
-        isbn: product.isbn ?? "",
-        brand: product.brand ?? "",
-        model: product.model ?? "",
-      });
-    } else {
-      setForm(initialForm);
-    }
-  }, [product, open]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -151,7 +161,7 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
       price: Number(form.price),
       discountPrice: form.discountPrice ? Number(form.discountPrice) : undefined,
       stock: Number(form.stock),
-      productType: form.productType,
+      productType: form.productType as "BOOK" | "GADGET",
       categoryId: form.categoryId,
       images: form.images,
       author: form.author,
@@ -174,6 +184,7 @@ export default function ProductModal({ open, onClose, product }: ProductModalPro
         onSuccess: () => {
           onClose();
           setForm(initialForm);
+          setSyncedKey(null);
         },
       });
     }
