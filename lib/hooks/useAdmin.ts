@@ -2,6 +2,33 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
+interface ProductPayload {
+  name: string;
+  description: string;
+  price: number;
+  discountPrice?: number;
+  stock: number;
+  productType: "BOOK" | "GADGET";
+  categoryId: string;
+  images: string[];
+  author?: string;
+  publisher?: string;
+  edition?: string;
+  classLevel?: string;
+  subject?: string;
+  isbn?: string;
+  brand?: string;
+  model?: string;
+}
+
 export function useAdminDashboard() {
   return useQuery({
     queryKey: ["admin", "dashboard"],
@@ -38,7 +65,7 @@ export function useUpdateOrderStatus() {
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
       toast.success("Order status updated!");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Failed to update status!");
     },
   });
@@ -58,7 +85,7 @@ export function useCreateProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: ProductPayload) => {
       const res = await api.post("/products", data);
       return res.data;
     },
@@ -67,7 +94,7 @@ export function useCreateProduct() {
       queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
       toast.success("Product created! ✅");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Failed to create product!");
     },
   });
@@ -77,7 +104,7 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: { id: string; [key: string]: any }) => {
+    mutationFn: async (data: Partial<ProductPayload> & { id: string }) => {
       const { id, ...rest } = data;
       const res = await api.put(`/products/${id}`, rest);
       return res.data;
@@ -86,7 +113,7 @@ export function useUpdateProduct() {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product updated! ✅");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Failed to update product!");
     },
   });
@@ -104,7 +131,7 @@ export function useDeleteProduct() {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Product deleted!");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Failed to delete!");
     },
   });
@@ -153,8 +180,76 @@ export function useUpdateStock() {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       toast.success("Stock updated!");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Failed to update stock!");
+    },
+  });
+}
+
+export function useAdminBundles() {
+  return useQuery({
+    queryKey: ["admin", "bundles"],
+    queryFn: async () => {
+      const res = await api.get("/bundles");
+      return res.data.data;
+    },
+  });
+}
+
+export function useCreateBundle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: { name: string; description?: string; discountPercent: number; productIds: string[] }) => {
+      const res = await api.post("/bundles", data);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "bundles"] });
+      queryClient.invalidateQueries({ queryKey: ["bundles"] });
+      toast.success("Bundle created! ✅");
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response?.data?.message || "Failed to create bundle!");
+    },
+  });
+}
+
+export function useUpdateBundle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: { id: string; name?: string; description?: string; discountPercent?: number; productIds?: string[] }) => {
+      const { id, ...rest } = data;
+      const res = await api.put(`/bundles/${id}`, rest);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "bundles"] });
+      queryClient.invalidateQueries({ queryKey: ["bundles"] });
+      toast.success("Bundle updated! ✅");
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response?.data?.message || "Failed to update bundle!");
+    },
+  });
+}
+
+export function useDeleteBundle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const res = await api.delete(`/bundles/${id}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "bundles"] });
+      queryClient.invalidateQueries({ queryKey: ["bundles"] });
+      toast.success("Bundle deleted!");
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response?.data?.message || "Failed to delete bundle!");
     },
   });
 }
