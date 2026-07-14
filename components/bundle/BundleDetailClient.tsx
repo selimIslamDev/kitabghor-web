@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ShoppingCart, CheckCircle, Tag } from "lucide-react";
 import { useBundle } from "@/lib/hooks";
 import { useCartStore } from "@/store/cart.store";
+import { useAuthStore } from "@/store/auth.store";
 import toast from "react-hot-toast";
 
 interface BundleProduct {
@@ -34,9 +36,18 @@ interface Bundle {
 export default function BundleDetailClient({ id }: { id: string }) {
   const { data: bundle, isLoading } = useBundle(id) as { data: Bundle | undefined; isLoading: boolean };
   const { addItem } = useCartStore();
+  const { isAuthenticated } = useAuthStore();
+  const router = useRouter();
 
   const handleAddBundle = () => {
     if (!bundle) return;
+
+    if (!isAuthenticated) {
+      toast.error("Bundle cart-এ যোগ করতে আগে লগইন করুন");
+      router.push(`/login?redirect=/bundles/${id}`);
+      return;
+    }
+
     const discountMultiplier = 1 - bundle.discountPercent / 100;
 
     bundle.items.forEach((item: BundleItem) => {
