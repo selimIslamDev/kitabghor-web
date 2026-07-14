@@ -1,5 +1,10 @@
 import BundleDetailClient from "@/components/bundle/BundleDetailClient";
 
-export default function BundlePage({ params }: { params: { id: string } }) {
-  return <BundleDetailClient id={params.id} />;
+export default async function BundlePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <BundleDetailClient id={id} />;
 }
