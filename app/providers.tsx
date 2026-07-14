@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/cart.store";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -18,6 +19,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     useCartStore.persist.rehydrate();
+    useAuthStore.persist.rehydrate();
   }, []);
 
   return (

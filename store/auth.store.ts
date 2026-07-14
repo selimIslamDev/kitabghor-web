@@ -14,6 +14,8 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
   setAuth: (user: User, token: string) => void;
   logout: () => void;
 }
@@ -24,13 +26,16 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
+      hasHydrated: false,
+
+      setHasHydrated: (state) => {
+        set({ hasHydrated: state });
+      },
 
       setAuth: (user, token) => {
         if (typeof window !== "undefined") {
           localStorage.setItem("token", token);
 
-          // আগের user এর cart clear করো
-          // নতুন user এর cart restore করো
           const userCartKey = `kitabghor-cart-${user.id}`;
           const savedCart = localStorage.getItem(userCartKey);
           if (savedCart) {
@@ -43,7 +48,6 @@ export const useAuthStore = create<AuthState>()(
               });
             } catch (e) {}
           } else {
-            // নতুন user এর জন্য cart clear করো
             useCartStore.getState().clearCart();
           }
         }
@@ -54,7 +58,6 @@ export const useAuthStore = create<AuthState>()(
         if (typeof window !== "undefined") {
           localStorage.removeItem("token");
 
-          // Current user এর cart save করো
           const currentUser = useAuthStore.getState().user;
           if (currentUser) {
             const cartState = useCartStore.getState();
@@ -66,12 +69,17 @@ export const useAuthStore = create<AuthState>()(
             }));
           }
 
-          // Cart clear করো
           useCartStore.getState().clearCart();
         }
         set({ user: null, token: null, isAuthenticated: false });
       },
     }),
-    { name: "kitabghor-auth" }
+    {
+      name: "kitabghor-auth",
+      skipHydration: true,
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+    }
   )
 );
