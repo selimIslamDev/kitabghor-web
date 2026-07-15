@@ -47,9 +47,32 @@ export function useCreateOrder() {
       const res = await api.post("/orders", data);
       return res.data.data;
     },
-    onSuccess: () => {
+    onSuccess: async (order, variables) => {
       clearCart();
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+
+      // SSLCommerz hole — payment gateway e redirect kora lagbe
+      if (variables.paymentMethod === "sslcommerz") {
+        try {
+          const res = await api.post(`/payments/sslcommerz/initiate/${order.id}`);
+          const gatewayUrl = res.data?.data?.gatewayUrl;
+
+          if (gatewayUrl) {
+            // Full page redirect — SSLCommerz-er own hosted payment page
+            window.location.href = gatewayUrl;
+            return;
+          }
+
+          toast.error("Payment gateway URL পাওয়া যায়নি, আবার চেষ্টা করুন");
+          router.push(`/orders/${order.id}`);
+        } catch (error: any) {
+          toast.error(error.response?.data?.message || "Payment শুরু করা যায়নি");
+          router.push(`/orders/${order.id}`);
+        }
+        return;
+      }
+
+      // bKash / Nagad — manual verification flow, age er moto
       toast.success("Order placed successfully! 🎉");
       router.push("/orders/success");
     },
