@@ -136,8 +136,16 @@ export default function BundleDetailClient({ id }: { id: string }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {bundle.items.map((item: BundleItem) => (
           <div key={item.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 h-40 flex items-center justify-center">
-              <span className="text-6xl">{item.product.images?.[0] || "📚"}</span>
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 h-40 flex items-center justify-center overflow-hidden">
+              {item.product.images?.[0] ? (
+                <img
+                  src={item.product.images[0]}
+                  alt={item.product.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-6xl">📚</span>
+              )}
             </div>
             <div className="p-4">
               <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1 line-clamp-1">
