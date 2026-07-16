@@ -51,8 +51,10 @@ export function useCreateOrder() {
       clearCart();
       queryClient.invalidateQueries({ queryKey: ["orders"] });
 
-      // SSLCommerz hole — payment gateway e redirect kora lagbe
-      if (variables.paymentMethod === "sslcommerz") {
+      // Card, bKash, Nagad — sob SSLCommerz gateway diye jabe.
+      // SSLCommerz-er nijer gateway e Mobile Banking tab already ache,
+      // tai alada manual bKash/Nagad logic banānor দরকার নেই।
+      if (["sslcommerz", "bkash", "nagad"].includes(variables.paymentMethod)) {
         try {
           const res = await api.post(`/payments/sslcommerz/initiate/${order.id}`);
           const gatewayUrl = res.data?.data?.gatewayUrl;
@@ -72,7 +74,7 @@ export function useCreateOrder() {
         return;
       }
 
-      // bKash / Nagad — manual verification flow, age er moto
+      // Fallback — onno kono payment method thakle (future-proofing)
       toast.success("Order placed successfully! 🎉");
       router.push("/orders/success");
     },
