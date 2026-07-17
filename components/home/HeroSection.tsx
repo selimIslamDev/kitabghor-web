@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ArrowRight, BookOpen, GraduationCap, Cpu, CheckCircle2 } from "lucide-react";
+import { Search, ArrowRight, Sparkles, Truck, ShieldCheck, Headset } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -17,11 +17,18 @@ interface Category {
   productCount?: number;
 }
 
-const ACCENTS = [
-  { chip: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300", dot: "bg-blue-600" },
-  { chip: "bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300", dot: "bg-teal-600" },
-  { chip: "bg-violet-50 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300", dot: "bg-violet-600" },
-  { chip: "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300", dot: "bg-amber-600" },
+// Pastel spine colors for the stacked-book visual
+const SPINES = [
+  "bg-violet-200 dark:bg-violet-900/50",
+  "bg-sky-200 dark:bg-sky-900/50",
+  "bg-rose-200 dark:bg-rose-900/50",
+  "bg-amber-200 dark:bg-amber-900/50",
+];
+
+const TRUST_ITEMS = [
+  { icon: Truck, label: "Free Shipping", sub: "On orders above ৳500" },
+  { icon: ShieldCheck, label: "Secure Payment", sub: "SSLCommerz protected" },
+  { icon: Headset, label: "Fast Support", sub: "We're here to help" },
 ];
 
 export default function HeroSection() {
@@ -33,9 +40,11 @@ export default function HeroSection() {
     if (search.trim()) router.push(`/products?search=${search}`);
   };
 
+  // Real categories — power the stacked-book visual on the right
   const { data: categories } = useCategories() as { data?: Category[] };
   const topCategories = (categories || []).filter((c) => !c.parentId).slice(0, 4);
 
+  // Real total book count
   const { data: bookCount } = useQuery({
     queryKey: ["hero-stats", "book-count"],
     queryFn: async (): Promise<number | null> => {
@@ -46,145 +55,131 @@ export default function HeroSection() {
   });
 
   return (
-    <section className="relative overflow-hidden bg-[#FAF7F2] dark:bg-[#0B1220]">
-      <div
-        className="absolute inset-0 opacity-[0.35] dark:opacity-[0.15] pointer-events-none"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(to bottom, transparent, transparent 27px, rgba(37,99,235,0.12) 28px)",
-        }}
-      />
-      <div className="absolute top-0 bottom-0 left-10 w-px bg-rose-300/40 dark:bg-rose-400/20 pointer-events-none hidden lg:block" />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+    <section className="relative overflow-hidden bg-gradient-to-br from-violet-50 via-rose-50/60 to-amber-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
           <div>
-            <div className="inline-flex items-center gap-2 border border-blue-200 dark:border-blue-800 bg-white/70 dark:bg-slate-900/50 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-full text-xs font-mono tracking-wide mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-              SESSION 2026 · ADMISSION & ACADEMIC BOOKS
+            <div className="inline-flex items-center gap-2 text-violet-700 dark:text-violet-300 text-xs font-semibold tracking-wide uppercase mb-5">
+              <Sparkles className="w-3.5 h-3.5" />
+              Discover Your Next Favorite Book
             </div>
 
             <h1
-              className="text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white leading-[1.1] mb-6"
+              className="text-4xl lg:text-5xl xl:text-[3.4rem] font-bold text-gray-900 dark:text-white leading-[1.12] mb-5"
               style={{ fontFamily: "Poppins, sans-serif" }}
             >
-              Your Learning
+              Books that
               <br />
-              <span className="text-blue-600 dark:text-blue-400">Journey</span> Starts Here
+              <span className="italic text-violet-600 dark:text-violet-400 font-serif">inspire</span> every
+              <br />
+              chapter of learning
             </h1>
 
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed max-w-lg">
-              Find every book and study essential from Class 8 to University —
-              all in one place. Trusted by thousands of students on KitabGhor.
+            <p className="text-base text-gray-600 dark:text-gray-300 mb-7 leading-relaxed max-w-md">
+              Explore academic books, bestsellers, and study gadgets from Class 8
+              to University — all in one place.
             </p>
 
-            <form onSubmit={handleSearch} className="flex gap-2 mb-8">
+            <form onSubmit={handleSearch} className="flex gap-2 mb-7 max-w-md">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search books, subjects, authors..."
-                  className="w-full pl-12 pr-4 py-4 rounded-xl border border-[var(--border)] bg-white dark:bg-slate-800 text-[var(--foreground)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm text-sm"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-full border border-[var(--border)] bg-white/80 dark:bg-slate-800/80 backdrop-blur text-[var(--foreground)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 shadow-sm text-sm"
                 />
               </div>
-              <button
-                type="submit"
-                className="px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition flex items-center gap-2 shadow-sm"
-              >
-                Search
-                <ArrowRight className="w-4 h-4" />
-              </button>
             </form>
 
-            <div className="flex flex-wrap gap-3 mb-10">
+            <div className="flex flex-wrap items-center gap-3 mb-10">
               <Link
                 href="/products?type=BOOK"
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition shadow-sm"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-full font-semibold text-sm transition shadow-sm"
               >
-                Browse Books
+                Shop Now
+                <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/products?type=GADGET"
-                className="px-6 py-3 border-2 border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl font-semibold transition"
+                className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-slate-800 rounded-full font-semibold text-sm transition"
               >
-                Shop Gadgets
+                Explore Categories
               </Link>
             </div>
 
-            <div className="flex items-center gap-2 font-mono text-sm text-gray-500 dark:text-gray-400">
-              <BookOpen className="w-4 h-4" />
-              {bookCount != null ? (
-                <span>
-                  <span className="font-bold text-gray-900 dark:text-white">{bookCount}+</span> books currently in stock
-                </span>
-              ) : (
-                <span className="inline-block h-4 w-40 bg-[var(--muted)] rounded animate-pulse" />
-              )}
+            {/* Trust row */}
+            <div className="flex flex-wrap gap-6">
+              {TRUST_ITEMS.map(({ icon: Icon, label, sub }) => (
+                <div key={label} className="flex items-center gap-2.5">
+                  <Icon className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <div className="leading-tight">
+                    <div className="text-xs font-semibold text-gray-800 dark:text-gray-200">{label}</div>
+                    <div className="text-[11px] text-gray-500 dark:text-gray-400">{sub}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="hidden lg:flex justify-center items-center">
-            <div className="relative">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-7 w-80 border border-[var(--border)]">
-                <div className="flex items-center justify-between mb-5 pb-4 border-b border-dashed border-[var(--border)]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center">
-                      <GraduationCap className="w-6 h-6 text-white" />
+          {/* Right Content — Stacked-book visual */}
+          <div className="relative hidden lg:block">
+            <div className="relative max-w-xs mx-auto">
+              {/* Stacked book spines, built from real categories when available */}
+              <div className="space-y-2">
+                {(topCategories.length > 0
+                  ? topCategories
+                  : [
+                      { id: "a", name: "Loading category…" } as Category,
+                      { id: "b", name: "Loading category…" } as Category,
+                      { id: "c", name: "Loading category…" } as Category,
+                    ]
+                ).map((cat, i) => {
+                  const count = cat._count?.products ?? cat.productCount;
+                  return (
+                    <div
+                      key={cat.id}
+                      className={`${SPINES[i % SPINES.length]} rounded-xl shadow-lg px-5 py-4 flex items-center justify-between backdrop-blur-sm`}
+                      style={{ marginLeft: `${i * 10}px`, marginRight: `${i * 10}px` }}
+                    >
+                      <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm">{cat.name}</span>
+                      {count != null && (
+                        <span className="text-xs font-mono text-gray-600 dark:text-gray-300">{count} books</span>
+                      )}
                     </div>
-                    <div>
-                      <div className="font-bold text-gray-900 dark:text-white text-sm">KitabGhor</div>
-                      <div className="text-xs font-mono text-gray-400">STORE ID · KG-2026</div>
-                    </div>
-                  </div>
-                </div>
+                  );
+                })}
+              </div>
 
-                <p className="text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-3">
-                  Stock by Category
+              {/* Floating testimonial / stat card */}
+              <div className="absolute -bottom-8 -left-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-4 w-56 border border-[var(--border)]">
+                <div className="flex -space-x-2 mb-2">
+                  {["bg-violet-400", "bg-sky-400", "bg-rose-400", "bg-amber-400"].map((c, i) => (
+                    <div
+                      key={i}
+                      className={`w-7 h-7 rounded-full ${c} border-2 border-white dark:border-slate-800 flex items-center justify-center text-white text-[10px] font-bold`}
+                    >
+                      {String.fromCharCode(65 + i)}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-600 dark:text-gray-300 leading-snug">
+                  Loved by students preparing for SSC, HSC & admission tests
                 </p>
-
-                <div className="space-y-1">
-                  {topCategories.length > 0 ? (
-                    topCategories.map((cat, i) => {
-                      const accent = ACCENTS[i % ACCENTS.length];
-                      const count = cat._count?.products ?? cat.productCount ?? null;
-                      return (
-                        <div
-                          key={cat.id}
-                          className="flex items-center justify-between py-2.5 border-b border-[var(--border)] last:border-0"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <span className={`w-2 h-2 rounded-full ${accent.dot}`} />
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{cat.name}</span>
-                          </div>
-                          <span className={`text-xs px-2 py-1 rounded-full font-mono ${accent.chip}`}>
-                            {count != null ? `${count}` : "—"}
-                          </span>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    [...Array(3)].map((_, i) => (
-                      <div key={i} className="h-9 my-1 bg-[var(--muted)] rounded animate-pulse" />
-                    ))
-                  )}
-                </div>
               </div>
 
-              <div className="absolute -top-5 -right-6 w-24 h-24 rounded-full border-2 border-rose-500/70 dark:border-rose-400/70 flex items-center justify-center rotate-[18deg] bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm">
-                <div className="text-center leading-tight">
-                  <CheckCircle2 className="w-4 h-4 text-rose-500 dark:text-rose-400 mx-auto mb-0.5" />
-                  <span className="block text-[9px] font-bold text-rose-600 dark:text-rose-400 font-mono">
-                    VERIFIED
-                  </span>
-                  <span className="block text-[8px] text-rose-500/80 dark:text-rose-400/80 font-mono">STORE</span>
-                </div>
-              </div>
-
-              <div className="absolute -bottom-4 -left-4 bg-white dark:bg-slate-800 px-4 py-2.5 rounded-xl shadow-lg border border-[var(--border)] flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-amber-600" />
-                <span className="text-xs font-mono text-gray-600 dark:text-gray-300">+ Study Gadgets</span>
+              {/* Live book count badge */}
+              <div className="absolute -top-6 -right-4 bg-white dark:bg-slate-800 rounded-2xl shadow-xl px-4 py-3 border border-[var(--border)]">
+                {bookCount != null ? (
+                  <>
+                    <div className="text-lg font-bold text-gray-900 dark:text-white leading-none">{bookCount}+</div>
+                    <div className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">Books in stock</div>
+                  </>
+                ) : (
+                  <div className="h-8 w-16 bg-[var(--muted)] rounded animate-pulse" />
+                )}
               </div>
             </div>
           </div>
