@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Search,
   SlidersHorizontal,
@@ -30,6 +31,9 @@ const sortMap: Record<string, string> = {
 };
 
 export default function ProductsClient() {
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("categoryId") || undefined;
+
   const [search, setSearch] = useState("");
   const [type, setType] = useState("ALL");
   const [classLevel, setClassLevel] = useState("All");
@@ -42,6 +46,7 @@ export default function ProductsClient() {
 
   const { data, isLoading, isError } = useProducts({
     type: type === "ALL" ? undefined : type,
+    categoryId,
     classLevel: classLevel === "All" ? undefined : classLevel,
     subject: subject === "All" ? undefined : subject,
     search: search || undefined,
