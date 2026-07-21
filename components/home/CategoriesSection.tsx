@@ -3,36 +3,32 @@
 import Link from "next/link";
 import { useCategories } from "@/lib/hooks";
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, LayoutGrid, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, LayoutGrid, Sparkles, BookOpen, Wrench } from "lucide-react";
 
 interface Category {
   id: string;
   name: string;
+  type: "BOOK" | "GADGET";
   _count?: {
     products: number;
   };
 }
 
-const categoryConfig: Record<string, { icon: string; color: string; href: string }> = {
-  "Class 8-9": { icon: "📗", color: "from-emerald-400 to-teal-600", href: "/products?classLevel=Class 8-9" },
-  SSC: { icon: "📘", color: "from-blue-500 to-indigo-600", href: "/products?classLevel=SSC" },
-  HSC: { icon: "📙", color: "from-amber-500 to-orange-600", href: "/products?classLevel=HSC" },
-  University: { icon: "🎓", color: "from-purple-500 to-violet-700", href: "/products?classLevel=University" },
-  Gadgets: { icon: "🔧", color: "from-slate-600 to-slate-800", href: "/products?type=GADGET" },
-  Calculator: { icon: "🔢", color: "from-cyan-500 to-blue-600", href: "/products?type=GADGET" },
-  "Geometry Box": { icon: "📐", color: "from-pink-500 to-rose-600", href: "/products?type=GADGET" },
-  "Pen & Pencil": { icon: "✏️", color: "from-red-400 to-rose-500", href: "/products?type=GADGET" },
-  "Art Supplies": { icon: "🎨", color: "from-fuchsia-500 to-purple-600", href: "/products?type=GADGET" },
-};
-
-const defaultConfig = { icon: "📚", color: "from-blue-500 to-indigo-600", href: "/products" };
+// Color cycles by position — no name guessing, works for any category the admin creates
+const COLOR_CYCLE = [
+  "from-blue-500 to-indigo-600",
+  "from-emerald-400 to-teal-600",
+  "from-amber-500 to-orange-600",
+  "from-purple-500 to-violet-700",
+  "from-pink-500 to-rose-600",
+  "from-cyan-500 to-blue-600",
+];
 
 export default function CategoriesSection() {
   const { data: categories, isLoading } = useCategories();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Manual Navigation Controls
   const handleScroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
       const scrollAmount = direction === "left" ? -280 : 280;
@@ -69,12 +65,9 @@ export default function CategoriesSection() {
 
   return (
     <section className="py-20 relative overflow-hidden bg-slate-50/50 dark:bg-slate-900/50">
-      {/* Background Subtle Gradient */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40 mb-3 shadow-sm">
@@ -92,7 +85,6 @@ export default function CategoriesSection() {
             </p>
           </div>
 
-          {/* Navigation Buttons for Desktop */}
           <div className="hidden sm:flex items-center gap-2">
             <button
               onClick={() => handleScroll("left")}
@@ -111,10 +103,7 @@ export default function CategoriesSection() {
           </div>
         </div>
 
-        {/* Scrollable Container with Gradient Edges */}
         <div className="relative group">
-          
-          {/* Left/Right Blur Gradient Masks */}
           <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-slate-50 dark:from-slate-900 to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-50 dark:from-slate-900 to-transparent z-10 pointer-events-none" />
 
@@ -126,32 +115,35 @@ export default function CategoriesSection() {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {categories.map((cat: Category, index: number) => {
-              const config = categoryConfig[cat.name] || defaultConfig;
+              const color = COLOR_CYCLE[index % COLOR_CYCLE.length];
+              // Real category id drives the filter — every category links to its own products
+              const href = `/products?categoryId=${cat.id}`;
+
               return (
                 <Link
-                  key={`${cat.id}-${index}`}
-                  href={config.href}
+                  key={cat.id}
+                  href={href}
                   className="group/card flex-shrink-0 flex flex-col items-center p-5 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-700/60 shadow-sm hover:shadow-xl hover:border-emerald-500/30 dark:hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1.5 w-36 sm:w-40 relative"
                 >
-                  {/* Floating Item Count Badge */}
                   {cat._count?.products !== undefined && cat._count.products > 0 && (
                     <span className="absolute top-3 right-3 bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-slate-200/50 dark:border-slate-600">
                       {cat._count.products}
                     </span>
                   )}
 
-                  {/* Icon Frame */}
                   <div className="relative mb-4">
                     <div
-                      className={`w-16 h-16 sm:w-18 sm:h-18 bg-gradient-to-tr ${config.color} rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shadow-lg shadow-gray-200 dark:shadow-none group-hover/card:scale-110 group-hover/card:rotate-3 transition-all duration-300`}
+                      className={`w-16 h-16 sm:w-18 sm:h-18 bg-gradient-to-tr ${color} rounded-2xl flex items-center justify-center shadow-lg shadow-gray-200 dark:shadow-none group-hover/card:scale-110 group-hover/card:rotate-3 transition-all duration-300`}
                     >
-                      {config.icon}
+                      {cat.type === "BOOK" ? (
+                        <BookOpen className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                      ) : (
+                        <Wrench className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                      )}
                     </div>
-                    {/* Soft Ring Reflection */}
                     <div className="absolute inset-0 rounded-2xl ring-2 ring-white/20 pointer-events-none" />
                   </div>
 
-                  {/* Category Title */}
                   <span className="text-sm font-bold text-gray-800 dark:text-gray-100 text-center line-clamp-1 group-hover/card:text-emerald-600 dark:group-hover/card:text-emerald-400 transition-colors">
                     {cat.name}
                   </span>
@@ -165,7 +157,6 @@ export default function CategoriesSection() {
           </div>
         </div>
 
-        {/* Mobile View All Helper */}
         <div className="mt-8 text-center sm:hidden">
           <Link
             href="/products"
@@ -175,14 +166,10 @@ export default function CategoriesSection() {
             <span>View All Categories</span>
           </Link>
         </div>
-
       </div>
     </section>
   );
 }
-
-
-
 
 
 
