@@ -10,7 +10,7 @@ import {
   Star,
   ChevronDown,
 } from "lucide-react";
-import { useCartWithAuth, useProducts } from "@/lib/hooks";
+import { useCartWithAuth, useProducts, Product } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
@@ -57,10 +57,10 @@ export default function ProductsClient() {
     limit: 20,
   });
 
-  const products = data?.data || [];
+  const products: Product[] = data?.data || [];
   const total = data?.pagination?.total || 0;
 
-  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+  const handleAddToCart = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
     const success = addItem({
@@ -83,10 +83,10 @@ export default function ProductsClient() {
     setMaxPrice("");
   };
 
-  const getProductImage = (product: any) => {
+  const getProductImage = (product: Product) => {
     const img = product.images?.[0];
-    if (img && img.startsWith("http")) return { type: "url", src: img };
-    return { type: "emoji", src: product.productType === "BOOK" ? "📚" : "🔧" };
+    if (img && img.startsWith("http")) return { type: "url" as const, src: img };
+    return { type: "emoji" as const, src: product.productType === "BOOK" ? "📚" : "🔧" };
   };
 
   return (
@@ -295,7 +295,7 @@ export default function ProductsClient() {
           {/* Grid */}
           {!isLoading && !isError && products.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product: any) => {
+              {products.map((product) => {
                 const image = getProductImage(product);
                 return (
                   <Link
@@ -361,7 +361,7 @@ export default function ProductsClient() {
                       <div className="flex items-center gap-1 mb-3">
                         <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          {product._count?.reviews > 0 ? "4.8" : "New"}
+                          {product._count && product._count.reviews > 0 ? "4.8" : "New"}
                         </span>
                         <span className="text-xs text-gray-400">
                           ({product._count?.reviews || 0})
