@@ -63,6 +63,17 @@ export function useProduct(id: string) {
   });
 }
 
+export function useRelatedProducts(id: string) {
+  return useQuery({
+    queryKey: ["products", "related", id],
+    queryFn: async () => {
+      const res = await api.get(`/products/${id}/related`);
+      return res.data.data as Product[];
+    },
+    enabled: !!id,
+  });
+}
+
 export function useFeaturedProducts() {
   return useQuery({
     queryKey: ["products", "featured"],

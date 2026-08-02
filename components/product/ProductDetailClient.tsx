@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useCartWithAuth, useProduct, useProductReviews, useAddToWishlist } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import ReviewForm from "./ReviewForm";
+import RelatedProducts from "./RelatedProducts";
 
 export default function ProductDetailClient({ id }: { id: string }) {
   const [quantity, setQuantity] = useState(1);
@@ -351,6 +352,9 @@ export default function ProductDetailClient({ id }: { id: string }) {
           </div>
         )}
       </div>
+
+      {/* Related Products */}
+      <RelatedProducts productId={id} />
     </div>
   );
 }
