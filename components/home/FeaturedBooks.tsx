@@ -176,7 +176,7 @@ function BookCard({
       className="group bg-white dark:bg-slate-800/90 rounded-xl border border-gray-100 dark:border-slate-700/60 overflow-hidden hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-500/40 transition-all duration-300 flex flex-col"
     >
       {/* Image */}
-      <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[4/5] w-full overflow-hidden">
+      <div className="relative bg-slate-100 dark:bg-slate-800 aspect-square w-full overflow-hidden">
         {isDiscounted && (
           <span className="absolute top-2.5 left-2.5 z-10 bg-sky-500 text-white text-[11px] font-bold px-2 py-1 rounded-full shadow-sm">
             {discountPercent}%
@@ -234,8 +234,8 @@ function BookCard({
       </div>
 
       {/* Info */}
-      <div className="p-3 flex flex-col gap-1.5 flex-1">
-        <h3 className="text-sm text-gray-800 dark:text-gray-100 line-clamp-2 leading-snug min-h-[2.5rem]">
+      <div className="p-3 flex flex-col gap-1 flex-1">
+        <h3 className="text-sm text-gray-800 dark:text-gray-100 line-clamp-1 leading-snug">
           {book.name}
         </h3>
 
@@ -270,7 +270,7 @@ function BookCard({
         <button
           onClick={(e) => onAddToCart(e, book)}
           disabled={book.stock === 0}
-          className={`mt-2 w-full flex items-center justify-center gap-1.5 py-2 rounded-full font-semibold text-xs transition-all duration-200 ${
+          className={`mt-1.5 w-full flex items-center justify-center gap-1.5 py-2 rounded-full font-semibold text-xs transition-all duration-200 ${
             book.stock === 0
               ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed"
               : "bg-violet-600 hover:bg-violet-700 text-white active:scale-[0.98]"
