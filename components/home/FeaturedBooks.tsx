@@ -49,11 +49,11 @@ export default function FeaturedBooks() {
   };
 
   return (
-    <section className="py-16 relative overflow-hidden bg-slate-50/50 dark:bg-slate-900/50">
+    <section className="py-12 relative overflow-hidden bg-slate-50/50 dark:bg-slate-900/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4 border-b border-gray-200 dark:border-slate-800 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-gray-200 dark:border-slate-800 pb-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/40 mb-2">
               <Sparkles className="w-3.5 h-3.5" />
@@ -78,15 +78,15 @@ export default function FeaturedBooks() {
 
         {/* Skeleton Loading */}
         {isLoading && (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-800 overflow-hidden animate-pulse p-3">
-                <div className="h-52 bg-slate-200 dark:bg-slate-700/50 rounded-md" />
+                <div className="h-44 bg-slate-200 dark:bg-slate-700/50 rounded-md" />
                 <div className="mt-3 space-y-2">
                   <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded w-full" />
                   <div className="h-3 bg-slate-200 dark:bg-slate-700/50 rounded w-2/3" />
                   <div className="h-3 bg-slate-200 dark:bg-slate-700/50 rounded w-1/3" />
-                  <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded w-1/2" />
+                  <div className="h-8 bg-slate-200 dark:bg-slate-700/50 rounded w-full" />
                 </div>
               </div>
             ))}
@@ -95,7 +95,7 @@ export default function FeaturedBooks() {
 
         {/* Product Grid */}
         {!isLoading && (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {books.length > 0 ? (
               books.map((book) => (
                 <BookCard key={book.id} book={book} onAddToCart={handleAddToCart} />
@@ -172,14 +172,14 @@ function BookCard({
     <div
       onMouseEnter={startCycling}
       onMouseLeave={stopCycling}
-      className="group bg-white dark:bg-slate-800/90 rounded-lg border border-gray-200 dark:border-slate-700/70 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col relative"
+      className="group bg-white dark:bg-slate-800/90 rounded-lg border border-gray-200 dark:border-slate-700/70 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative"
     >
-      {/* Rokomari Style Image Container with Hover Overlay */}
-      <div className="relative bg-white dark:bg-slate-900 p-3 aspect-[3/4] w-full overflow-hidden flex items-center justify-center border-b border-gray-100 dark:border-slate-800">
+      {/* Top Image Section - Compact Aspect Ratio */}
+      <div className="relative bg-white dark:bg-slate-900 p-2 aspect-[4/5] w-full overflow-hidden flex items-center justify-center border-b border-gray-100 dark:border-slate-800">
         
         {/* Rokomari Red Discount Ribbon Badge */}
         {isDiscounted && (
-          <div className="absolute top-2 left-2 z-20 bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-sm">
+          <div className="absolute top-2 left-2 z-20 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">
             {discountPercent}% OFF
           </div>
         )}
@@ -187,7 +187,7 @@ function BookCard({
         {/* Stock Status Badge Overlay */}
         {book.stock === 0 && (
           <div className="absolute inset-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-[1px] flex items-center justify-center">
-            <span className="bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wider">
+            <span className="bg-red-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded uppercase tracking-wider">
               Out of Stock
             </span>
           </div>
@@ -212,22 +212,22 @@ function BookCard({
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
             {book.images?.[0] ? (
-              <span className="text-5xl">{book.images[0]}</span>
+              <span className="text-4xl">{book.images[0]}</span>
             ) : (
-              <BookOpen className="w-16 h-16 stroke-[1.2]" />
+              <BookOpen className="w-12 h-12 stroke-[1.2]" />
             )}
           </div>
         )}
 
         {/* Hover Multi-image Dots Indicator */}
         {hasMultipleImages && (
-          <div className="absolute bottom-2 left-0 right-0 z-20 flex items-center justify-center gap-1">
+          <div className="absolute bottom-1.5 left-0 right-0 z-20 flex items-center justify-center gap-1">
             {validImages.map((_, idx) => (
               <span
                 key={idx}
                 className={`h-1 rounded-full transition-all duration-300 ${
                   idx === activeIndex
-                    ? "w-3 bg-blue-600"
+                    ? "w-2.5 bg-blue-600"
                     : "w-1 bg-gray-300 dark:bg-slate-600"
                 }`}
               />
@@ -235,12 +235,12 @@ function BookCard({
           </div>
         )}
 
-        {/* Rokomari Action Overlay (Hover state) */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2 p-4">
+        {/* Hover Add to Cart Button Overlay */}
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-3">
           <button
             onClick={(e) => onAddToCart(e, book)}
             disabled={book.stock === 0}
-            className={`w-full py-2 px-3 rounded text-xs font-bold transition-transform active:scale-95 flex items-center justify-center gap-1.5 shadow-md ${
+            className={`w-full py-2 px-2 rounded text-xs font-bold transition-transform active:scale-95 flex items-center justify-center gap-1 shadow-md ${
               book.stock === 0
                 ? "bg-gray-400 text-white cursor-not-allowed"
                 : "bg-sky-500 hover:bg-sky-600 text-white"
@@ -249,35 +249,25 @@ function BookCard({
             <ShoppingCart className="w-3.5 h-3.5" />
             {book.stock === 0 ? "Out of Stock" : "Add to Cart"}
           </button>
-
-          <Link
-            href={`/products/${book.id}`}
-            className="w-full py-2 px-3 rounded text-xs font-semibold bg-white/90 hover:bg-white text-gray-800 transition-all flex items-center justify-center gap-1.5 shadow-md"
-          >
-            <Eye className="w-3.5 h-3.5 text-gray-600" />
-            View Details
-          </Link>
         </div>
       </div>
 
-      {/* Rokomari Style Info Details Section */}
-      <div className="p-3 flex flex-col justify-between flex-1 text-center sm:text-left bg-white dark:bg-slate-800">
-        <div>
+      {/* Book Info Section */}
+      <div className="p-2.5 flex flex-col justify-between flex-1 bg-white dark:bg-slate-800">
+        <div className="text-center sm:text-left">
           <Link href={`/products/${book.id}`} className="block">
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 line-clamp-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <h3 className="text-xs sm:text-sm font-semibold text-gray-800 dark:text-gray-100 line-clamp-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               {book.name}
             </h3>
           </Link>
 
           {/* Author Name */}
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
+          <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
             {book.author || "Unknown Author"}
           </p>
-        </div>
 
-        <div className="mt-2 space-y-1">
           {/* Reviews and Ratings */}
-          <div className="flex items-center justify-center sm:justify-start gap-1">
+          <div className="flex items-center justify-center sm:justify-start gap-1 mt-1">
             <div className="flex items-center text-amber-400">
               {[...Array(5)].map((_, idx) => (
                 <Star
@@ -290,37 +280,36 @@ function BookCard({
                 />
               ))}
             </div>
-            <span className="text-[11px] text-gray-400 dark:text-gray-500">
+            <span className="text-[10px] text-gray-400 dark:text-gray-500">
               ({book._count?.reviews || 0})
             </span>
           </div>
 
-          {/* Stock Status text */}
-          <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">
-            {book.stock === 0 ? (
-              <span className="text-red-500">Out of stock</span>
-            ) : (
-              <span>Product In Stock</span>
-            )}
-          </p>
-
           {/* Price Container */}
-          <div className="flex items-center justify-center sm:justify-start gap-2 pt-0.5">
+          <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-1">
             {isDiscounted && (
-              <span className="text-xs text-gray-400 line-through">
+              <span className="text-[11px] text-gray-400 line-through">
                 TK. {book.price}
               </span>
             )}
-            <span className="text-sm font-bold text-gray-900 dark:text-white">
+            <span className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
               TK. {activePrice}
             </span>
           </div>
         </div>
+
+        {/* View Details Button at Bottom */}
+        <Link
+          href={`/products/${book.id}`}
+          className="mt-2.5 w-full py-1.5 px-2 rounded text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 transition-colors flex items-center justify-center gap-1 border border-gray-200/60 dark:border-slate-600/50"
+        >
+          <Eye className="w-3 h-3 text-gray-500 dark:text-slate-300" />
+          View Details
+        </Link>
       </div>
     </div>
   );
 }
-
 
 
 
