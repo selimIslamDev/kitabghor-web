@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCartWithAuth, useProduct, useProductReviews, useAddToWishlist } from "@/lib/hooks";
-import toast from "react-hot-toast";
 import ReviewForm from "./ReviewForm";
 import RelatedProducts from "./RelatedProducts";
 
@@ -35,15 +34,17 @@ export default function ProductDetailClient({ id }: { id: string }) {
 
   const handleAddToCart = () => {
     if (!product) return;
-    const success = addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      discountPrice: product.discountPrice,
-      image: product.images?.[0] || "📚",
-      stock: product.stock,
-    });
-    if (success) toast.success(`${quantity}x ${product.name} added to cart!`);
+    addItem(
+      {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        discountPrice: product.discountPrice,
+        image: product.images?.[0] || "📚",
+        stock: product.stock,
+      },
+      quantity
+    );
   };
 
   const handleWishlist = () => {

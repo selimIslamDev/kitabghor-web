@@ -11,13 +11,18 @@ interface CartItem {
   stock: number;
 }
 
+interface AddItemResult {
+  added: number; // how many units were actually added (0 if none)
+  requested: number; // how many units were requested
+}
+
 interface CartState {
   items: CartItem[];
   totalAmount: number;
   totalItems: number;
   hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
-  addItem: (item: Omit<CartItem, "quantity">) => void;
+  addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => AddItemResult;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -41,27 +46,32 @@ export const useCartStore = create<CartState>()(
         set({ hasHydrated: state });
       },
 
-      addItem: (newItem) => {
+      addItem: (newItem, quantity = 1) => {
         const items = get().items;
         const existing = items.find((i) => i.id === newItem.id);
+        const currentQty = existing ? existing.quantity : 0;
 
-        if (existing && existing.quantity >= newItem.stock) {
-          return;
+        // How many more units can we actually add without exceeding stock?
+        const maxAddable = Math.max(0, newItem.stock - currentQty);
+        const qtyToAdd = Math.min(quantity, maxAddable);
+
+        if (qtyToAdd <= 0) {
+          return { added: 0, requested: quantity };
         }
 
         const updated = existing
           ? items.map((i) =>
-              i.id === newItem.id
-                ? { ...i, quantity: Math.min(i.quantity + 1, i.stock) }
-                : i
+              i.id === newItem.id ? { ...i, quantity: i.quantity + qtyToAdd } : i
             )
-          : [...items, { ...newItem, quantity: 1 }];
+          : [...items, { ...newItem, quantity: qtyToAdd }];
 
         set({
           items: updated,
           totalAmount: calcTotal(updated),
           totalItems: calcTotalItems(updated),
         });
+
+        return { added: qtyToAdd, requested: quantity };
       },
 
       removeItem: (id) => {

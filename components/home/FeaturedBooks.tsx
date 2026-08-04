@@ -37,7 +37,7 @@ export default function FeaturedBooks() {
       toast.error("This product is out of stock!");
       return;
     }
-    const success = addItem({
+    addItem({
       id: book.id,
       name: book.name,
       price: book.price,
@@ -45,7 +45,6 @@ export default function FeaturedBooks() {
       image: book.images?.[0] || "📚",
       stock: book.stock,
     });
-    if (success) toast.success(`${book.name} added to cart!`);
   };
 
   return (

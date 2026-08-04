@@ -18,7 +18,7 @@ export default function RelatedProducts({ productId }: { productId: string }) {
       toast.error("This product is out of stock!");
       return;
     }
-    const success = addItem({
+    addItem({
       id: product.id,
       name: product.name,
       price: product.price,
@@ -26,7 +26,6 @@ export default function RelatedProducts({ productId }: { productId: string }) {
       image: product.images?.[0] || "📦",
       stock: product.stock,
     });
-    if (success) toast.success(`${product.name} added to cart!`);
   };
 
   if (isLoading) {

@@ -8,14 +8,17 @@ export function useCartWithAuth() {
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
 
-  const addItem = (item: {
-    id: string;
-    name: string;
-    price: number;
-    discountPrice?: number;
-    image: string;
-    stock: number;
-  }) => {
+  const addItem = (
+    item: {
+      id: string;
+      name: string;
+      price: number;
+      discountPrice?: number;
+      image: string;
+      stock: number;
+    },
+    quantity: number = 1
+  ) => {
     if (!isAuthenticated) {
       toast.error("Please login to add items to cart!");
       router.push("/login");
@@ -26,15 +29,28 @@ export function useCartWithAuth() {
       return false;
     }
 
-    // Check current quantity in cart
     const currentItems = cartStore.items;
     const existingItem = currentItems.find((i) => i.id === item.id);
-    if (existingItem && existingItem.quantity >= item.stock) {
+    const currentQty = existingItem ? existingItem.quantity : 0;
+
+    if (currentQty >= item.stock) {
+      toast.error(`Only ${item.stock} available in stock — you already have the max in your cart!`);
+      return false;
+    }
+
+    const result = cartStore.addItem(item, quantity);
+
+    if (result.added === 0) {
       toast.error(`Only ${item.stock} available in stock!`);
       return false;
     }
 
-    cartStore.addItem(item);
+    if (result.added < result.requested) {
+      toast.error(`Only ${result.added} added — that's all the stock we have left!`);
+      return true;
+    }
+
+    toast.success(`${result.added}x ${item.name} added to cart!`);
     return true;
   };
 
