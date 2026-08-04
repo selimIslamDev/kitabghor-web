@@ -159,7 +159,7 @@ function BookCard({
     <div
       onMouseEnter={startCycling}
       onMouseLeave={stopCycling}
-      className="group bg-white dark:bg-slate-800 rounded border border-gray-200/80 dark:border-slate-700 overflow-hidden transition-all duration-300 flex flex-col justify-between relative h-[380px] w-full hover:shadow-[inset_0_0_12px_rgba(0,0,0,0.12)]"
+      className="group bg-white dark:bg-slate-800 rounded border border-gray-200/80 dark:border-slate-700 overflow-hidden transition-all duration-300 flex flex-col justify-between relative h-[380px] w-full hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-200/80 dark:hover:shadow-slate-900/60 hover:border-[#0095DA]/40"
     >
       {/* Top Image Section */}
       <div className="relative bg-white dark:bg-slate-900 p-3 h-52 w-full flex items-center justify-center">
@@ -286,8 +286,6 @@ function BookCard({
     </div>
   );
 }
-
-
 
 
 
