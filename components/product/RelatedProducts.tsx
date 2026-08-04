@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { ShoppingCart, Star, Package } from "lucide-react";
+import { ShoppingCart, Package } from "lucide-react";
 import { useRelatedProducts, useCartWithAuth, type Product } from "@/lib/hooks";
 import toast from "react-hot-toast";
 
@@ -37,7 +37,7 @@ export default function RelatedProducts({ productId }: { productId: string }) {
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-pulse">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="bg-white dark:bg-slate-800/80 rounded-xl border border-gray-100 dark:border-slate-800 overflow-hidden">
-              <div className="aspect-square bg-slate-100 dark:bg-slate-700/50" />
+              <div className="aspect-[3/4] bg-slate-100 dark:bg-slate-700/50" />
               <div className="p-3 space-y-2">
                 <div className="h-4 bg-slate-100 dark:bg-slate-700/50 rounded w-full" />
                 <div className="h-3 bg-slate-100 dark:bg-slate-700/50 rounded w-1/2" />
@@ -85,7 +85,6 @@ function ProductCard({
   const discountPercent = isDiscounted
     ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
     : 0;
-  const rating = product._count && product._count.reviews > 0 ? 5 : 4;
 
   const startCycling = () => {
     if (!hasMultipleImages) return;
@@ -115,12 +114,23 @@ function ProductCard({
       onMouseLeave={stopCycling}
       className="group bg-white dark:bg-slate-800/90 rounded-xl border border-gray-100 dark:border-slate-700/60 overflow-hidden hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-500/40 transition-all duration-300 flex flex-col"
     >
-      {/* Image */}
-      <div className="relative bg-slate-100 dark:bg-slate-800 aspect-square w-full overflow-hidden">
+      {/* Image — book-cover style portrait ratio */}
+      <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[3/4] w-full overflow-hidden">
+        {/* Circular discount badge, top-left, like Rokomari */}
         {isDiscounted && (
-          <span className="absolute top-2.5 left-2.5 z-10 bg-sky-500 text-white text-[11px] font-bold px-2 py-1 rounded-full shadow-sm">
-            {discountPercent}%
+          <span className="absolute top-2.5 left-2.5 z-10 w-11 h-11 rounded-full bg-rose-500 text-white flex flex-col items-center justify-center leading-none shadow-md">
+            <span className="text-[11px] font-extrabold">{discountPercent}%</span>
+            <span className="text-[7px] font-semibold tracking-wide">OFF</span>
           </span>
+        )}
+
+        {/* Diagonal ribbon badge, top-right corner, like Rokomari's "eBook" ribbon */}
+        {product.productType && (
+          <div className="absolute top-0 right-0 z-10 w-24 h-24 overflow-hidden pointer-events-none">
+            <span className="absolute top-[14px] right-[-32px] w-[130px] rotate-45 bg-sky-500 text-white text-[10px] font-bold text-center py-1 shadow-sm">
+              {product.productType === "BOOK" ? "Book" : "Gadget"}
+            </span>
+          </div>
         )}
 
         {product.stock === 0 && (
@@ -174,27 +184,13 @@ function ProductCard({
 
       {/* Info */}
       <div className="p-3 flex flex-col gap-1 flex-1">
-        <h3 className="text-sm text-gray-800 dark:text-gray-100 line-clamp-1 leading-snug">
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 line-clamp-1 leading-snug">
           {product.name}
         </h3>
 
-        <span className={`text-xs font-semibold ${product.stock === 0 ? "text-red-500" : "text-green-600 dark:text-green-500"}`}>
-          {product.stock === 0 ? "Out of Stock" : "In Stock"}
-        </span>
-
-        <div className="flex items-center gap-0.5">
-          {[...Array(5)].map((_, idx) => (
-            <Star
-              key={idx}
-              className={`w-3.5 h-3.5 ${
-                idx < rating
-                  ? "fill-amber-400 text-amber-400"
-                  : "fill-gray-200 text-gray-200 dark:fill-slate-700 dark:text-slate-700"
-              }`}
-            />
-          ))}
-          <span className="text-xs text-gray-400 ml-1">({product._count?.reviews || 0})</span>
-        </div>
+        {product.author && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">{product.author}</p>
+        )}
 
         <div className="flex items-baseline gap-2 mt-0.5">
           {isDiscounted && (
