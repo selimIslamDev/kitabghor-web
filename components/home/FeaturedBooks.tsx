@@ -81,7 +81,7 @@ export default function FeaturedBooks() {
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="bg-white dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-800 overflow-hidden animate-pulse p-3">
-                <div className="h-44 bg-slate-200 dark:bg-slate-700/50 rounded" />
+                <div className="h-36 bg-slate-200 dark:bg-slate-700/50 rounded" />
                 <div className="mt-3 space-y-2">
                   <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded w-full" />
                   <div className="h-3 bg-slate-200 dark:bg-slate-700/50 rounded w-2/3" />
@@ -145,7 +145,6 @@ function BookCard({
   const discountPercent = isDiscounted
     ? Math.round(((book.price - book.discountPrice!) / book.price) * 100)
     : 0;
-  const rating = book._count && book._count.reviews > 0 ? 5 : 4;
 
   const startCycling = () => {
     if (!hasMultipleImages) return;
@@ -174,14 +173,14 @@ function BookCard({
       onMouseLeave={stopCycling}
       className="group bg-white dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-md transition-all duration-200 flex flex-col justify-between relative"
     >
-      {/* Top Image Section */}
-      <div className="relative bg-white dark:bg-slate-900 p-2 aspect-[4/5] w-full overflow-hidden flex items-center justify-center">
+      {/* Top Image Section - Compact Size with Extra Padding */}
+      <div className="relative bg-white dark:bg-slate-900 p-3.5 aspect-square w-full overflow-hidden flex items-center justify-center">
         
-        {/* Rokomari Style Round Yellow Discount Badge */}
+        {/* Round Yellow Discount Badge */}
         {isDiscounted && (
-          <div className="absolute top-2 left-2 z-20 bg-[#FDE047] text-gray-800 w-10 h-10 rounded-full flex flex-col items-center justify-center text-[10px] font-bold leading-tight shadow-sm border border-amber-200">
+          <div className="absolute top-2 left-2 z-20 bg-[#FDE047] text-gray-800 w-9 h-9 rounded-full flex flex-col items-center justify-center text-[9px] font-bold leading-tight shadow-sm border border-amber-200">
             <span>{discountPercent}%</span>
-            <span className="text-[8px] font-medium uppercase">OFF</span>
+            <span className="text-[7px] font-medium uppercase">OFF</span>
           </div>
         )}
 
@@ -203,7 +202,7 @@ function BookCard({
                 src={src}
                 alt={book.name}
                 fill
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
+                sizes="(max-width: 768px) 40vw, (max-width: 1200px) 20vw, 20vw"
                 className={`object-contain transition-all duration-300 ease-in-out p-1 ${
                   idx === activeIndex ? "opacity-100" : "opacity-0"
                 }`}
@@ -213,16 +212,16 @@ function BookCard({
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
             {book.images?.[0] ? (
-              <span className="text-4xl">{book.images[0]}</span>
+              <span className="text-3xl">{book.images[0]}</span>
             ) : (
-              <BookOpen className="w-12 h-12 stroke-[1.2]" />
+              <BookOpen className="w-10 h-10 stroke-[1.2]" />
             )}
           </div>
         )}
 
         {/* Multi-image Dots Indicator */}
         {hasMultipleImages && (
-          <div className="absolute bottom-1.5 left-0 right-0 z-20 flex items-center justify-center gap-1">
+          <div className="absolute bottom-1 left-0 right-0 z-20 flex items-center justify-center gap-1">
             {validImages.map((_, idx) => (
               <span
                 key={idx}
@@ -237,11 +236,11 @@ function BookCard({
         )}
 
         {/* Hover State: Add to Cart Button Centered */}
-        <div className="absolute inset-0 bg-white/40 dark:bg-black/40 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-white/40 dark:bg-black/40 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-3">
           <button
             onClick={(e) => onAddToCart(e, book)}
             disabled={book.stock === 0}
-            className={`w-full py-2 px-3 rounded text-xs font-bold transition-all shadow ${
+            className={`w-full py-1.5 px-2 rounded text-xs font-bold transition-all shadow ${
               book.stock === 0
                 ? "bg-gray-400 text-white cursor-not-allowed"
                 : "bg-[#0095DA] hover:bg-[#0082BF] text-white active:scale-95"
@@ -253,21 +252,21 @@ function BookCard({
       </div>
 
       {/* Book Info Section */}
-      <div className="p-2.5 text-center flex flex-col justify-between flex-1 bg-white dark:bg-slate-800">
+      <div className="p-2 text-center flex flex-col justify-between flex-1 bg-white dark:bg-slate-800">
         <div>
           <Link href={`/products/${book.id}`} className="block">
-            <h3 className="text-xs sm:text-sm font-medium text-gray-800 dark:text-gray-100 line-clamp-1 hover:text-[#0095DA] transition-colors">
+            <h3 className="text-xs font-medium text-gray-800 dark:text-gray-100 line-clamp-1 hover:text-[#0095DA] transition-colors">
               {book.name}
             </h3>
           </Link>
 
           {/* Author Name */}
-          <p className="text-[11px] text-gray-400 dark:text-gray-400 mt-0.5 line-clamp-1">
+          <p className="text-[10px] text-gray-400 dark:text-gray-400 mt-0.5 line-clamp-1">
             {book.author || "Unknown Author"}
           </p>
 
           {/* Stock Status */}
-          <p className="text-[11px] text-emerald-500 font-medium mt-1">
+          <p className="text-[10px] text-emerald-500 font-medium mt-0.5">
             {book.stock === 0 ? (
               <span className="text-red-500">Out of Stock</span>
             ) : (
@@ -278,28 +277,27 @@ function BookCard({
           {/* Pricing */}
           <div className="flex items-center justify-center gap-1.5 mt-1">
             {isDiscounted && (
-              <span className="text-[11px] text-gray-400 line-through">
+              <span className="text-[10px] text-gray-400 line-through">
                 TK. {book.price}
               </span>
             )}
-            <span className="text-xs sm:text-sm font-bold text-gray-800 dark:text-white">
+            <span className="text-xs font-bold text-gray-800 dark:text-white">
               TK. {activePrice}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Rokomari Style Bottom Footer for View Details */}
+      {/* Bottom Footer for View Details */}
       <Link
         href={`/products/${book.id}`}
-        className="w-full py-2 bg-[#F1F3F6] hover:bg-[#E5E8ED] dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[#0095DA] dark:text-sky-400 text-xs font-semibold text-center transition-colors border-t border-gray-100 dark:border-slate-700 block"
+        className="w-full py-1.5 bg-[#F1F3F6] hover:bg-[#E5E8ED] dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[#0095DA] dark:text-sky-400 text-[11px] font-semibold text-center transition-colors border-t border-gray-100 dark:border-slate-700 block"
       >
         View Details
       </Link>
     </div>
   );
 }
-
 
 
 
