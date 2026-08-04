@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { ShoppingCart, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import { useRelatedProducts, useCartWithAuth, type Product } from "@/lib/hooks";
 import toast from "react-hot-toast";
 
@@ -26,6 +26,7 @@ export default function RelatedProducts({ productId }: { productId: string }) {
       image: product.images?.[0] || "📦",
       stock: product.stock,
     });
+    toast.success("Added to cart!");
   };
 
   if (isLoading) {
@@ -34,15 +35,14 @@ export default function RelatedProducts({ productId }: { productId: string }) {
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>
           Related Products
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-pulse">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 animate-pulse">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white dark:bg-slate-800/80 rounded-xl border border-gray-100 dark:border-slate-800 overflow-hidden">
-              <div className="aspect-[3/4] bg-slate-100 dark:bg-slate-700/50" />
-              <div className="p-3 space-y-2">
-                <div className="h-4 bg-slate-100 dark:bg-slate-700/50 rounded w-full" />
-                <div className="h-3 bg-slate-100 dark:bg-slate-700/50 rounded w-1/2" />
-                <div className="h-3 bg-slate-100 dark:bg-slate-700/50 rounded w-2/3" />
-                <div className="h-4 bg-slate-100 dark:bg-slate-700/50 rounded w-1/3" />
+            <div key={i} className="bg-white dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-800 overflow-hidden p-3">
+              <div className="h-36 bg-slate-200 dark:bg-slate-700/50 rounded" />
+              <div className="mt-3 space-y-2">
+                <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded w-full" />
+                <div className="h-3 bg-slate-200 dark:bg-slate-700/50 rounded w-2/3" />
+                <div className="h-3 bg-slate-200 dark:bg-slate-700/50 rounded w-1/3" />
               </div>
             </div>
           ))}
@@ -58,7 +58,7 @@ export default function RelatedProducts({ productId }: { productId: string }) {
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>
         Related Products
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {related.map((product: Product) => (
           <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
         ))}
@@ -108,114 +108,134 @@ function ProductCard({
   }, []);
 
   return (
-    <Link
-      href={`/products/${product.id}`}
+    <div
       onMouseEnter={startCycling}
       onMouseLeave={stopCycling}
-      className="group bg-white dark:bg-slate-800/90 rounded-xl border border-gray-100 dark:border-slate-700/60 overflow-hidden hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-500/40 transition-all duration-300 flex flex-col"
+      className="group bg-white dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative"
     >
-      {/* Image — book-cover style portrait ratio */}
-      <div className="relative bg-slate-100 dark:bg-slate-800 aspect-[3/4] w-full overflow-hidden">
-        {/* Circular discount badge, top-left, like Rokomari */}
-        {isDiscounted && (
-          <span className="absolute top-2.5 left-2.5 z-10 w-11 h-11 rounded-full bg-rose-500 text-white flex flex-col items-center justify-center leading-none shadow-md">
-            <span className="text-[11px] font-extrabold">{discountPercent}%</span>
-            <span className="text-[7px] font-semibold tracking-wide">OFF</span>
-          </span>
-        )}
+      {/* Top Image Section */}
+      <div className="relative bg-white dark:bg-slate-900 p-3.5 aspect-square w-full overflow-hidden flex items-center justify-center">
 
-        {/* Diagonal ribbon badge, top-right corner, like Rokomari's "eBook" ribbon */}
-        {product.productType && (
-          <div className="absolute top-0 right-0 z-10 w-24 h-24 overflow-hidden pointer-events-none">
-            <span className="absolute top-[14px] right-[-32px] w-[130px] rotate-45 bg-sky-500 text-white text-[10px] font-bold text-center py-1 shadow-sm">
-              {product.productType === "BOOK" ? "Book" : "Gadget"}
-            </span>
+        {/* Round Yellow Discount Badge */}
+        {isDiscounted && (
+          <div className="absolute top-2 left-2 z-20 bg-[#FDE047] text-gray-800 w-9 h-9 rounded-full flex flex-col items-center justify-center text-[9px] font-bold leading-tight shadow-sm border border-amber-200">
+            <span>{discountPercent}%</span>
+            <span className="text-[7px] font-medium uppercase">OFF</span>
           </div>
         )}
 
+        {/* Out of Stock Overlay */}
         {product.stock === 0 && (
-          <div className="absolute inset-0 z-10 bg-white/70 dark:bg-slate-900/70 backdrop-blur-[1px] flex items-center justify-center">
-            <span className="bg-slate-900 text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+          <div className="absolute inset-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-[1px] flex items-center justify-center">
+            <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
               Out of Stock
             </span>
           </div>
         )}
 
+        {/* Product Image */}
         {validImages.length > 0 ? (
-          <>
+          <div className="relative w-full h-full flex items-center justify-center">
             {validImages.map((src, idx) => (
               <Image
                 key={src + idx}
                 src={src}
                 alt={product.name}
                 fill
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
-                className={`object-cover transition-opacity duration-300 ease-in-out ${
+                sizes="(max-width: 768px) 40vw, (max-width: 1200px) 20vw, 20vw"
+                className={`object-contain transition-all duration-300 ease-in-out p-1 ${
                   idx === activeIndex ? "opacity-100" : "opacity-0"
                 }`}
               />
             ))}
-
-            {hasMultipleImages && (
-              <div className="absolute bottom-2 left-0 right-0 z-10 flex items-center justify-center gap-1">
-                {validImages.map((_, idx) => (
-                  <span
-                    key={idx}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      idx === activeIndex
-                        ? "w-3.5 bg-violet-600"
-                        : "w-1.5 bg-white/80 dark:bg-slate-500 border border-slate-300/50"
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
-          </>
+          </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
             {product.images?.[0] ? (
-              <span className="text-5xl">{product.images[0]}</span>
+              <span className="text-3xl">{product.images[0]}</span>
             ) : (
-              <Package className="w-14 h-14 stroke-[1.5]" />
+              <Package className="w-10 h-10 stroke-[1.2]" />
             )}
           </div>
         )}
-      </div>
 
-      {/* Info */}
-      <div className="p-3 flex flex-col gap-1 flex-1">
-        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 line-clamp-1 leading-snug">
-          {product.name}
-        </h3>
-
-        {product.author && (
-          <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">{product.author}</p>
+        {/* Multi-image Dots Indicator */}
+        {hasMultipleImages && (
+          <div className="absolute bottom-1 left-0 right-0 z-20 flex items-center justify-center gap-1">
+            {validImages.map((_, idx) => (
+              <span
+                key={idx}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  idx === activeIndex
+                    ? "w-2.5 bg-sky-500"
+                    : "w-1 bg-gray-300 dark:bg-slate-600"
+                }`}
+              />
+            ))}
+          </div>
         )}
 
-        <div className="flex items-baseline gap-2 mt-0.5">
-          {isDiscounted && (
-            <span className="text-xs text-gray-400 line-through">
-              Tk {product.price.toLocaleString()}
-            </span>
-          )}
-          <span className="text-base font-extrabold text-gray-900 dark:text-white">
-            Tk {activePrice.toLocaleString()}
-          </span>
+        {/* HOVER OVERLAY: Add to Cart Button appears inside image section */}
+        <div className="absolute inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-[1px] z-20 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center p-3">
+          <button
+            onClick={(e) => onAddToCart(e, product)}
+            disabled={product.stock === 0}
+            className={`w-full py-2 px-2 rounded text-xs font-bold transition-all shadow-md ${
+              product.stock === 0
+                ? "bg-gray-400 text-white cursor-not-allowed"
+                : "bg-[#0095DA] hover:bg-[#0082BF] text-white active:scale-95"
+            }`}
+          >
+            {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+          </button>
         </div>
-
-        <button
-          onClick={(e) => onAddToCart(e, product)}
-          disabled={product.stock === 0}
-          className={`mt-1.5 w-full flex items-center justify-center gap-1.5 py-2 rounded-full font-semibold text-xs transition-all duration-200 ${
-            product.stock === 0
-              ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed"
-              : "bg-violet-600 hover:bg-violet-700 text-white active:scale-[0.98]"
-          }`}
-        >
-          <ShoppingCart className="w-3.5 h-3.5" />
-          {product.stock === 0 ? "Unavailable" : "Add to Cart"}
-        </button>
       </div>
-    </Link>
+
+      {/* Info Section */}
+      <div className="p-2.5 text-center flex flex-col justify-between flex-1 bg-white dark:bg-slate-800">
+        <div>
+          <Link href={`/products/${product.id}`} className="block">
+            <h3 className="text-xs font-medium text-gray-800 dark:text-gray-100 line-clamp-1 hover:text-[#0095DA] transition-colors">
+              {product.name}
+            </h3>
+          </Link>
+
+          {product.author && (
+            <p className="text-[10px] text-gray-400 dark:text-gray-400 mt-0.5 line-clamp-1">
+              {product.author}
+            </p>
+          )}
+
+          <p className="text-[10px] text-emerald-500 font-medium mt-0.5">
+            {product.stock === 0 ? (
+              <span className="text-red-500">Out of Stock</span>
+            ) : (
+              "Product In Stock"
+            )}
+          </p>
+
+          <div className="flex items-center justify-center gap-1.5 mt-1">
+            {isDiscounted && (
+              <span className="text-[10px] text-gray-400 line-through">
+                TK. {product.price.toLocaleString()}
+              </span>
+            )}
+            <span className="text-xs font-bold text-gray-800 dark:text-white">
+              TK. {activePrice.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* HOVER BOTTOM FOOTER: View Details Link only pops up when HOVERED */}
+      <div className="max-h-0 opacity-0 overflow-hidden group-hover:max-h-12 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+        <Link
+          href={`/products/${product.id}`}
+          className="w-full py-2 bg-[#F1F3F6] hover:bg-[#E5E8ED] dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[#0095DA] dark:text-sky-400 text-[11px] font-semibold text-center transition-colors border-t border-gray-100 dark:border-slate-700 block"
+        >
+          View Details
+        </Link>
+      </div>
+    </div>
   );
 }
