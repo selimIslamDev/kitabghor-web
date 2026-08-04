@@ -172,19 +172,19 @@ function BookCard({
     <div
       onMouseEnter={startCycling}
       onMouseLeave={stopCycling}
-      className="group bg-white dark:bg-slate-800/90 rounded-lg border border-gray-200 dark:border-slate-700/70 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative"
+      className="group bg-white dark:bg-slate-800/90 rounded-lg border border-gray-200 dark:border-slate-700/70 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative"
     >
-      {/* Top Image Section - Compact Aspect Ratio */}
+      {/* Top Image Section with Rokomari Shadow/Overlay on Hover */}
       <div className="relative bg-white dark:bg-slate-900 p-2 aspect-[4/5] w-full overflow-hidden flex items-center justify-center border-b border-gray-100 dark:border-slate-800">
         
-        {/* Rokomari Red Discount Ribbon Badge */}
+        {/* Rokomari Red Discount Badge */}
         {isDiscounted && (
           <div className="absolute top-2 left-2 z-20 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">
             {discountPercent}% OFF
           </div>
         )}
 
-        {/* Stock Status Badge Overlay */}
+        {/* Stock Status Badge */}
         {book.stock === 0 && (
           <div className="absolute inset-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-[1px] flex items-center justify-center">
             <span className="bg-red-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded uppercase tracking-wider">
@@ -235,12 +235,14 @@ function BookCard({
           </div>
         )}
 
-        {/* Hover Add to Cart Button Overlay */}
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-3">
+        {/* Rokomari Soft Shadow Overlay + Buttons (Triggered ONLY on Hover) */}
+        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 p-3">
+          
+          {/* Add to Cart Button */}
           <button
             onClick={(e) => onAddToCart(e, book)}
             disabled={book.stock === 0}
-            className={`w-full py-2 px-2 rounded text-xs font-bold transition-transform active:scale-95 flex items-center justify-center gap-1 shadow-md ${
+            className={`w-full py-1.5 px-2 rounded text-xs font-bold transition-transform active:scale-95 flex items-center justify-center gap-1.5 shadow-md ${
               book.stock === 0
                 ? "bg-gray-400 text-white cursor-not-allowed"
                 : "bg-sky-500 hover:bg-sky-600 text-white"
@@ -249,6 +251,15 @@ function BookCard({
             <ShoppingCart className="w-3.5 h-3.5" />
             {book.stock === 0 ? "Out of Stock" : "Add to Cart"}
           </button>
+
+          {/* View Details Button inside Hover Overlay */}
+          <Link
+            href={`/products/${book.id}`}
+            className="w-full py-1.5 px-2 rounded text-[11px] font-semibold bg-white/95 hover:bg-white text-gray-800 transition-colors flex items-center justify-center gap-1 shadow-md"
+          >
+            <Eye className="w-3.5 h-3.5 text-gray-600" />
+            View Details
+          </Link>
         </div>
       </div>
 
@@ -286,7 +297,7 @@ function BookCard({
           </div>
 
           {/* Price Container */}
-          <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-1">
+          <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-1.5">
             {isDiscounted && (
               <span className="text-[11px] text-gray-400 line-through">
                 TK. {book.price}
@@ -297,21 +308,10 @@ function BookCard({
             </span>
           </div>
         </div>
-
-        {/* View Details Button at Bottom */}
-        <Link
-          href={`/products/${book.id}`}
-          className="mt-2.5 w-full py-1.5 px-2 rounded text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 transition-colors flex items-center justify-center gap-1 border border-gray-200/60 dark:border-slate-600/50"
-        >
-          <Eye className="w-3 h-3 text-gray-500 dark:text-slate-300" />
-          View Details
-        </Link>
       </div>
     </div>
   );
 }
-
-
 
 
 
