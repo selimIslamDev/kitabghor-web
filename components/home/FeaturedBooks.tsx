@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { ShoppingCart, Star, ArrowRight, BookOpen, Sparkles } from "lucide-react";
+import { ShoppingCart, Eye, BookOpen, Sparkles, ArrowRight } from "lucide-react";
 import { useCartWithAuth, useFeaturedProducts } from "@/lib/hooks";
 import toast from "react-hot-toast";
 
@@ -86,7 +86,6 @@ export default function FeaturedBooks() {
                   <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded w-full" />
                   <div className="h-3 bg-slate-200 dark:bg-slate-700/50 rounded w-2/3" />
                   <div className="h-3 bg-slate-200 dark:bg-slate-700/50 rounded w-1/3" />
-                  <div className="h-8 bg-slate-200 dark:bg-slate-700/50 rounded w-full" />
                 </div>
               </div>
             ))}
@@ -110,17 +109,6 @@ export default function FeaturedBooks() {
             )}
           </div>
         )}
-
-        {/* Mobile View All Link */}
-        <div className="sm:hidden mt-8 text-center">
-          <Link
-            href="/products?type=BOOK"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/30"
-          >
-            <span>View All Books</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
 
       </div>
     </section>
@@ -171,9 +159,9 @@ function BookCard({
     <div
       onMouseEnter={startCycling}
       onMouseLeave={stopCycling}
-      className="group bg-white dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-md transition-all duration-200 flex flex-col justify-between relative"
+      className="group bg-white dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative"
     >
-      {/* Top Image Section - Compact Size with Extra Padding */}
+      {/* Top Image Section */}
       <div className="relative bg-white dark:bg-slate-900 p-3.5 aspect-square w-full overflow-hidden flex items-center justify-center">
         
         {/* Round Yellow Discount Badge */}
@@ -235,12 +223,12 @@ function BookCard({
           </div>
         )}
 
-        {/* Hover State: Add to Cart Button Centered */}
-        <div className="absolute inset-0 bg-white/40 dark:bg-black/40 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center p-3">
+        {/* HOVER OVERLAY: Add to Cart Button appears inside image section */}
+        <div className="absolute inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-[1px] z-20 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center p-3">
           <button
             onClick={(e) => onAddToCart(e, book)}
             disabled={book.stock === 0}
-            className={`w-full py-1.5 px-2 rounded text-xs font-bold transition-all shadow ${
+            className={`w-full py-2 px-2 rounded text-xs font-bold transition-all shadow-md ${
               book.stock === 0
                 ? "bg-gray-400 text-white cursor-not-allowed"
                 : "bg-[#0095DA] hover:bg-[#0082BF] text-white active:scale-95"
@@ -252,7 +240,7 @@ function BookCard({
       </div>
 
       {/* Book Info Section */}
-      <div className="p-2 text-center flex flex-col justify-between flex-1 bg-white dark:bg-slate-800">
+      <div className="p-2.5 text-center flex flex-col justify-between flex-1 bg-white dark:bg-slate-800">
         <div>
           <Link href={`/products/${book.id}`} className="block">
             <h3 className="text-xs font-medium text-gray-800 dark:text-gray-100 line-clamp-1 hover:text-[#0095DA] transition-colors">
@@ -288,17 +276,18 @@ function BookCard({
         </div>
       </div>
 
-      {/* Bottom Footer for View Details */}
-      <Link
-        href={`/products/${book.id}`}
-        className="w-full py-1.5 bg-[#F1F3F6] hover:bg-[#E5E8ED] dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[#0095DA] dark:text-sky-400 text-[11px] font-semibold text-center transition-colors border-t border-gray-100 dark:border-slate-700 block"
-      >
-        View Details
-      </Link>
+      {/* HOVER BOTTOM FOOTER: View Details Link only pops up when HOVERED */}
+      <div className="max-h-0 opacity-0 overflow-hidden group-hover:max-h-12 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+        <Link
+          href={`/products/${book.id}`}
+          className="w-full py-2 bg-[#F1F3F6] hover:bg-[#E5E8ED] dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[#0095DA] dark:text-sky-400 text-[11px] font-semibold text-center transition-colors border-t border-gray-100 dark:border-slate-700 block"
+        >
+          View Details
+        </Link>
+      </div>
     </div>
   );
 }
-
 
 
 
