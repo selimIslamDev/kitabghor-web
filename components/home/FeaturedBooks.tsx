@@ -80,8 +80,8 @@ export default function FeaturedBooks() {
         {isLoading && (
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-800 overflow-hidden animate-pulse p-3">
-                <div className="h-36 bg-slate-200 dark:bg-slate-700/50 rounded" />
+              <div key={i} className="bg-white dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-800 overflow-hidden animate-pulse p-3 h-[380px]">
+                <div className="h-48 bg-slate-200 dark:bg-slate-700/50 rounded" />
                 <div className="mt-3 space-y-2">
                   <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded w-full" />
                   <div className="h-3 bg-slate-200 dark:bg-slate-700/50 rounded w-2/3" />
@@ -159,91 +159,78 @@ function BookCard({
     <div
       onMouseEnter={startCycling}
       onMouseLeave={stopCycling}
-      className="group bg-white dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative"
+      className="group bg-white dark:bg-slate-800 rounded border border-gray-200/80 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative h-[380px] w-full"
     >
-      {/* Top Image Section */}
-      <div className="relative bg-white dark:bg-slate-900 p-3.5 aspect-square w-full overflow-hidden flex items-center justify-center">
+      {/* CARD CONTENT WRAPPER */}
+      <div className="relative flex-1 flex flex-col justify-between overflow-hidden">
         
-        {/* Round Yellow Discount Badge */}
-        {isDiscounted && (
-          <div className="absolute top-2 left-2 z-20 bg-[#FDE047] text-gray-800 w-9 h-9 rounded-full flex flex-col items-center justify-center text-[9px] font-bold leading-tight shadow-sm border border-amber-200">
-            <span>{discountPercent}%</span>
-            <span className="text-[7px] font-medium uppercase">OFF</span>
-          </div>
-        )}
+        {/* Top Image Section */}
+        <div className="relative bg-white dark:bg-slate-900 p-3 h-52 w-full flex items-center justify-center">
+          
+          {/* Round Yellow Discount Badge */}
+          {isDiscounted && (
+            <div className="absolute top-2 left-2 z-20 bg-[#FDE047] text-gray-800 w-9 h-9 rounded-full flex flex-col items-center justify-center text-[9px] font-bold leading-tight shadow-sm border border-amber-200">
+              <span>{discountPercent}%</span>
+              <span className="text-[7px] font-medium uppercase">OFF</span>
+            </div>
+          )}
 
-        {/* Stock Status Badge */}
-        {book.stock === 0 && (
-          <div className="absolute inset-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-[1px] flex items-center justify-center">
-            <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
-              Out of Stock
-            </span>
-          </div>
-        )}
+          {/* Stock Status Badge */}
+          {book.stock === 0 && (
+            <div className="absolute inset-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-[1px] flex items-center justify-center">
+              <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+                Out of Stock
+              </span>
+            </div>
+          )}
 
-        {/* Book Cover Image */}
-        {validImages.length > 0 ? (
-          <div className="relative w-full h-full flex items-center justify-center">
-            {validImages.map((src, idx) => (
-              <Image
-                key={src + idx}
-                src={src}
-                alt={book.name}
-                fill
-                sizes="(max-width: 768px) 40vw, (max-width: 1200px) 20vw, 20vw"
-                className={`object-contain transition-all duration-300 ease-in-out p-1 ${
-                  idx === activeIndex ? "opacity-100" : "opacity-0"
-                }`}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
-            {book.images?.[0] ? (
-              <span className="text-3xl">{book.images[0]}</span>
-            ) : (
-              <BookOpen className="w-10 h-10 stroke-[1.2]" />
-            )}
-          </div>
-        )}
+          {/* Book Cover Image */}
+          {validImages.length > 0 ? (
+            <div className="relative w-full h-full flex items-center justify-center">
+              {validImages.map((src, idx) => (
+                <Image
+                  key={src + idx}
+                  src={src}
+                  alt={book.name}
+                  fill
+                  sizes="(max-width: 768px) 40vw, (max-width: 1200px) 20vw, 20vw"
+                  className={`object-contain transition-all duration-300 ease-in-out p-1 ${
+                    idx === activeIndex ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
+              {book.images?.[0] ? (
+                <span className="text-3xl">{book.images[0]}</span>
+              ) : (
+                <BookOpen className="w-10 h-10 stroke-[1.2]" />
+              )}
+            </div>
+          )}
 
-        {/* Multi-image Dots Indicator */}
-        {hasMultipleImages && (
-          <div className="absolute bottom-1 left-0 right-0 z-20 flex items-center justify-center gap-1">
-            {validImages.map((_, idx) => (
-              <span
-                key={idx}
-                className={`h-1 rounded-full transition-all duration-300 ${
-                  idx === activeIndex
-                    ? "w-2.5 bg-sky-500"
-                    : "w-1 bg-gray-300 dark:bg-slate-600"
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* HOVER OVERLAY: Add to Cart Button appears inside image section */}
-        <div className="absolute inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-[1px] z-20 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center p-3">
-          <button
-            onClick={(e) => onAddToCart(e, book)}
-            disabled={book.stock === 0}
-            className={`w-full py-2 px-2 rounded text-xs font-bold transition-all shadow-md ${
-              book.stock === 0
-                ? "bg-gray-400 text-white cursor-not-allowed"
-                : "bg-[#0095DA] hover:bg-[#0082BF] text-white active:scale-95"
-            }`}
-          >
-            {book.stock === 0 ? "Out of Stock" : "Add to Cart"}
-          </button>
+          {/* Multi-image Dots Indicator */}
+          {hasMultipleImages && (
+            <div className="absolute bottom-1 left-0 right-0 z-20 flex items-center justify-center gap-1">
+              {validImages.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`h-1 rounded-full transition-all duration-300 ${
+                    idx === activeIndex
+                      ? "w-2.5 bg-sky-500"
+                      : "w-1 bg-gray-300 dark:bg-slate-600"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      </div>
 
-      {/* Book Info Section */}
-      <div className="p-2.5 text-center flex flex-col justify-between flex-1 bg-white dark:bg-slate-800">
-        <div>
+        {/* Book Info Section */}
+        <div className="p-2.5 text-center flex flex-col justify-center flex-1 bg-white dark:bg-slate-800 transition-opacity duration-300">
           <Link href={`/products/${book.id}`} className="block">
-            <h3 className="text-xs font-medium text-gray-800 dark:text-gray-100 line-clamp-1 hover:text-[#0095DA] transition-colors">
+            <h3 className="text-xs font-semibold text-gray-800 dark:text-gray-100 line-clamp-1 hover:text-[#0095DA] transition-colors">
               {book.name}
             </h3>
           </Link>
@@ -254,7 +241,7 @@ function BookCard({
           </p>
 
           {/* Stock Status */}
-          <p className="text-[10px] text-emerald-500 font-medium mt-0.5">
+          <p className="text-[10px] text-emerald-500 font-medium mt-1">
             {book.stock === 0 ? (
               <span className="text-red-500">Out of Stock</span>
             ) : (
@@ -274,13 +261,31 @@ function BookCard({
             </span>
           </div>
         </div>
+
+        {/* ROKOMARI INNER SHADOW / LIGHT OVERLAY ON HOVER */}
+        <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-[0.5px] z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+        {/* HOVER ADD TO CART BUTTON (Appears Over Image Area) */}
+        <div className="absolute top-[28%] inset-x-3 z-30 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center pointer-events-auto">
+          <button
+            onClick={(e) => onAddToCart(e, book)}
+            disabled={book.stock === 0}
+            className={`w-full py-2 px-2 rounded text-xs font-bold shadow-md transition-all active:scale-95 ${
+              book.stock === 0
+                ? "bg-gray-400 text-white cursor-not-allowed"
+                : "bg-[#0095DA] hover:bg-[#0082BF] text-white"
+            }`}
+          >
+            {book.stock === 0 ? "Out of Stock" : "Add to Cart"}
+          </button>
+        </div>
       </div>
 
-      {/* HOVER BOTTOM FOOTER: View Details Link only pops up when HOVERED */}
-      <div className="max-h-0 opacity-0 overflow-hidden group-hover:max-h-12 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+      {/* FIXED BOTTOM VIEW DETAILS FOOTER (Height is fixed, visible on Hover) */}
+      <div className="h-9 w-full z-30 bg-[#F1F3F6] dark:bg-slate-700/60 border-t border-gray-100 dark:border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
         <Link
           href={`/products/${book.id}`}
-          className="w-full py-2 bg-[#F1F3F6] hover:bg-[#E5E8ED] dark:bg-slate-700/60 dark:hover:bg-slate-700 text-[#0095DA] dark:text-sky-400 text-[11px] font-semibold text-center transition-colors border-t border-gray-100 dark:border-slate-700 block"
+          className="w-full h-full text-[#0095DA] dark:text-sky-400 text-[11px] font-semibold text-center flex items-center justify-center hover:underline"
         >
           View Details
         </Link>
@@ -288,8 +293,6 @@ function BookCard({
     </div>
   );
 }
-
-
 
 
 
