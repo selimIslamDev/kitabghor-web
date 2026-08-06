@@ -25,12 +25,44 @@ export default function ProductDetailClient({ id }: { id: string }) {
   const [wishlisted, setWishlisted] = useState(false);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">("description");
 
+  // Image Zoom States (Rokomari style)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showZoom, setShowZoom] = useState(false);
+  const [lensPos, setLensPos] = useState({ x: 0, y: 0 });
+  const [bgPos, setBgPos] = useState({ x: 0, y: 0 });
+
   const { data: product, isLoading } = useProduct(id);
   const { data: reviewData } = useProductReviews(id);
   const { addItem } = useCartWithAuth();
   const addToWishlist = useAddToWishlist();
 
   const reviews: Review[] = reviewData?.data || [];
+
+  const mainImage = selectedImage || product?.images?.[0];
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - left;
+    const y = e.clientY - top;
+
+    // Lens dimensions
+    const lensSize = 120;
+    let lensX = x - lensSize / 2;
+    let lensY = y - lensSize / 2;
+
+    // Boundaries
+    if (lensX < 0) lensX = 0;
+    if (lensY < 0) lensY = 0;
+    if (lensX > width - lensSize) lensX = width - lensSize;
+    if (lensY > height - lensSize) lensY = height - lensSize;
+
+    // Percentages for zoomed background
+    const bgX = (lensX / (width - lensSize)) * 100;
+    const bgY = (lensY / (height - lensSize)) * 100;
+
+    setLensPos({ x: lensX, y: lensY });
+    setBgPos({ x: bgX, y: bgY });
+  };
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -103,46 +135,62 @@ export default function ProductDetailClient({ id }: { id: string }) {
       </Link>
 
       {/* Product Main */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-        {/* Image with Hover / Zoom Effect */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 relative">
+        {/* Rokomari Style Zoom Lens Container */}
         <div>
           <div 
-            className="bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl aspect-square flex items-center justify-center relative overflow-hidden border border-gray-100 dark:border-slate-700 group cursor-crosshair"
-            onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = ((e.clientX - rect.left) / rect.width) * 100;
-              const y = ((e.clientY - rect.top) / rect.height) * 100;
-              const img = e.currentTarget.querySelector("img");
-              if (img) {
-                img.style.transformOrigin = `${x}% ${y}%`;
-              }
-            }}
+            className="bg-slate-100 dark:bg-slate-800 rounded-2xl aspect-square flex items-center justify-center relative overflow-hidden border border-gray-100 dark:border-slate-700 select-none cursor-crosshair"
+            onMouseEnter={() => setShowZoom(true)}
+            onMouseLeave={() => setShowZoom(false)}
+            onMouseMove={handleMouseMove}
           >
-            {product.images?.[0] && product.images[0].startsWith("http") ? (
+            {mainImage && mainImage.startsWith("http") ? (
               <img
-                src={product.images[0]}
+                src={mainImage}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-200 ease-out group-hover:scale-150"
+                className="w-full h-full object-contain"
               />
             ) : (
-              <span className="text-9xl transition-transform duration-200 group-hover:scale-125">
-                {product.images?.[0] || (product.productType === "BOOK" ? "📚" : "🔧")}
+              <span className="text-9xl">
+                {mainImage || (product.productType === "BOOK" ? "📚" : "🔧")}
               </span>
             )}
+
+            {/* Rokomari Transparent Hover Lens */}
+            {showZoom && mainImage?.startsWith("http") && (
+              <div
+                className="absolute border-2 border-violet-500 bg-violet-500/20 pointer-events-none rounded-lg"
+                style={{
+                  width: "120px",
+                  height: "120px",
+                  left: `${lensPos.x}px`,
+                  top: `${lensPos.y}px`,
+                }}
+              />
+            )}
+
             {product.discountPrice && (
-              <div className="absolute top-4 left-4 bg-sky-500 text-white text-sm font-bold px-3 py-1 rounded-full pointer-events-none">
+              <div className="absolute top-4 left-4 bg-sky-500 text-white text-sm font-bold px-3 py-1 rounded-full pointer-events-none z-10">
                 {Math.round(((product.price - product.discountPrice) / product.price) * 100)}% OFF
               </div>
             )}
           </div>
 
-          {/* Extra Images */}
+          {/* Extra Images Thumbnails */}
           {product.images?.length > 1 && (
             <div className="flex gap-3 mt-3">
-              {product.images.slice(1).map((img: string, i: number) => (
-                <div key={i} className="w-20 h-20 rounded-xl overflow-hidden border-2 border-[var(--border)] hover:border-violet-500 transition cursor-pointer">
+              {product.images.map((img: string, i: number) => (
+                <div 
+                  key={i} 
+                  onClick={() => setSelectedImage(img)}
+                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition cursor-pointer ${
+                    (selectedImage === img || (!selectedImage && i === 0))
+                      ? "border-violet-600 shadow-md"
+                      : "border-[var(--border)] hover:border-violet-300"
+                  }`}
+                >
                   {img.startsWith("http") ? (
-                    <img src={img} alt={`${product.name} ${i + 2}`} className="w-full h-full object-cover" />
+                    <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-2xl bg-[var(--muted)]">{img}</div>
                   )}
@@ -152,145 +200,153 @@ export default function ProductDetailClient({ id }: { id: string }) {
           )}
         </div>
 
-        {/* Info */}
-        <div>
-          {/* Badges */}
-          <div className="flex items-center gap-2 mb-3 flex-wrap">
-            {product.classLevel && (
-              <span className="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-medium px-3 py-1 rounded-full">
-                {product.classLevel}
-              </span>
-            )}
-            {product.subject && (
-              <span className="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs font-medium px-3 py-1 rounded-full">
-                {product.subject}
-              </span>
-            )}
-            {product.productType && (
-              <span className="bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 text-xs font-medium px-3 py-1 rounded-full">
-                {product.productType === "BOOK" ? "📚 Book" : "🔧 Gadget"}
-              </span>
-            )}
-          </div>
+        {/* Info Column OR Rokomari Zoom Preview Overlay */}
+        <div className="relative">
+          {showZoom && mainImage?.startsWith("http") ? (
+            /* Rokomari Big Zoom View Overlay */
+            <div 
+              className="hidden lg:block absolute inset-0 z-30 bg-white dark:bg-slate-900 rounded-2xl border-2 border-violet-500 shadow-2xl overflow-hidden"
+              style={{
+                backgroundImage: `url(${mainImage})`,
+                backgroundPosition: `${bgPos.x}% ${bgPos.y}%`,
+                backgroundSize: "250%",
+                backgroundRepeat: "no-repeat"
+              }}
+            />
+          ) : null}
 
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1" style={{ fontFamily: "Poppins, sans-serif" }}>
-            {product.name}
-          </h1>
-
-          {/* Author line */}
-          {product.author && (
-            <p className="text-gray-500 dark:text-gray-400 mb-3">{product.author}</p>
-          )}
-
-          {/* Other meta info */}
-          {(product.publisher || product.edition || product.isbn || product.brand || product.model) && (
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-4 space-y-1.5">
-              {product.publisher && (
-                <p>Publisher: <span className="text-gray-700 dark:text-gray-300 font-medium">{product.publisher}</span></p>
+          {/* Regular Info Content */}
+          <div>
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
+              {product.classLevel && (
+                <span className="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-medium px-3 py-1 rounded-full">
+                  {product.classLevel}
+                </span>
               )}
-              {product.edition && (
-                <p>Edition: <span className="text-gray-700 dark:text-gray-300 font-medium">{product.edition}</span></p>
+              {product.subject && (
+                <span className="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs font-medium px-3 py-1 rounded-full">
+                  {product.subject}
+                </span>
               )}
-              {product.isbn && (
-                <p>ISBN: <span className="text-gray-700 dark:text-gray-300 font-medium font-mono">{product.isbn}</span></p>
-              )}
-              {product.brand && (
-                <p>Brand: <span className="text-gray-700 dark:text-gray-300 font-medium">{product.brand}</span></p>
-              )}
-              {product.model && (
-                <p>Model: <span className="text-gray-700 dark:text-gray-300 font-medium">{product.model}</span></p>
+              {product.productType && (
+                <span className="bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 text-xs font-medium px-3 py-1 rounded-full">
+                  {product.productType === "BOOK" ? "📚 Book" : "🔧 Gadget"}
+                </span>
               )}
             </div>
-          )}
 
-          {/* Rating */}
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex items-center gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className={`w-4 h-4 ${i < rating ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200 dark:fill-slate-700 dark:text-slate-700"}`} />
-              ))}
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1" style={{ fontFamily: "Poppins, sans-serif" }}>
+              {product.name}
+            </h1>
+
+            {product.author && (
+              <p className="text-gray-500 dark:text-gray-400 mb-3">{product.author}</p>
+            )}
+
+            {(product.publisher || product.edition || product.isbn || product.brand || product.model) && (
+              <div className="text-sm text-gray-500 dark:text-gray-400 mb-4 space-y-1.5">
+                {product.publisher && (
+                  <p>Publisher: <span className="text-gray-700 dark:text-gray-300 font-medium">{product.publisher}</span></p>
+                )}
+                {product.edition && (
+                  <p>Edition: <span className="text-gray-700 dark:text-gray-300 font-medium">{product.edition}</span></p>
+                )}
+                {product.isbn && (
+                  <p>ISBN: <span className="text-gray-700 dark:text-gray-300 font-medium font-mono">{product.isbn}</span></p>
+                )}
+                {product.brand && (
+                  <p>Brand: <span className="text-gray-700 dark:text-gray-300 font-medium">{product.brand}</span></p>
+                )}
+                {product.model && (
+                  <p>Model: <span className="text-gray-700 dark:text-gray-300 font-medium">{product.model}</span></p>
+                )}
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className={`w-4 h-4 ${i < rating ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200 dark:fill-slate-700 dark:text-slate-700"}`} />
+                ))}
+              </div>
+              <span className="text-gray-500 dark:text-gray-400 text-sm">({reviews.length} reviews)</span>
             </div>
-            <span className="text-gray-500 dark:text-gray-400 text-sm">({reviews.length} reviews)</span>
-          </div>
 
-          {/* Price */}
-          <div className="flex items-baseline gap-3 mb-3">
-            <span className="text-4xl font-extrabold text-violet-600 dark:text-violet-400">
-              ৳{(product.discountPrice || product.price).toLocaleString()}
-            </span>
-            {product.discountPrice && (
-              <span className="text-lg text-gray-400 line-through">৳{product.price.toLocaleString()}</span>
-            )}
-          </div>
-
-          {/* Stock */}
-          <div className="flex items-center gap-2 mb-5">
-            {product.stock > 0 ? (
-              <span className="text-sm text-green-600 dark:text-green-400 font-medium flex items-center gap-1">
-                <CheckCircle className="w-4 h-4" />
-                In Stock ({product.stock} available)
+            <div className="flex items-baseline gap-3 mb-3">
+              <span className="text-4xl font-extrabold text-violet-600 dark:text-violet-400">
+                ৳{(product.discountPrice || product.price).toLocaleString()}
               </span>
-            ) : (
-              <span className="text-sm text-red-500 font-medium">Out of Stock</span>
-            )}
-          </div>
+              {product.discountPrice && (
+                <span className="text-lg text-gray-400 line-through">৳{product.price.toLocaleString()}</span>
+              )}
+            </div>
 
-          {/* Quantity + Add to Cart + Wishlist */}
-          <div className="flex items-center gap-3 mb-6 flex-wrap">
-            <div className="flex items-center gap-3 bg-[var(--muted)] rounded-full px-2 py-1">
+            <div className="flex items-center gap-2 mb-5">
+              {product.stock > 0 ? (
+                <span className="text-sm text-green-600 dark:text-green-400 font-medium flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4" />
+                  In Stock ({product.stock} available)
+                </span>
+              ) : (
+                <span className="text-sm text-red-500 font-medium">Out of Stock</span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3 mb-6 flex-wrap">
+              <div className="flex items-center gap-3 bg-[var(--muted)] rounded-full px-2 py-1">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white dark:hover:bg-slate-700 transition"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="w-6 text-center font-semibold">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  disabled={quantity >= product.stock}
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white dark:hover:bg-slate-700 transition disabled:opacity-40"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+
               <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white dark:hover:bg-slate-700 transition"
+                onClick={handleAddToCart}
+                disabled={product.stock === 0}
+                className="flex-1 min-w-[180px] flex items-center justify-center gap-2 py-3.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white rounded-full font-semibold transition"
               >
-                <Minus className="w-4 h-4" />
+                <ShoppingCart className="w-5 h-5" />
+                {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
               </button>
-              <span className="w-6 text-center font-semibold">{quantity}</span>
+
               <button
-                onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                disabled={quantity >= product.stock}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white dark:hover:bg-slate-700 transition disabled:opacity-40"
+                onClick={handleWishlist}
+                className={`p-3.5 rounded-full border-2 transition ${wishlisted
+                  ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20 text-violet-600"
+                  : "border-[var(--border)] hover:border-violet-300 text-gray-400 hover:text-violet-500"
+                }`}
               >
-                <Plus className="w-4 h-4" />
+                <Heart className={`w-5 h-5 ${wishlisted ? "fill-current" : ""}`} />
               </button>
             </div>
 
-            <button
-              onClick={handleAddToCart}
-              disabled={product.stock === 0}
-              className="flex-1 min-w-[180px] flex items-center justify-center gap-2 py-3.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white rounded-full font-semibold transition"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
-            </button>
-
-            <button
-              onClick={handleWishlist}
-              className={`p-3.5 rounded-full border-2 transition ${wishlisted
-                ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20 text-violet-600"
-                : "border-[var(--border)] hover:border-violet-300 text-gray-400 hover:text-violet-500"
-              }`}
-            >
-              <Heart className={`w-5 h-5 ${wishlisted ? "fill-current" : ""}`} />
-            </button>
-          </div>
-
-          {/* Trust Badge box */}
-          <div className="grid grid-cols-2 gap-3 p-4 bg-[var(--muted)] rounded-2xl border border-[var(--border)]">
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-              <Truck className="w-4 h-4 text-violet-500" />
-              Fast Delivery
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-              <RefreshCw className="w-4 h-4 text-violet-500" />
-              Easy Returns
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-              <CheckCircle className="w-4 h-4 text-violet-500" />
-              100% Original
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-              <ShieldCheck className="w-4 h-4 text-violet-500" />
-              Secured Payment
+            <div className="grid grid-cols-2 gap-3 p-4 bg-[var(--muted)] rounded-2xl border border-[var(--border)]">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <Truck className="w-4 h-4 text-violet-500" />
+                Fast Delivery
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <RefreshCw className="w-4 h-4 text-violet-500" />
+                Easy Returns
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <CheckCircle className="w-4 h-4 text-violet-500" />
+                100% Original
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <ShieldCheck className="w-4 h-4 text-violet-500" />
+                Secured Payment
+              </div>
             </div>
           </div>
         </div>
@@ -313,7 +369,6 @@ export default function ProductDetailClient({ id }: { id: string }) {
           ))}
         </div>
 
-        {/* Description */}
         {activeTab === "description" && (
           <div className="prose dark:prose-invert max-w-none">
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -322,13 +377,10 @@ export default function ProductDetailClient({ id }: { id: string }) {
           </div>
         )}
 
-        {/* Reviews */}
         {activeTab === "reviews" && (
           <div className="space-y-4">
-            {/* Review Form */}
             <ReviewForm productId={id} />
 
-            {/* Reviews List */}
             {reviews.length === 0 ? (
               <div className="text-center py-8">
                 <span className="text-4xl mb-3 block">⭐</span>
@@ -379,15 +431,10 @@ export default function ProductDetailClient({ id }: { id: string }) {
         )}
       </div>
 
-      {/* Related Products */}
       <RelatedProducts productId={id} />
     </div>
   );
 }
-
-
-
-
 
 
 
