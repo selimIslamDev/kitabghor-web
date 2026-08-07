@@ -147,7 +147,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
         {/* Image Column */}
         <div>
           <div
-            className="bg-white dark:bg-slate-900 rounded-2xl aspect-square flex items-center justify-center relative overflow-hidden border border-gray-200 dark:border-slate-700 shadow-sm select-none cursor-crosshair"
+            className="bg-gray-50 dark:bg-slate-900/50 rounded-2xl h-[420px] sm:h-[480px] flex items-center justify-center relative overflow-hidden border border-gray-200 dark:border-slate-800 shadow-sm select-none cursor-crosshair p-4"
             onMouseEnter={() => setShowZoom(true)}
             onMouseLeave={() => setShowZoom(false)}
             onMouseMove={handleMouseMove}
@@ -156,15 +156,15 @@ export default function ProductDetailClient({ id }: { id: string }) {
               <img
                 src={mainImage}
                 alt={product.name}
-                className="w-full h-full object-contain p-6"
+                className="max-h-full max-w-full object-contain rounded-lg drop-shadow-md hover:scale-105 transition-transform duration-300"
               />
             ) : (
-              <span className="text-9xl">
+              <span className="text-8xl">
                 {mainImage || (product.productType === "BOOK" ? "📚" : "🔧")}
               </span>
             )}
 
-            {/* Rokomari-style Hover Zoom Lens — 100x150 */}
+            {/* Rokomari-style Hover Zoom Lens */}
             {showZoom && mainImage?.startsWith("http") && (
               <div
                 className="absolute border-2 border-violet-500 bg-violet-500/20 pointer-events-none rounded-md"
@@ -194,28 +194,28 @@ export default function ProductDetailClient({ id }: { id: string }) {
 
           {/* Thumbnails */}
           {product.images?.length > 1 && (
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-4 justify-center sm:justify-start">
               {product.images.map((img: string, i: number) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(img)}
-                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition cursor-pointer bg-white dark:bg-slate-900 ${
+                  className={`w-16 h-20 rounded-lg overflow-hidden border-2 transition cursor-pointer bg-white dark:bg-slate-900 p-1 ${
                     (selectedImage === img || (!selectedImage && i === 0))
                       ? "border-violet-600 shadow-md ring-2 ring-violet-100 dark:ring-violet-900/40"
                       : "border-gray-200 dark:border-slate-700 hover:border-violet-300"
                   }`}
                 >
                   {img.startsWith("http") ? (
-                    <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-contain p-1.5" />
+                    <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-contain rounded" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-2xl bg-[var(--muted)]">{img}</div>
+                    <div className="w-full h-full flex items-center justify-center text-xl bg-[var(--muted)]">{img}</div>
                   )}
                 </button>
               ))}
             </div>
           )}
 
-          {/* Trust Badges — moved under image on desktop for balance */}
+          {/* Trust Badges */}
           <div className="hidden lg:grid grid-cols-2 gap-3 mt-6 p-4 bg-[var(--muted)] rounded-2xl border border-[var(--border)]">
             <div className="flex items-center gap-2.5 text-sm text-gray-600 dark:text-gray-300">
               <div className="w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center shrink-0">
@@ -405,7 +405,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
               </button>
             </div>
 
-            {/* Trust Badges — mobile only (desktop version sits under image) */}
+            {/* Trust Badges — mobile only */}
             <div className="grid lg:hidden grid-cols-2 gap-3 mt-5 p-4 bg-[var(--muted)] rounded-2xl border border-[var(--border)]">
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <Truck className="w-4 h-4 text-violet-500" />
@@ -511,9 +511,6 @@ export default function ProductDetailClient({ id }: { id: string }) {
     </div>
   );
 }
-
-
-
 
 
 
