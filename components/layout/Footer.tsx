@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { BookOpen, Share2, Globe, Mail, Phone, MapPin } from "lucide-react";
 
@@ -27,7 +29,6 @@ export default function Footer() {
               Your one-stop shop for academic books and gadgets — from Class 8 to University.
             </p>
 
-            {/* Contact */}
             <div className="space-y-2 text-sm text-[#6b6358]">
               <a
                 href="mailto:support@kitabghor.com"
@@ -124,8 +125,6 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-white/[0.06] mt-10 pt-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-
-            {/* Payment methods */}
             <div className="flex items-center gap-2 flex-wrap justify-center">
               <span className="text-[11px] text-[#6b6358] mr-1">We accept</span>
               {["bKash", "Nagad", "Card", "COD"].map((method) => (
@@ -138,7 +137,6 @@ export default function Footer() {
               ))}
             </div>
 
-            {/* Social — no border, clean hover */}
             <div className="flex gap-1.5">
               <a
                 href="#"
