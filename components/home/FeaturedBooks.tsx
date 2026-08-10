@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { BookOpen, Sparkles, ArrowRight, ShoppingCart } from "lucide-react";
+import { BookOpen, Sparkles, ArrowRight } from "lucide-react";
 import { useCartWithAuth, useFeaturedProducts } from "@/lib/hooks";
 import toast from "react-hot-toast";
 
@@ -49,64 +49,74 @@ export default function FeaturedBooks() {
   };
 
   return (
-    <section className="py-16 bg-[#0c0b09]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section className="py-12 relative overflow-hidden bg-[#0c0b09]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-7 gap-4 pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div>
-            <div className="inline-flex items-center gap-1.5 text-[#c9a227] text-[11px] font-semibold tracking-[0.08em] uppercase mb-3">
+            <div
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-2"
+              style={{ background: "rgba(201,162,39,0.1)", color: "#d4b84a", border: "1px solid rgba(201,162,39,0.2)" }}
+            >
               <Sparkles className="w-3.5 h-3.5" />
-              Trending Collection
+              <span>Trending Collection</span>
             </div>
-            <h2 className="text-2xl sm:text-[1.75rem] font-semibold text-[#f5f0e8] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight" style={{ color: "#f5f0e8" }}>
               Popular Books
             </h2>
-            <p className="text-[#6b6358] text-sm mt-1.5">
+            <p className="text-sm mt-1" style={{ color: "#a89f8f" }}>
               Most loved and highly recommended books by students
             </p>
           </div>
 
           <Link
             href="/products?type=BOOK"
-            className="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-[#c9a227] hover:text-[#d4b84a] transition group"
+            className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 group"
+            style={{ color: "#d4b84a", background: "rgba(201,162,39,0.08)", border: "1px solid rgba(201,162,39,0.2)" }}
           >
-            View All Books
+            <span>View All Books</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 
-        {/* Skeleton */}
+        {/* Skeleton Loading */}
         {isLoading && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-[1.15rem]">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="aspect-[3/4] rounded-2xl bg-[#141210]" />
-                <div className="mt-4 space-y-2">
-                  <div className="h-3.5 bg-[#141210] rounded w-4/5" />
-                  <div className="h-3 bg-[#141210] rounded w-1/2" />
-                  <div className="h-4 bg-[#141210] rounded w-1/3 mt-3" />
+              <div key={i} className="rounded-xl overflow-hidden animate-pulse" style={{ background: "#141210", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="h-[11.5rem]" style={{ background: "rgba(255,255,255,0.04)" }} />
+                <div className="p-3 space-y-2">
+                  <div className="h-3 rounded w-full" style={{ background: "rgba(255,255,255,0.06)" }} />
+                  <div className="h-2.5 rounded w-2/3" style={{ background: "rgba(255,255,255,0.06)" }} />
+                  <div className="h-2.5 rounded w-1/3" style={{ background: "rgba(255,255,255,0.06)" }} />
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Grid */}
+        {/* Product Grid */}
         {!isLoading && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-[1.15rem]">
             {books.length > 0 ? (
               books.map((book) => (
                 <BookCard key={book.id} book={book} onAddToCart={handleAddToCart} />
               ))
             ) : (
-              <div className="col-span-full text-center py-16 rounded-2xl border border-dashed border-white/[0.08]">
-                <BookOpen className="w-10 h-10 text-[#3a342c] mx-auto mb-3" />
-                <p className="text-[#6b6358] text-sm">No books available at the moment.</p>
+              <div
+                className="col-span-full text-center py-12 rounded-2xl"
+                style={{ background: "#141210", border: "1px dashed rgba(255,255,255,0.08)" }}
+              >
+                <BookOpen className="w-10 h-10 mx-auto mb-2" style={{ color: "#6b6358" }} />
+                <p className="text-sm font-medium" style={{ color: "#a89f8f" }}>
+                  No books available at the moment.
+                </p>
               </div>
             )}
           </div>
         )}
+
       </div>
     </section>
   );
@@ -156,115 +166,163 @@ function BookCard({
     <div
       onMouseEnter={startCycling}
       onMouseLeave={stopCycling}
-      className="group relative"
+      className="group rounded-xl overflow-hidden flex flex-col relative transition-colors duration-200"
+      style={{ background: "#141210", border: "1px solid rgba(255,255,255,0.06)" }}
     >
-      {/* Cover */}
-      <Link href={`/products/${book.id}`} className="block relative">
-        <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#141210] border border-white/[0.06] group-hover:border-[#c9a227]/25 transition-all duration-300">
+      {/* Image Area */}
+      <div
+        className="relative flex items-center justify-center overflow-hidden"
+        style={{ background: "rgba(12,11,9,0.5)", padding: "0.6rem", height: "11.5rem" }}
+      >
+        {/* Gold Discount Badge */}
+        {isDiscounted && (
+          <div
+            className="absolute z-20 flex flex-col items-center justify-center font-bold leading-tight"
+            style={{
+              top: "0.4rem",
+              left: "0.4rem",
+              width: "2rem",
+              height: "2rem",
+              borderRadius: "50%",
+              background: "#c9a227",
+              color: "#0c0b09",
+              fontSize: "8px",
+            }}
+          >
+            <span>{discountPercent}%</span>
+            <span style={{ fontSize: "6px", fontWeight: 500, textTransform: "uppercase" }}>OFF</span>
+          </div>
+        )}
 
-          {/* Discount */}
-          {isDiscounted && (
-            <span className="absolute top-3 left-3 z-20 bg-[#c9a227] text-[#0c0b09] text-[10px] font-bold px-2 py-1 rounded-md">
-              -{discountPercent}%
+        {/* Stock Status Overlay */}
+        {book.stock === 0 && (
+          <div className="absolute inset-0 z-30 backdrop-blur-[1px] flex items-center justify-center" style={{ background: "rgba(12,11,9,0.75)" }}>
+            <span className="text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider" style={{ background: "#dc2626" }}>
+              Out of Stock
             </span>
-          )}
+          </div>
+        )}
 
-          {/* Out of stock */}
-          {book.stock === 0 && (
-            <div className="absolute inset-0 z-30 bg-[#0c0b09]/75 backdrop-blur-[2px] flex items-center justify-center">
-              <span className="text-[11px] font-semibold text-rose-400 uppercase tracking-wider">
-                Out of Stock
-              </span>
-            </div>
-          )}
+        {/* Book Cover Image */}
+        {validImages.length > 0 ? (
+          <div className="relative w-full h-full flex items-center justify-center">
+            {validImages.map((src, idx) => (
+              <Image
+                key={src + idx}
+                src={src}
+                alt={book.name}
+                fill
+                sizes="(max-width: 768px) 40vw, (max-width: 1200px) 20vw, 20vw"
+                className={`object-contain transition-all duration-300 ease-in-out p-1 ${
+                  idx === activeIndex ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center" style={{ color: "#6b6358" }}>
+            {book.images?.[0] ? (
+              <span className="text-3xl">{book.images[0]}</span>
+            ) : (
+              <BookOpen className="w-10 h-10 stroke-[1.2]" />
+            )}
+          </div>
+        )}
 
-          {/* Image */}
-          {validImages.length > 0 ? (
-            <div className="absolute inset-0">
-              {validImages.map((src, idx) => (
-                <Image
-                  key={src + idx}
-                  src={src}
-                  alt={book.name}
-                  fill
-                  sizes="(max-width: 768px) 45vw, 22vw"
-                  className={`object-cover transition-opacity duration-500 ${
-                    idx === activeIndex ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-[#3a342c]">
-              {book.images?.[0] ? (
-                <span className="text-4xl">{book.images[0]}</span>
-              ) : (
-                <BookOpen className="w-12 h-12 stroke-[1]" />
-              )}
-            </div>
-          )}
+        {/* Multi-image Dots Indicator */}
+        {hasMultipleImages && (
+          <div className="absolute bottom-1 left-0 right-0 z-20 flex items-center justify-center gap-1">
+            {validImages.map((_, idx) => (
+              <span
+                key={idx}
+                className="h-1 rounded-full transition-all duration-300"
+                style={{
+                  width: idx === activeIndex ? "0.625rem" : "0.25rem",
+                  background: idx === activeIndex ? "#c9a227" : "rgba(255,255,255,0.2)",
+                }}
+              />
+            ))}
+          </div>
+        )}
 
-          {/* Gradient overlay at bottom of cover */}
-          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#0c0b09]/80 to-transparent pointer-events-none" />
-
-          {/* Dots */}
-          {hasMultipleImages && (
-            <div className="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-1">
-              {validImages.map((_, idx) => (
-                <span
-                  key={idx}
-                  className={`h-1 rounded-full transition-all duration-300 ${
-                    idx === activeIndex ? "w-3 bg-[#c9a227]" : "w-1 bg-white/30"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
+        {/* Hover Overlay + Add to Cart */}
+        <div
+          className="absolute inset-0 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
+          style={{ background: "rgba(12,11,9,0.55)" }}
+        >
+          <button
+            onClick={(e) => onAddToCart(e, book)}
+            disabled={book.stock === 0}
+            className="font-semibold transition-all active:scale-95"
+            style={{
+              padding: "0.4rem 0.85rem",
+              borderRadius: "0.4rem",
+              fontSize: "0.7rem",
+              background: book.stock === 0 ? "#4a463f" : "#c9a227",
+              color: book.stock === 0 ? "#a89f8f" : "#0c0b09",
+              cursor: book.stock === 0 ? "not-allowed" : "pointer",
+              boxShadow: "0 3px 10px rgba(0,0,0,0.3)",
+            }}
+          >
+            {book.stock === 0 ? "Out of Stock" : "Add to Cart"}
+          </button>
         </div>
-      </Link>
+      </div>
 
-      {/* Info below cover */}
-      <div className="pt-3.5 px-0.5">
-        <Link href={`/products/${book.id}`}>
-          <h3 className="text-[13px] font-medium text-[#f5f0e8] line-clamp-1 group-hover:text-[#c9a227] transition">
+      {/* Book Info */}
+      <div className="text-center" style={{ padding: "0.55rem 0.6rem 0.5rem" }}>
+        <Link href={`/products/${book.id}`} className="block">
+          <h3
+            className="font-semibold whitespace-nowrap overflow-hidden text-ellipsis transition-colors"
+            style={{ fontSize: "0.72rem", color: "#f5f0e8" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#c9a227")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#f5f0e8")}
+          >
             {book.name}
           </h3>
         </Link>
 
-        <p className="text-[11px] text-[#6b6358] mt-0.5 line-clamp-1">
+        <p className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ fontSize: "10px", color: "#6b6358", marginTop: "1px" }}>
           {book.author || "Unknown Author"}
         </p>
 
-        <div className="flex items-center justify-between mt-2.5">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-sm font-semibold text-[#c9a227]">
-              ৳{activePrice.toLocaleString()}
-            </span>
-            {isDiscounted && (
-              <span className="text-[11px] text-[#6b6358] line-through">
-                ৳{book.price.toLocaleString()}
-              </span>
-            )}
-          </div>
+        <p style={{ fontSize: "10px", fontWeight: 500, marginTop: "3px", color: book.stock === 0 ? "#f87171" : "rgba(52,211,153,0.9)" }}>
+          {book.stock === 0 ? "Out of Stock" : "In Stock"}
+        </p>
 
-          {/* Quick add button */}
-          <button
-            onClick={(e) => onAddToCart(e, book)}
-            disabled={book.stock === 0}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
-              book.stock === 0
-                ? "text-[#3a342c] cursor-not-allowed"
-                : "text-[#6b6358] hover:text-[#0c0b09] hover:bg-[#c9a227]"
-            }`}
-            aria-label="Add to cart"
-          >
-            <ShoppingCart className="w-3.5 h-3.5" />
-          </button>
+        <div className="flex items-center justify-center gap-[0.35rem]" style={{ marginTop: "4px" }}>
+          {isDiscounted && (
+            <span style={{ fontSize: "10px", color: "#6b6358", textDecoration: "line-through" }}>
+              ৳{book.price}
+            </span>
+          )}
+          <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "#c9a227" }}>
+            ৳{activePrice}
+          </span>
         </div>
       </div>
+
+      {/* View Details Footer */}
+      <Link
+        href={`/products/${book.id}`}
+        className="w-full flex items-center justify-center font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:underline"
+        style={{
+          height: "2rem",
+          borderTop: "1px solid rgba(255,255,255,0.05)",
+          background: "rgba(12,11,9,0.4)",
+          fontSize: "11px",
+          color: "#c9a227",
+        }}
+      >
+        View Details
+      </Link>
     </div>
   );
 }
+
+
+
+
 
 
 
