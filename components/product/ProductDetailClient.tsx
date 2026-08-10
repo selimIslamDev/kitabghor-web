@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   ShoppingCart, Star, Heart, ArrowLeft,
-  Plus, Minus, CheckCircle, Truck, RefreshCw, ShieldCheck, BadgeCheck,
+  Plus, Minus, CheckCircle, Truck, RefreshCw, ShieldCheck,
   ChevronDown, ChevronUp, Share2, BookOpen
 } from "lucide-react";
 import Link from "next/link";
@@ -28,6 +28,23 @@ const isValidMeta = (val?: string | null) => {
   return val && val.trim() !== "" && val.trim() !== "$$";
 };
 
+// Design tokens — Nirjhar Books style (single dark-gold theme, no light/dark toggle)
+const theme = {
+  "--bg": "#0c0b09",
+  "--bg-elevated": "#161411",
+  "--bg-card": "#1c1915",
+  "--bg-soft": "#221e19",
+  "--gold": "#c9a227",
+  "--gold-soft": "#d4b84a",
+  "--gold-dim": "#8a7120",
+  "--text": "#f5f0e8",
+  "--text-muted": "#a89f8f",
+  "--text-dim": "#6b6358",
+  "--border": "rgba(201, 162, 39, 0.18)",
+  "--border-strong": "rgba(201, 162, 39, 0.35)",
+  "--success": "#4a9b6e",
+} as React.CSSProperties;
+
 export default function ProductDetailClient({ id }: { id: string }) {
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
@@ -49,15 +66,8 @@ export default function ProductDetailClient({ id }: { id: string }) {
   const reviews: Review[] = reviewData?.data || [];
   const mainImage = selectedImage || product?.images?.[0];
 
-  // Sticky bar on scroll
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 400) {
-        setShowStickyBar(true);
-      } else {
-        setShowStickyBar(false);
-      }
-    };
+    const handleScroll = () => setShowStickyBar(window.scrollY > 400);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -105,15 +115,17 @@ export default function ProductDetailClient({ id }: { id: string }) {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-pulse">
-          <div className="lg:col-span-5 h-[450px] bg-[#161411] rounded-2xl border border-[#c9a227]/15" />
-          <div className="lg:col-span-7 space-y-4">
-            <div className="h-5 bg-[#161411] rounded w-1/4" />
-            <div className="h-10 bg-[#161411] rounded w-3/4" />
-            <div className="h-4 bg-[#161411] rounded w-1/3" />
-            <div className="h-28 bg-[#161411] rounded-2xl" />
-            <div className="h-12 bg-[#161411] rounded-xl w-1/2" />
+      <div style={theme} className="min-h-screen bg-[var(--bg)]">
+        <div className="max-w-[1280px] mx-auto px-7 py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-pulse">
+            <div className="lg:col-span-5 h-[480px] bg-[var(--bg-elevated)] rounded-[20px] border border-[var(--border)]" />
+            <div className="lg:col-span-7 space-y-4">
+              <div className="h-5 bg-[var(--bg-elevated)] rounded w-1/4" />
+              <div className="h-12 bg-[var(--bg-elevated)] rounded w-3/4" />
+              <div className="h-4 bg-[var(--bg-elevated)] rounded w-1/3" />
+              <div className="h-24 bg-[var(--bg-elevated)] rounded-2xl" />
+              <div className="h-12 bg-[var(--bg-elevated)] rounded-full w-1/2" />
+            </div>
           </div>
         </div>
       </div>
@@ -122,16 +134,15 @@ export default function ProductDetailClient({ id }: { id: string }) {
 
   if (!product) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-24 text-center">
-        <span className="text-6xl mb-4 block">📭</span>
-        <h2 className="text-2xl font-semibold text-[#f5f0e8] mb-2">Product Not Found</h2>
-        <p className="text-[#a89f8f] mb-6 text-sm">The product you are looking for might have been removed or is unavailable.</p>
-        <Link
-          href="/products"
-          className="inline-block px-6 py-3 bg-[#c9a227] hover:bg-[#d4b84a] text-[#0c0b09] rounded-xl font-semibold transition shadow-lg shadow-[#c9a227]/20"
-        >
-          Back to Shop
-        </Link>
+      <div style={theme} className="min-h-screen bg-[var(--bg)]">
+        <div className="max-w-[1280px] mx-auto px-7 py-24 text-center">
+          <span className="text-6xl mb-4 block">📭</span>
+          <h2 className="text-2xl font-bold text-[var(--text)] mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Product Not Found</h2>
+          <p className="text-[var(--text-muted)] mb-6 text-sm">The product you are looking for might have been removed or is unavailable.</p>
+          <Link href="/products" className="inline-block px-6 py-3 rounded-[10px] font-semibold text-[#0c0b09]" style={{ background: "linear-gradient(135deg, var(--gold) 0%, #b8921f 100%)" }}>
+            Back to Shop
+          </Link>
+        </div>
       </div>
     );
   }
@@ -148,466 +159,484 @@ export default function ProductDetailClient({ id }: { id: string }) {
   const hasValidMeta = isValidMeta(product.publisher) || isValidMeta(product.edition) || isValidMeta(product.isbn) || isValidMeta(product.brand) || isValidMeta(product.model);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 selection:bg-[#c9a227] selection:text-[#0c0b09]">
-      
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-medium text-[#6b6358] mb-5">
-        <Link href="/" className="hover:text-[#c9a227] transition">Home</Link>
-        <span className="opacity-50">/</span>
-        <Link href="/products" className="hover:text-[#c9a227] transition">Shop</Link>
-        <span className="opacity-50">/</span>
-        <span className="text-[#f5f0e8] font-medium truncate max-w-[200px]">{product.name}</span>
-      </div>
+    <div style={theme} className="min-h-screen bg-[var(--bg)] text-[var(--text)] relative">
+      {/* Fonts */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-      <Link
-        href="/products"
-        className="inline-flex items-center gap-2 text-xs font-semibold text-[#c9a227] hover:gap-3 transition-all mb-7 group"
-      >
-        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-        Back to Products
-      </Link>
+      {/* subtle grain overlay */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")",
+        }}
+      />
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 mb-16 relative">
-        
-        {/* Left: Gallery */}
-        <div className="lg:col-span-5">
-          <div
-            className="bg-gradient-to-b from-[#1c1915] to-[#161411] rounded-2xl h-[420px] sm:h-[480px] flex items-center justify-center relative border border-[#c9a227]/15 shadow-[0_24px_64px_rgba(0,0,0,0.4)] select-none cursor-crosshair p-8 group"
-            onMouseEnter={() => setShowZoom(true)}
-            onMouseLeave={() => setShowZoom(false)}
-            onMouseMove={handleMouseMove}
-          >
-            {mainImage && mainImage.startsWith("http") ? (
-              <img
-                src={mainImage}
-                alt={product.name}
-                className="max-h-full max-w-full object-contain rounded-lg shadow-[0_20px_40px_-8px_rgba(0,0,0,0.55)] transition-transform duration-300 group-hover:scale-[1.02]"
-              />
-            ) : (
-              <span className="text-8xl filter drop-shadow-lg">
-                {mainImage || (product.productType === "BOOK" ? "📚" : "🔧")}
-              </span>
-            )}
+      <div className="max-w-[1280px] mx-auto px-5 sm:px-7 py-8 relative z-[1]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
 
-            {/* Hover Lens */}
-            {showZoom && mainImage?.startsWith("http") && (
-              <div
-                className="absolute border-2 border-[#c9a227] bg-[#c9a227]/10 backdrop-blur-[1px] pointer-events-none rounded-lg shadow-xl"
-                style={{
-                  width: `${LENS_WIDTH}px`,
-                  height: `${LENS_HEIGHT}px`,
-                  left: `${lensPos.x}px`,
-                  top: `${lensPos.y}px`,
-                }}
-              />
-            )}
-
-            {/* Discount Badge */}
-            {product.discountPrice && (
-              <div className="absolute top-4 left-4 bg-gradient-to-r from-[#c9a227] to-[#b8921f] text-[#0c0b09] text-[11px] font-bold px-3 py-1.5 rounded-lg z-10 shadow-lg shadow-[#c9a227]/25 uppercase tracking-wider">
-                {discountPercent}% OFF
-              </div>
-            )}
-
-            {/* Out of Stock Overlay */}
-            {product.stock === 0 && (
-              <div className="absolute inset-0 z-20 bg-[#0c0b09]/70 backdrop-blur-md flex items-center justify-center rounded-2xl">
-                <span className="bg-rose-600 text-white text-xs font-bold px-5 py-2 rounded-full uppercase tracking-widest shadow-xl">
-                  Out of Stock
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Thumbnails */}
-          {product.images?.length > 1 && (
-            <div className="flex gap-3 mt-4 overflow-x-auto pb-2 justify-center sm:justify-start">
-              {product.images.map((img: string, i: number) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedImage(img)}
-                  className={`w-16 h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer bg-[#161411] p-1 shrink-0 ${
-                    (selectedImage === img || (!selectedImage && i === 0))
-                      ? "border-[#c9a227] shadow-lg shadow-[#c9a227]/15 ring-2 ring-[#c9a227]/20 scale-105"
-                      : "border-[#c9a227]/15 opacity-70 hover:opacity-100 hover:border-[#c9a227]/40"
-                  }`}
-                >
-                  {img.startsWith("http") ? (
-                    <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-contain rounded-lg" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xl">{img}</div>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Trust Badges */}
-          <div className="hidden lg:grid grid-cols-2 gap-3 mt-6 p-4 bg-[#161411]/80 rounded-2xl border border-[#c9a227]/12">
-            <div className="flex items-center gap-3 p-2">
-              <div className="w-9 h-9 rounded-xl bg-[#c9a227]/10 flex items-center justify-center shrink-0 text-[#c9a227]">
-                <Truck className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-[#f5f0e8]">Express Delivery</p>
-                <p className="text-[10px] text-[#6b6358]">2-4 Days Islandwide</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-2">
-              <div className="w-9 h-9 rounded-xl bg-[#c9a227]/10 flex items-center justify-center shrink-0 text-[#c9a227]">
-                <RefreshCw className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-[#f5f0e8]">7 Days Return</p>
-                <p className="text-[10px] text-[#6b6358]">Moneyback Guarantee</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-2">
-              <div className="w-9 h-9 rounded-xl bg-[#c9a227]/10 flex items-center justify-center shrink-0 text-[#c9a227]">
-                <BadgeCheck className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-[#f5f0e8]">100% Original</p>
-                <p className="text-[10px] text-[#6b6358]">Authentic Publication</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-2">
-              <div className="w-9 h-9 rounded-xl bg-[#c9a227]/10 flex items-center justify-center shrink-0 text-[#c9a227]">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-[#f5f0e8]">Secure Payment</p>
-                <p className="text-[10px] text-[#6b6358]">SSL Encrypted</p>
-              </div>
-            </div>
-          </div>
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-[0.82rem] text-[var(--text-dim)] mb-2">
+          <Link href="/" className="text-[var(--text-muted)] hover:text-[var(--gold)] transition">Home</Link>
+          <span className="opacity-60">/</span>
+          <Link href="/products" className="text-[var(--text-muted)] hover:text-[var(--gold)] transition">Shop</Link>
+          <span className="opacity-60">/</span>
+          <span className="text-[var(--text)] font-medium truncate max-w-[200px]">{product.name}</span>
         </div>
 
-        {/* Right: Product Info */}
-        <div className="lg:col-span-7 relative flex flex-col justify-between">
-          
-          {/* Zoom Window */}
-          {showZoom && mainImage?.startsWith("http") ? (
-            <div
-              className="hidden lg:block absolute inset-0 z-30 bg-[#161411] rounded-2xl border-2 border-[#c9a227] shadow-2xl overflow-hidden"
-              style={{
-                backgroundImage: `url(${mainImage})`,
-                backgroundPosition: `${bgPos.x}% ${bgPos.y}%`,
-                backgroundSize: "280%",
-                backgroundRepeat: "no-repeat"
-              }}
-            />
-          ) : null}
+        <Link href="/products" className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--gold-soft)] hover:text-[var(--gold)] hover:gap-3 transition-all my-6 group">
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          Back to Products
+        </Link>
 
-          <div>
-            {/* Tags */}
-            <div className="flex items-center gap-2 mb-4 flex-wrap">
-              {product.classLevel && (
-                <span className="bg-[#1c1915] text-[#a89f8f] text-[11px] font-medium px-3 py-1 rounded-lg border border-[#c9a227]/15">
-                  {product.classLevel}
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 mb-16 relative">
+
+          {/* Gallery */}
+          <div className="lg:col-span-5">
+            <div
+              className="rounded-[20px] border border-[var(--border)] p-10 sm:p-12 flex items-center justify-center relative overflow-hidden select-none cursor-crosshair"
+              style={{
+                background: "linear-gradient(145deg, #1a1713 0%, #12100e 100%)",
+                boxShadow: "0 24px 64px rgba(0,0,0,0.45)",
+              }}
+              onMouseEnter={() => setShowZoom(true)}
+              onMouseLeave={() => setShowZoom(false)}
+              onMouseMove={handleMouseMove}
+            >
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ background: "radial-gradient(ellipse at 30% 20%, rgba(201, 162, 39, 0.07) 0%, transparent 55%)" }}
+              />
+
+              {mainImage && mainImage.startsWith("http") ? (
+                <img
+                  src={mainImage}
+                  alt={product.name}
+                  className="max-h-[380px] max-w-full object-contain rounded-md relative z-[1]"
+                  style={{ boxShadow: "8px 12px 32px rgba(0,0,0,0.55)" }}
+                />
+              ) : (
+                <span className="text-8xl relative z-[1]">
+                  {mainImage || (product.productType === "BOOK" ? "📚" : "🔧")}
                 </span>
               )}
-              {product.subject && (
-                <span className="bg-[#c9a227]/10 text-[#d4b84a] text-[11px] font-medium px-3 py-1 rounded-lg border border-[#c9a227]/25">
-                  {product.subject}
-                </span>
+
+              {/* Hover Lens */}
+              {showZoom && mainImage?.startsWith("http") && (
+                <div
+                  className="absolute pointer-events-none rounded-lg z-[2]"
+                  style={{
+                    width: `${LENS_WIDTH}px`,
+                    height: `${LENS_HEIGHT}px`,
+                    left: `${lensPos.x}px`,
+                    top: `${lensPos.y}px`,
+                    border: "2px solid var(--gold)",
+                    background: "rgba(201, 162, 39, 0.15)",
+                  }}
+                />
               )}
-              {product.productType && (
-                <span className="bg-[#c9a227]/10 text-[#d4b84a] text-[11px] font-medium px-3 py-1 rounded-lg border border-[#c9a227]/25 flex items-center gap-1">
-                  <BookOpen className="w-3 h-3" />
-                  {product.productType === "BOOK" ? "Book" : "Gadget"}
-                </span>
+
+              {product.discountPrice && (
+                <div
+                  className="absolute top-4 left-4 text-[#0c0b09] text-xs font-bold px-3 py-1.5 rounded-full z-10 uppercase tracking-wider"
+                  style={{ background: "linear-gradient(135deg, var(--gold) 0%, var(--gold-soft) 100%)" }}
+                >
+                  {discountPercent}% OFF
+                </div>
+              )}
+
+              {product.stock === 0 && (
+                <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-md flex items-center justify-center rounded-[20px]">
+                  <span className="bg-red-600 text-white text-xs font-bold px-5 py-2 rounded-full uppercase tracking-widest">
+                    Out of Stock
+                  </span>
+                </div>
               )}
             </div>
 
-            {/* Title */}
-            <h1 className="text-2xl sm:text-3xl lg:text-[2.1rem] font-semibold text-[#f5f0e8] mb-2 leading-tight tracking-tight">
-              {product.name}
-            </h1>
-
-            {/* Author */}
-            {product.author && isValidMeta(product.author) && (
-              <p className="text-[#a89f8f] text-sm mb-5">
-                by <span className="font-semibold text-[#c9a227] hover:text-[#d4b84a] cursor-pointer transition">{product.author}</span>
-              </p>
+            {/* Thumbnails */}
+            {product.images?.length > 1 && (
+              <div className="flex gap-3 mt-5 justify-center overflow-x-auto pb-1">
+                {product.images.map((img: string, i: number) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImage(img)}
+                    className="w-16 h-16 rounded-[10px] overflow-hidden transition-all cursor-pointer flex items-center justify-center shrink-0"
+                    style={{
+                      background: "var(--bg-card)",
+                      border: (selectedImage === img || (!selectedImage && i === 0))
+                        ? "1.5px solid var(--gold)"
+                        : "1.5px solid transparent",
+                      boxShadow: (selectedImage === img || (!selectedImage && i === 0))
+                        ? "0 0 0 2px rgba(201, 162, 39, 0.2)"
+                        : "none",
+                    }}
+                  >
+                    {img.startsWith("http") ? (
+                      <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-contain p-1" />
+                    ) : (
+                      <span className="text-xl">{img}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
             )}
 
-            {/* Rating + Share */}
-            <div className="flex items-center justify-between gap-4 pb-5 border-b border-[#c9a227]/12 mb-6">
-              <div className="flex items-center gap-2.5">
-                <div className="flex items-center gap-1 bg-[#c9a227]/10 px-2.5 py-1 rounded-lg border border-[#c9a227]/20">
-                  <Star className="w-3.5 h-3.5 fill-[#c9a227] text-[#c9a227]" />
-                  <span className="text-xs font-semibold text-[#d4b84a]">{rating}.0</span>
+            {/* Trust Guarantees */}
+            <div className="hidden lg:grid grid-cols-2 gap-3 mt-6 p-4 rounded-2xl" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
+              {[
+                { icon: Truck, title: "Express Delivery", sub: "2-4 Days Islandwide" },
+                { icon: RefreshCw, title: "7 Days Return", sub: "Moneyback Guarantee" },
+                { icon: CheckCircle, title: "100% Original", sub: "Authentic Publication" },
+                { icon: ShieldCheck, title: "Secure Payment", sub: "SSL Encrypted" },
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-3 p-2">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-[var(--gold)]" style={{ background: "rgba(201, 162, 39, 0.12)" }}>
+                    <item.icon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[var(--text)]">{item.title}</p>
+                    <p className="text-[10px] text-[var(--text-dim)]">{item.sub}</p>
+                  </div>
                 </div>
-                <span className="text-xs text-[#6b6358]">
-                  ({reviews.length} {reviews.length === 1 ? "Customer Review" : "Customer Reviews"})
-                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Info */}
+          <div className="lg:col-span-7 relative flex flex-col justify-between">
+            {showZoom && mainImage?.startsWith("http") ? (
+              <div
+                className="hidden lg:block absolute inset-0 z-30 rounded-[20px] overflow-hidden"
+                style={{
+                  background: "var(--bg-elevated)",
+                  border: "2px solid var(--gold)",
+                  boxShadow: "0 24px 64px rgba(0,0,0,0.6)",
+                  backgroundImage: `url(${mainImage})`,
+                  backgroundPosition: `${bgPos.x}% ${bgPos.y}%`,
+                  backgroundSize: "280%",
+                  backgroundRepeat: "no-repeat",
+                }}
+              />
+            ) : null}
+
+            <div>
+              {/* Tags */}
+              <div className="flex items-center gap-2 mb-4 flex-wrap">
+                {product.classLevel && (
+                  <span
+                    className="text-[0.72rem] font-semibold uppercase tracking-wide px-3 py-1.5 rounded-md"
+                    style={{ background: "rgba(201, 162, 39, 0.1)", color: "var(--text-muted)", border: "1px solid var(--border)" }}
+                  >
+                    {product.classLevel}
+                  </span>
+                )}
+                {product.subject && (
+                  <span
+                    className="text-[0.72rem] font-semibold uppercase tracking-wide px-3 py-1.5 rounded-md"
+                    style={{ background: "rgba(201, 162, 39, 0.15)", color: "var(--gold-soft)", border: "1px solid rgba(201, 162, 39, 0.3)" }}
+                  >
+                    {product.subject}
+                  </span>
+                )}
+                {product.productType && (
+                  <span
+                    className="text-[0.72rem] font-semibold uppercase tracking-wide px-3 py-1.5 rounded-md flex items-center gap-1"
+                    style={{ background: "rgba(74, 155, 110, 0.12)", color: "#6bc48a", border: "1px solid rgba(74, 155, 110, 0.25)" }}
+                  >
+                    <BookOpen className="w-3 h-3" />
+                    {product.productType === "BOOK" ? "Book" : "Gadget"}
+                  </span>
+                )}
               </div>
 
-              <button className="text-[#6b6358] hover:text-[#c9a227] transition p-2 rounded-full hover:bg-[#c9a227]/10">
-                <Share2 className="w-4 h-4" />
-              </button>
-            </div>
+              {/* Title */}
+              <h1
+                className="text-3xl sm:text-[3.1rem] font-semibold leading-[1.12] tracking-tight mb-2.5"
+                style={{ fontFamily: "'Cormorant Garamond', serif", color: "var(--text)" }}
+              >
+                {product.name}
+              </h1>
 
-            {/* Price Block */}
-            <div className="p-5 bg-[#161411] rounded-2xl border border-[#c9a227]/15 mb-6">
-              <div className="flex items-baseline gap-3 flex-wrap">
-                <span className="text-3xl sm:text-4xl font-semibold text-[#c9a227]">
+              {product.author && isValidMeta(product.author) && (
+                <p className="text-[1.05rem] text-[var(--text-muted)] mb-6">
+                  by <span className="font-medium text-[var(--gold-soft)]">{product.author}</span>
+                </p>
+              )}
+
+              {/* Rating + Share */}
+              <div className="flex items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="flex gap-[3px] text-[var(--gold)] text-[1.05rem]">
+                    {"★".repeat(rating)}{"☆".repeat(5 - rating)}
+                  </div>
+                  <span className="text-[0.9rem] text-[var(--text-muted)]">
+                    <strong className="text-[var(--text)] font-semibold">{rating}.0</strong> · {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
+                  </span>
+                </div>
+                <button className="text-[var(--text-dim)] hover:text-[var(--gold)] transition p-2 rounded-full">
+                  <Share2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Price Block */}
+              <div
+                className="rounded-[14px] p-6 mb-7 flex items-baseline gap-4 flex-wrap"
+                style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
+              >
+                <span className="text-[2.4rem] font-semibold tracking-tight" style={{ fontFamily: "'Cormorant Garamond', serif", color: "var(--gold)" }}>
                   ৳{(product.discountPrice || product.price).toLocaleString()}
                 </span>
                 {product.discountPrice && (
                   <>
-                    <span className="text-base text-[#6b6358] line-through">৳{product.price.toLocaleString()}</span>
-                    <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                    <span className="text-[1.15rem] text-[var(--text-dim)] line-through">৳{product.price.toLocaleString()}</span>
+                    <span className="text-[0.82rem] font-semibold px-2.5 py-1 rounded-[5px]" style={{ color: "var(--success)", background: "rgba(74, 155, 110, 0.12)" }}>
                       Save ৳{savedAmount.toLocaleString()}
                     </span>
                   </>
                 )}
+
+                <div className="w-full pt-3 mt-1 border-t" style={{ borderColor: "var(--border)" }}>
+                  {product.stock > 0 ? (
+                    <span className="text-xs font-semibold flex items-center gap-1.5" style={{ color: "var(--success)" }}>
+                      <CheckCircle className="w-4 h-4" />
+                      In Stock — {product.stock} copies available
+                    </span>
+                  ) : (
+                    <span className="text-xs font-semibold text-rose-400">Out of Stock</span>
+                  )}
+                </div>
               </div>
 
-              {/* Stock */}
-              <div className="mt-4 pt-3 border-t border-[#c9a227]/10 flex items-center justify-between">
-                {product.stock > 0 ? (
-                  <span className="text-xs font-medium text-emerald-400 flex items-center gap-1.5">
-                    <CheckCircle className="w-4 h-4" />
-                    In Stock ({product.stock} copies available)
-                  </span>
-                ) : (
-                  <span className="text-xs font-medium text-rose-400">Out of Stock</span>
-                )}
-              </div>
-            </div>
+              {/* Meta grid */}
+              {hasValidMeta && (
+                <div className="grid grid-cols-2 gap-x-7 gap-y-3.5 mb-8 text-[0.88rem]">
+                  {isValidMeta(product.publisher) && (
+                    <div className="flex flex-col gap-[3px]">
+                      <span className="text-[0.78rem] uppercase tracking-wide text-[var(--text-dim)]">Publisher</span>
+                      <span className="font-medium text-[var(--text)]">{product.publisher}</span>
+                    </div>
+                  )}
+                  {isValidMeta(product.edition) && (
+                    <div className="flex flex-col gap-[3px]">
+                      <span className="text-[0.78rem] uppercase tracking-wide text-[var(--text-dim)]">Edition</span>
+                      <span className="font-medium text-[var(--text)]">{product.edition}</span>
+                    </div>
+                  )}
+                  {isValidMeta(product.isbn) && (
+                    <div className="flex flex-col gap-[3px]">
+                      <span className="text-[0.78rem] uppercase tracking-wide text-[var(--text-dim)]">ISBN</span>
+                      <span className="font-medium text-[var(--text)] font-mono">{product.isbn}</span>
+                    </div>
+                  )}
+                  {isValidMeta(product.brand) && (
+                    <div className="flex flex-col gap-[3px]">
+                      <span className="text-[0.78rem] uppercase tracking-wide text-[var(--text-dim)]">Brand</span>
+                      <span className="font-medium text-[var(--text)]">{product.brand}</span>
+                    </div>
+                  )}
+                  {isValidMeta(product.model) && (
+                    <div className="flex flex-col gap-[3px]">
+                      <span className="text-[0.78rem] uppercase tracking-wide text-[var(--text-dim)]">Model</span>
+                      <span className="font-medium text-[var(--text)]">{product.model}</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
-            {/* Actions */}
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center gap-3">
-                {/* Quantity */}
-                <div className="flex items-center gap-1 bg-[#1c1915] rounded-xl px-2 py-1.5 border border-[#c9a227]/20">
+              {/* Actions */}
+              <div className="flex items-center gap-3.5 flex-wrap mb-2">
+                <div className="flex items-center rounded-[10px] overflow-hidden" style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a89f8f] hover:text-[#c9a227] hover:bg-[#c9a227]/10 transition"
+                    className="w-[42px] h-12 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--gold)] transition"
                   >
-                    <Minus className="w-3.5 h-3.5" />
+                    <Minus className="w-4 h-4" />
                   </button>
-                  <span className="w-8 text-center font-semibold text-sm text-[#f5f0e8]">{quantity}</span>
+                  <span className="w-11 text-center font-semibold text-sm text-[var(--text)]">{quantity}</span>
                   <button
                     onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                     disabled={quantity >= product.stock}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg text-[#a89f8f] hover:text-[#c9a227] hover:bg-[#c9a227]/10 transition disabled:opacity-40"
+                    className="w-[42px] h-12 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--gold)] transition disabled:opacity-40"
                   >
-                    <Plus className="w-3.5 h-3.5" />
+                    <Plus className="w-4 h-4" />
                   </button>
                 </div>
 
-                {/* Add to Cart */}
                 <button
                   onClick={handleAddToCart}
                   disabled={product.stock === 0}
-                  className="flex-1 py-3.5 px-6 bg-gradient-to-r from-[#c9a227] to-[#b8921f] hover:from-[#d4b84a] hover:to-[#c9a227] disabled:opacity-50 text-[#0c0b09] rounded-xl font-semibold text-sm transition shadow-lg shadow-[#c9a227]/25 active:scale-[0.98] flex items-center justify-center gap-2"
+                  className="flex-1 min-w-[180px] h-12 rounded-[10px] font-semibold text-sm flex items-center justify-center gap-2.5 transition disabled:opacity-50 active:scale-[0.98]"
+                  style={{
+                    background: "linear-gradient(135deg, var(--gold) 0%, #b8921f 100%)",
+                    color: "#0c0b09",
+                    boxShadow: "0 4px 20px rgba(201, 162, 39, 0.25)",
+                  }}
                 >
                   <ShoppingCart className="w-4 h-4" />
                   {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
                 </button>
 
-                {/* Wishlist */}
                 <button
                   onClick={handleWishlist}
-                  className={`p-3.5 rounded-xl border-2 transition ${
-                    wishlisted
-                      ? "border-[#c9a227] bg-[#c9a227]/10 text-[#c9a227]"
-                      : "border-[#c9a227]/20 hover:border-[#c9a227]/50 text-[#6b6358] hover:text-[#c9a227]"
-                  }`}
+                  className="h-12 w-12 rounded-[10px] flex items-center justify-center transition"
+                  style={{
+                    border: wishlisted ? "1.5px solid var(--gold)" : "1.5px solid var(--border-strong)",
+                    color: wishlisted ? "var(--gold)" : "var(--text-muted)",
+                    background: wishlisted ? "rgba(201, 162, 39, 0.08)" : "transparent",
+                  }}
                 >
                   <Heart className={`w-4 h-4 ${wishlisted ? "fill-current" : ""}`} />
                 </button>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Specs Summary */}
-          {hasValidMeta && (
-            <div className="bg-[#161411]/80 rounded-2xl p-4 border border-[#c9a227]/12">
-              <h4 className="text-[11px] font-semibold text-[#6b6358] uppercase tracking-wider mb-3">Specifications Summary</h4>
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                {isValidMeta(product.publisher) && (
-                  <div>
-                    <span className="text-[#6b6358] block text-[10px] mb-0.5">Publisher</span>
-                    <span className="font-medium text-[#f5f0e8]">{product.publisher}</span>
-                  </div>
+        {/* Tabs */}
+        <div className="mb-16 pt-7" style={{ borderTop: "1px solid var(--border)" }}>
+          <div className="flex gap-7 mb-6 pb-0" style={{ borderBottom: "1px solid var(--border)" }}>
+            {(["description", "specifications", "reviews"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="pb-3.5 font-medium text-sm transition relative -mb-px"
+                style={{ color: activeTab === tab ? "var(--gold)" : "var(--text-dim)" }}
+              >
+                {tab === "description" ? "Book Overview" : tab === "specifications" ? "Specifications" : `Reviews (${reviews.length})`}
+                {activeTab === tab && (
+                  <span className="absolute left-0 right-0 -bottom-px h-[2px] rounded-t-[2px]" style={{ background: "var(--gold)" }} />
                 )}
-                {isValidMeta(product.edition) && (
-                  <div>
-                    <span className="text-[#6b6358] block text-[10px] mb-0.5">Edition</span>
-                    <span className="font-medium text-[#f5f0e8]">{product.edition}</span>
-                  </div>
-                )}
-                {isValidMeta(product.isbn) && (
-                  <div>
-                    <span className="text-[#6b6358] block text-[10px] mb-0.5">ISBN</span>
-                    <span className="font-medium text-[#f5f0e8] font-mono">{product.isbn}</span>
-                  </div>
-                )}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === "description" && (
+            <div>
+              <div
+                className={`text-[0.95rem] leading-[1.75] text-[var(--text-muted)] ${!isDescExpanded ? "line-clamp-4" : ""}`}
+              >
+                <p>{product.description || "No detailed description provided for this product."}</p>
               </div>
+              {product.description && product.description.length > 200 && (
+                <button
+                  onClick={() => setIsDescExpanded(!isDescExpanded)}
+                  className="mt-4 text-xs font-semibold flex items-center gap-1 hover:underline"
+                  style={{ color: "var(--gold-soft)" }}
+                >
+                  {isDescExpanded ? <>Show Less <ChevronUp className="w-3.5 h-3.5" /></> : <>Read Full Overview <ChevronDown className="w-3.5 h-3.5" /></>}
+                </button>
+              )}
+            </div>
+          )}
+
+          {activeTab === "specifications" && (
+            <div className="rounded-[14px] overflow-hidden max-w-2xl" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
+              <table className="w-full text-left text-xs">
+                <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
+                  {isValidMeta(product.publisher) && (
+                    <tr>
+                      <td className="px-6 py-3.5 text-[var(--text-dim)] font-medium w-1/3" style={{ background: "var(--bg-soft)" }}>Publisher</td>
+                      <td className="px-6 py-3.5 font-semibold text-[var(--text)]">{product.publisher}</td>
+                    </tr>
+                  )}
+                  {isValidMeta(product.author) && (
+                    <tr>
+                      <td className="px-6 py-3.5 text-[var(--text-dim)] font-medium" style={{ background: "var(--bg-soft)" }}>Author</td>
+                      <td className="px-6 py-3.5 font-semibold text-[var(--text)]">{product.author}</td>
+                    </tr>
+                  )}
+                  {isValidMeta(product.edition) && (
+                    <tr>
+                      <td className="px-6 py-3.5 text-[var(--text-dim)] font-medium" style={{ background: "var(--bg-soft)" }}>Edition</td>
+                      <td className="px-6 py-3.5 font-semibold text-[var(--text)]">{product.edition}</td>
+                    </tr>
+                  )}
+                  {isValidMeta(product.isbn) && (
+                    <tr>
+                      <td className="px-6 py-3.5 text-[var(--text-dim)] font-medium" style={{ background: "var(--bg-soft)" }}>ISBN</td>
+                      <td className="px-6 py-3.5 font-semibold text-[var(--text)] font-mono">{product.isbn}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {activeTab === "reviews" && (
+            <div className="space-y-5">
+              <ReviewForm productId={id} />
+
+              {reviews.length === 0 ? (
+                <div className="text-center py-12 rounded-[14px]" style={{ background: "var(--bg-elevated)", border: "1px dashed var(--border)" }}>
+                  <span className="text-4xl mb-2 block">💬</span>
+                  <p className="text-xs font-semibold text-[var(--text-muted)]">No customer reviews yet. Be the first to share your thoughts!</p>
+                </div>
+              ) : (
+                reviews.map((review: Review) => (
+                  <div key={review.id} className="rounded-[14px] p-5" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-[#0c0b09]"
+                          style={{ background: "linear-gradient(135deg, var(--gold) 0%, var(--gold-soft) 100%)" }}
+                        >
+                          {review.user?.name?.[0]?.toUpperCase() || "U"}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-[var(--text)] text-xs">{review.user?.name}</p>
+                          <p className="text-[10px] text-[var(--text-dim)]">
+                            {new Date(review.createdAt).toLocaleDateString("en-BD", { year: "numeric", month: "long", day: "numeric" })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-[2px] text-[var(--gold)] text-xs">
+                        {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+                      </div>
+                    </div>
+                    {review.comment && <p className="text-xs text-[var(--text-muted)] leading-relaxed">{review.comment}</p>}
+                  </div>
+                ))
+              )}
             </div>
           )}
         </div>
-      </div>
 
-      {/* Tabs */}
-      <div className="mb-16">
-        <div className="flex gap-8 border-b border-[#c9a227]/15 mb-8">
-          {(["description", "specifications", "reviews"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`pb-4 font-semibold text-sm capitalize transition border-b-2 -mb-px ${
-                activeTab === tab
-                  ? "border-[#c9a227] text-[#c9a227]"
-                  : "border-transparent text-[#6b6358] hover:text-[#a89f8f]"
-              }`}
-            >
-              {tab === "description" ? "Book Overview" : tab === "specifications" ? "Specifications" : `Reviews (${reviews.length})`}
-            </button>
-          ))}
+        {/* Related Products */}
+        <div>
+          <h2
+            className="text-[1.85rem] font-semibold mb-7 flex items-center gap-4"
+            style={{ fontFamily: "'Cormorant Garamond', serif", color: "var(--text)" }}
+          >
+            You may also like
+            <span className="flex-1 h-px" style={{ background: "linear-gradient(90deg, var(--border-strong), transparent)" }} />
+          </h2>
+          <RelatedProducts productId={id} />
         </div>
-
-        {/* Description Tab */}
-        {activeTab === "description" && (
-          <div className="bg-[#161411]/60 rounded-2xl p-6 border border-[#c9a227]/12">
-            <div className={`prose prose-invert max-w-none text-[#a89f8f] text-sm leading-relaxed ${!isDescExpanded ? "line-clamp-4" : ""}`}>
-              <p>{product.description || "No detailed description provided for this product."}</p>
-            </div>
-            {product.description && product.description.length > 200 && (
-              <button
-                onClick={() => setIsDescExpanded(!isDescExpanded)}
-                className="mt-4 text-xs font-semibold text-[#c9a227] flex items-center gap-1 hover:text-[#d4b84a] transition"
-              >
-                {isDescExpanded ? (
-                  <>Show Less <ChevronUp className="w-3.5 h-3.5" /></>
-                ) : (
-                  <>Read Full Overview <ChevronDown className="w-3.5 h-3.5" /></>
-                )}
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Specifications Tab */}
-        {activeTab === "specifications" && (
-          <div className="bg-[#161411] rounded-2xl border border-[#c9a227]/12 overflow-hidden max-w-2xl">
-            <table className="w-full text-left text-xs">
-              <tbody className="divide-y divide-[#c9a227]/10">
-                {isValidMeta(product.publisher) && (
-                  <tr>
-                    <td className="px-6 py-3.5 text-[#6b6358] font-medium w-1/3 bg-[#1c1915]/50">Publisher</td>
-                    <td className="px-6 py-3.5 font-medium text-[#f5f0e8]">{product.publisher}</td>
-                  </tr>
-                )}
-                {isValidMeta(product.author) && (
-                  <tr>
-                    <td className="px-6 py-3.5 text-[#6b6358] font-medium bg-[#1c1915]/50">Author</td>
-                    <td className="px-6 py-3.5 font-medium text-[#f5f0e8]">{product.author}</td>
-                  </tr>
-                )}
-                {isValidMeta(product.edition) && (
-                  <tr>
-                    <td className="px-6 py-3.5 text-[#6b6358] font-medium bg-[#1c1915]/50">Edition</td>
-                    <td className="px-6 py-3.5 font-medium text-[#f5f0e8]">{product.edition}</td>
-                  </tr>
-                )}
-                {isValidMeta(product.isbn) && (
-                  <tr>
-                    <td className="px-6 py-3.5 text-[#6b6358] font-medium bg-[#1c1915]/50">ISBN</td>
-                    <td className="px-6 py-3.5 font-medium text-[#f5f0e8] font-mono">{product.isbn}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Reviews Tab */}
-        {activeTab === "reviews" && (
-          <div className="space-y-5">
-            <ReviewForm productId={id} />
-
-            {reviews.length === 0 ? (
-              <div className="text-center py-12 bg-[#161411]/60 rounded-2xl border border-dashed border-[#c9a227]/20">
-                <span className="text-4xl mb-2 block">💬</span>
-                <p className="text-[#6b6358] text-xs font-medium">No customer reviews yet. Be the first to share your thoughts!</p>
-              </div>
-            ) : (
-              reviews.map((review: Review) => (
-                <div
-                  key={review.id}
-                  className="bg-[#161411] rounded-2xl border border-[#c9a227]/12 p-5"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 bg-[#c9a227] rounded-full flex items-center justify-center font-bold text-[#0c0b09] text-xs shadow-md shadow-[#c9a227]/20">
-                        {review.user?.name?.[0]?.toUpperCase() || "U"}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-[#f5f0e8] text-xs">{review.user?.name}</p>
-                        <p className="text-[10px] text-[#6b6358]">
-                          {new Date(review.createdAt).toLocaleDateString("en-BD", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-0.5">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-3.5 h-3.5 ${
-                            i < review.rating ? "fill-[#c9a227] text-[#c9a227]" : "text-[#3a342c]"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  {review.comment && (
-                    <p className="text-xs text-[#a89f8f] leading-relaxed">{review.comment}</p>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        )}
       </div>
 
-      <RelatedProducts productId={id} />
-
-      {/* Sticky Bottom Bar */}
+      {/* Floating Sticky Buy Bar */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-50 bg-[#0c0b09]/90 backdrop-blur-md border-t border-[#c9a227]/15 p-3 transition-transform duration-300 shadow-2xl ${
-          showStickyBar ? "translate-y-0" : "translate-y-full"
-        }`}
+        className={`fixed bottom-0 left-0 right-0 z-50 p-3 transition-transform duration-300 ${showStickyBar ? "translate-y-0" : "translate-y-full"}`}
+        style={{ background: "rgba(12, 11, 9, 0.9)", backdropFilter: "blur(16px)", borderTop: "1px solid var(--border)" }}
       >
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between gap-4">
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-7 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 truncate">
             {mainImage && mainImage.startsWith("http") && (
-              <img
-                src={mainImage}
-                alt={product.name}
-                className="w-10 h-10 object-contain rounded-lg border border-[#c9a227]/20"
-              />
+              <img src={mainImage} alt={product.name} className="w-10 h-10 object-contain rounded-lg" style={{ border: "1px solid var(--border)" }} />
             )}
             <div className="truncate">
-              <h4 className="text-xs font-semibold text-[#f5f0e8] truncate">{product.name}</h4>
-              <p className="text-xs font-semibold text-[#c9a227]">
-                ৳{(product.discountPrice || product.price).toLocaleString()}
-              </p>
+              <h4 className="text-xs font-semibold text-[var(--text)] truncate">{product.name}</h4>
+              <p className="text-xs font-bold" style={{ color: "var(--gold)" }}>৳{(product.discountPrice || product.price).toLocaleString()}</p>
             </div>
           </div>
           <button
             onClick={handleAddToCart}
             disabled={product.stock === 0}
-            className="px-6 py-2.5 bg-gradient-to-r from-[#c9a227] to-[#b8921f] hover:from-[#d4b84a] hover:to-[#c9a227] disabled:opacity-50 text-[#0c0b09] rounded-xl font-semibold text-xs shadow-md shadow-[#c9a227]/20 transition shrink-0"
+            className="px-6 py-2.5 rounded-full font-semibold text-xs transition shrink-0 disabled:opacity-50"
+            style={{ background: "linear-gradient(135deg, var(--gold) 0%, #b8921f 100%)", color: "#0c0b09" }}
           >
             Add to Cart
           </button>
