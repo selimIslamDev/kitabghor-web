@@ -7,10 +7,10 @@ import {
   ChevronDown, Zap, GraduationCap,
 } from "lucide-react";
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
+import { useCartStore } from "@/store/cart.store";
+import { useAuthStore } from "@/store/auth.store";
+import { useRouter, usePathname } from "next/navigation";
 
-// Hydration-safe "mounted" flag — avoids calling setState synchronously
-// inside an effect (which React now warns about). No-op subscribe,
-// client snapshot true, server snapshot false.
 function useMounted() {
   return useSyncExternalStore(
     () => () => {},
@@ -18,9 +18,6 @@ function useMounted() {
     () => false
   );
 }
-import { useCartStore } from "@/store/cart.store";
-import { useAuthStore } from "@/store/auth.store";
-import { useRouter, usePathname } from "next/navigation";
 
 const megaMenuCategories = [
   {
@@ -55,20 +52,6 @@ const megaMenuCategories = [
   },
 ];
 
-// Design tokens — premium dark-gold theme (single theme, no light/dark toggle)
-const theme = {
-  "--bg": "#0c0b09",
-  "--surface": "#141210",
-  "--surface-2": "#1c1915",
-  "--border": "rgba(255,255,255,0.06)",
-  "--border-gold": "rgba(201,162,39,0.2)",
-  "--gold": "#c9a227",
-  "--gold-soft": "#d4b84a",
-  "--text": "#f5f0e8",
-  "--muted": "#a89f8f",
-  "--dim": "#6b6358",
-} as React.CSSProperties;
-
 export default function Navbar() {
   const mounted = useMounted();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -99,14 +82,12 @@ export default function Navbar() {
     megaCloseTimer.current = setTimeout(() => setMegaOpen(false), 150);
   };
 
-  // Scroll effect
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
@@ -120,7 +101,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Cleanup pending hover-close timer on unmount
   useEffect(() => {
     return () => {
       if (megaCloseTimer.current) clearTimeout(megaCloseTimer.current);
@@ -147,29 +127,17 @@ export default function Navbar() {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <div style={theme}>
-      {/* Fonts */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet" />
-
+    <>
       {/* Promo Bar */}
-      <div
-        className="h-9 flex items-center justify-center text-xs tracking-wide"
-        style={{
-          background: "linear-gradient(90deg, #1a160f 0%, #2a2215 50%, #1a160f 100%)",
-          borderBottom: "1px solid var(--border-gold)",
-          color: "var(--muted)",
-        }}
-      >
-        <span>✦ Free shipping on orders above <strong style={{ color: "var(--gold)", fontWeight: 600 }}>৳500</strong></span>
+      <div className="h-9 flex items-center justify-center text-xs bg-gradient-to-r from-[#1a160f] via-[#2a2215] to-[#1a160f] border-b border-[#c9a227]/20 text-[#a89f8f]">
+        <span>
+          ✦ Free shipping on orders above{" "}
+          <strong className="text-[#c9a227] font-semibold">৳500</strong>
+        </span>
         <span className="mx-3 opacity-30">|</span>
         <span>
           Use code{" "}
-          <span
-            className="inline-flex items-center font-semibold text-[0.6875rem] px-2 py-0.5 rounded mx-1 tracking-wide"
-            style={{ background: "rgba(201,162,39,0.12)", border: "1px solid rgba(201,162,39,0.25)", color: "var(--gold-soft)" }}
-          >
+          <span className="inline-flex items-center bg-[#c9a227]/10 border border-[#c9a227]/25 text-[#d4b84a] font-semibold text-[11px] px-2 py-0.5 rounded tracking-wide mx-1">
             KITAB10
           </span>{" "}
           for 10% off
@@ -178,42 +146,40 @@ export default function Navbar() {
 
       {/* Main Navbar */}
       <nav
-        className="sticky top-0 z-50 transition-all duration-300"
-        style={{
-          background: scrolled ? "rgba(12, 11, 9, 0.95)" : "rgba(12, 11, 9, 0.92)",
-          backdropFilter: "blur(16px)",
-          borderBottom: "1px solid var(--border)",
-          boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.3)" : "none",
-        }}
+        className={`sticky top-0 z-50 transition-all duration-300 border-b border-white/[0.06] ${
+          scrolled
+            ? "bg-[#0c0b09]/95 shadow-[0_4px_24px_rgba(0,0,0,0.35)]"
+            : "bg-[#0c0b09]/90"
+        } backdrop-blur-xl`}
       >
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-center justify-between h-16 gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between h-16 gap-6">
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 flex-shrink-0 group">
-              <div
-                className="w-9 h-9 rounded-[10px] flex items-center justify-center transition-transform group-hover:scale-105"
-                style={{ background: "linear-gradient(135deg, var(--gold) 0%, #b8921f 100%)", boxShadow: "0 2px 12px rgba(201,162,39,0.25)" }}
-              >
-                <BookOpen className="w-[18px] h-[18px]" style={{ color: "#0c0b09" }} />
+            <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+              <div className="w-9 h-9 rounded-[10px] bg-gradient-to-br from-[#c9a227] to-[#b8921f] flex items-center justify-center shadow-lg shadow-[#c9a227]/20 group-hover:scale-105 transition-transform">
+                <BookOpen className="w-[18px] h-[18px] text-[#0c0b09]" strokeWidth={2.2} />
               </div>
-              <span className="text-[1.35rem] font-bold tracking-wide" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: "var(--text)" }}>
-                Kitab<span style={{ color: "var(--gold)" }}>Ghor</span>
+              <span className="text-[1.3rem] font-bold tracking-wide text-[#f5f0e8]" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                Kitab<span className="text-[#c9a227]">Ghor</span>
               </span>
             </Link>
 
-            {/* Desktop Nav Links */}
-            <div className="hidden md:flex items-center gap-1 flex-1">
+            {/* Desktop Links */}
+            <div className="hidden md:flex items-center gap-0.5 flex-1">
               <Link
                 href="/"
-                className="relative px-3.5 py-2 text-[0.8125rem] font-medium rounded-lg transition"
-                style={{ color: isActive("/") ? "var(--gold)" : "var(--muted)" }}
+                className={`relative px-3.5 py-2 text-[13px] font-medium rounded-lg transition ${
+                  isActive("/") ? "text-[#c9a227]" : "text-[#a89f8f] hover:text-[#f5f0e8] hover:bg-white/[0.04]"
+                }`}
               >
                 Home
-                {isActive("/") && <span className="absolute left-1/2 -translate-x-1/2 bottom-0.5 w-4 h-0.5 rounded-full" style={{ background: "var(--gold)" }} />}
+                {isActive("/") && (
+                  <span className="absolute left-1/2 -translate-x-1/2 bottom-0.5 w-4 h-0.5 rounded-full bg-[#c9a227]" />
+                )}
               </Link>
 
-              {/* Shop Mega Menu — opens on hover */}
+              {/* Shop Mega Menu */}
               <div
                 className="relative"
                 ref={megaRef}
@@ -222,39 +188,36 @@ export default function Navbar() {
               >
                 <button
                   onClick={() => setMegaOpen(!megaOpen)}
-                  className="flex items-center gap-1.5 px-3.5 py-2 text-[0.8125rem] font-medium rounded-lg transition"
-                  style={{ color: pathname.startsWith("/products") || megaOpen ? "var(--gold)" : "var(--muted)" }}
+                  className={`flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-lg transition ${
+                    pathname.startsWith("/products") || megaOpen
+                      ? "text-[#c9a227]"
+                      : "text-[#a89f8f] hover:text-[#f5f0e8] hover:bg-white/[0.04]"
+                  }`}
                 >
                   Shop
                   <ChevronDown className={`w-3 h-3 opacity-60 transition-transform duration-200 ${megaOpen ? "rotate-180" : ""}`} />
                 </button>
 
                 {megaOpen && (
-                  <div
-                    className="absolute left-0 top-12 w-[520px] rounded-2xl p-5 z-50"
-                    style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 24px 64px rgba(0,0,0,0.5)" }}
-                  >
-                    <div className="grid grid-cols-3 gap-4">
+                  <div className="absolute left-0 top-12 w-[540px] rounded-2xl p-5 z-50 bg-[#141210] border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
+                    <div className="grid grid-cols-3 gap-5">
                       {megaMenuCategories.map((cat) => (
                         <div key={cat.title}>
-                          <div className="flex items-center gap-2 font-semibold text-sm mb-3" style={{ color: "var(--gold-soft)" }}>
-                            <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: "rgba(201,162,39,0.12)" }}>
+                          <div className="flex items-center gap-2 font-semibold text-sm text-[#d4b84a] mb-3">
+                            <div className="w-6 h-6 rounded-lg bg-[#c9a227]/10 flex items-center justify-center text-[#c9a227]">
                               {cat.icon}
                             </div>
                             {cat.title}
                           </div>
-                          <ul className="space-y-1">
+                          <ul className="space-y-0.5">
                             {cat.items.map((item) => (
                               <li key={item.label}>
                                 <Link
                                   href={item.href}
                                   onClick={() => setMegaOpen(false)}
-                                  className="flex items-center gap-2 text-sm py-1.5 px-2 rounded-lg transition"
-                                  style={{ color: "var(--muted)" }}
-                                  onMouseEnter={(e) => { e.currentTarget.style.color = "var(--gold-soft)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
-                                  onMouseLeave={(e) => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "transparent"; }}
+                                  className="flex items-center gap-2 text-[13px] py-1.5 px-2 rounded-lg text-[#a89f8f] hover:text-[#d4b84a] hover:bg-white/[0.04] transition"
                                 >
-                                  <span>{item.icon}</span>
+                                  <span className="text-sm">{item.icon}</span>
                                   {item.label}
                                 </Link>
                               </li>
@@ -264,13 +227,12 @@ export default function Navbar() {
                       ))}
                     </div>
 
-                    <div className="mt-4 pt-4 flex items-center justify-between" style={{ borderTop: "1px solid var(--border)" }}>
-                      <p className="text-xs" style={{ color: "var(--dim)" }}>🔥 New arrivals every week!</p>
+                    <div className="mt-5 pt-4 flex items-center justify-between border-t border-white/[0.06]">
+                      <p className="text-xs text-[#6b6358]">🔥 New arrivals every week</p>
                       <Link
                         href="/products"
                         onClick={() => setMegaOpen(false)}
-                        className="text-xs px-4 py-2 rounded-lg font-medium transition"
-                        style={{ background: "linear-gradient(135deg, var(--gold) 0%, #b8921f 100%)", color: "#0c0b09" }}
+                        className="text-xs px-4 py-2 rounded-lg font-semibold bg-gradient-to-r from-[#c9a227] to-[#b8921f] text-[#0c0b09] hover:from-[#d4b84a] hover:to-[#c9a227] transition"
                       >
                         View All Products →
                       </Link>
@@ -281,25 +243,27 @@ export default function Navbar() {
 
               <Link
                 href="/about"
-                className="relative px-3.5 py-2 text-[0.8125rem] font-medium rounded-lg transition"
-                style={{ color: isActive("/about") ? "var(--gold)" : "var(--muted)" }}
+                className={`px-3.5 py-2 text-[13px] font-medium rounded-lg transition ${
+                  isActive("/about") ? "text-[#c9a227]" : "text-[#a89f8f] hover:text-[#f5f0e8] hover:bg-white/[0.04]"
+                }`}
               >
                 About
               </Link>
 
               <Link
                 href="/contact"
-                className="relative px-3.5 py-2 text-[0.8125rem] font-medium rounded-lg transition"
-                style={{ color: isActive("/contact") ? "var(--gold)" : "var(--muted)" }}
+                className={`px-3.5 py-2 text-[13px] font-medium rounded-lg transition ${
+                  isActive("/contact") ? "text-[#c9a227]" : "text-[#a89f8f] hover:text-[#f5f0e8] hover:bg-white/[0.04]"
+                }`}
               >
                 Contact
               </Link>
             </div>
 
-            {/* Right Side */}
-            <div className="flex items-center gap-1.5">
+            {/* Right Actions */}
+            <div className="flex items-center gap-1 shrink-0">
 
-              {/* Search — Desktop */}
+              {/* Search */}
               <div className="hidden md:flex items-center">
                 {searchOpen ? (
                   <form onSubmit={handleSearch} className="flex items-center gap-2">
@@ -308,23 +272,20 @@ export default function Navbar() {
                       type="text"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Search..."
-                      className="w-48 px-3 py-2 rounded-lg text-sm focus:outline-none"
-                      style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--text)" }}
+                      placeholder="Search books..."
+                      className="w-48 px-3 py-2 rounded-lg text-sm bg-[#1c1915] border border-white/[0.08] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40"
                     />
-                    <button type="button" onClick={() => setSearchOpen(false)} style={{ color: "var(--dim)" }}>
+                    <button type="button" onClick={() => setSearchOpen(false)} className="text-[#6b6358] hover:text-[#a89f8f]">
                       <X className="w-4 h-4" />
                     </button>
                   </form>
                 ) : (
                   <button
                     onClick={() => setSearchOpen(true)}
-                    className="w-[38px] h-[38px] rounded-lg flex items-center justify-center transition"
-                    style={{ color: "var(--muted)" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = "var(--gold)"; e.currentTarget.style.background = "rgba(201,162,39,0.08)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "transparent"; }}
+                    className="w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[#a89f8f] hover:text-[#c9a227] hover:bg-[#c9a227]/10 transition"
+                    aria-label="Search"
                   >
-                    <Search className="w-[18px] h-[18px]" />
+                    <Search className="w-[18px] h-[18px]" strokeWidth={1.8} />
                   </button>
                 )}
               </div>
@@ -332,98 +293,81 @@ export default function Navbar() {
               {/* Cart */}
               <Link
                 href="/cart"
-                className="relative w-[38px] h-[38px] rounded-lg flex items-center justify-center transition"
-                style={{ color: "var(--muted)" }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = "var(--gold)"; e.currentTarget.style.background = "rgba(201,162,39,0.08)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = "var(--muted)"; e.currentTarget.style.background = "transparent"; }}
+                className="relative w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[#a89f8f] hover:text-[#c9a227] hover:bg-[#c9a227]/10 transition"
+                aria-label="Cart"
               >
-                <ShoppingCart className="w-[18px] h-[18px]" />
+                <ShoppingCart className="w-[18px] h-[18px]" strokeWidth={1.8} />
                 {mounted && totalItems > 0 && (
-                  <span
-                    className="absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[0.625rem] font-bold"
-                    style={{ background: "var(--gold)", color: "#0c0b09" }}
-                  >
+                  <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-[#c9a227] text-[#0c0b09] text-[10px] font-bold flex items-center justify-center leading-none">
                     {totalItems > 9 ? "9+" : totalItems}
                   </span>
                 )}
               </Link>
 
-              {/* Profile Dropdown */}
+              {/* Profile / Auth */}
               {isAuthenticated ? (
                 <div className="hidden md:block relative ml-1" ref={profileRef}>
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full transition"
-                    style={{
-                      border: profileOpen ? "1px solid var(--border-gold)" : "1px solid var(--border)",
-                      background: profileOpen ? "rgba(201,162,39,0.05)" : "transparent",
-                    }}
+                    className={`flex items-center gap-2 pl-1 pr-2 py-1 rounded-full border transition ${
+                      profileOpen
+                        ? "border-[#c9a227]/30 bg-[#c9a227]/5"
+                        : "border-white/[0.06] hover:border-[#c9a227]/25"
+                    }`}
                   >
-                    <div
-                      className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-xs font-bold"
-                      style={{ background: "linear-gradient(135deg, var(--gold), #b8921f)", color: "#0c0b09" }}
-                    >
+                    <div className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-[#c9a227] to-[#b8921f] text-[#0c0b09] text-xs font-bold flex items-center justify-center">
                       {user?.name?.[0]?.toUpperCase()}
                     </div>
-                    <span className="text-xs font-medium max-w-[80px] truncate" style={{ color: "var(--muted)" }}>
+                    <span className="text-xs font-medium text-[#a89f8f] max-w-[80px] truncate">
                       {user?.name?.split(" ")[0]}
                     </span>
-                    <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} style={{ color: "var(--dim)" }} />
+                    <ChevronDown className={`w-3 h-3 text-[#6b6358] transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} />
                   </button>
 
                   {profileOpen && (
-                    <div
-                      className="absolute right-0 top-12 w-60 rounded-2xl overflow-hidden z-50"
-                      style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 24px 64px rgba(0,0,0,0.5)" }}
-                    >
-                      {/* User Info */}
-                      <div className="px-4 py-4" style={{ background: "linear-gradient(135deg, var(--gold) 0%, #b8921f 100%)" }}>
+                    <div className="absolute right-0 top-12 w-60 rounded-2xl overflow-hidden z-50 bg-[#141210] border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
+                      {/* User header */}
+                      <div className="px-4 py-4 bg-gradient-to-br from-[#c9a227] to-[#b8921f]">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-black/15 rounded-xl flex items-center justify-center font-bold text-lg" style={{ color: "#0c0b09" }}>
+                          <div className="w-10 h-10 bg-black/15 rounded-xl flex items-center justify-center font-bold text-lg text-[#0c0b09]">
                             {user?.name?.[0]?.toUpperCase()}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-sm truncate" style={{ color: "#0c0b09" }}>{user?.name}</p>
-                            <p className="text-xs truncate" style={{ color: "rgba(12,11,9,0.7)" }}>{user?.email}</p>
+                            <p className="font-bold text-sm text-[#0c0b09] truncate">{user?.name}</p>
+                            <p className="text-xs text-[#0c0b09]/70 truncate">{user?.email}</p>
                           </div>
                         </div>
-                        <span
-                          className="inline-block mt-2 text-xs px-2 py-0.5 rounded-full font-semibold"
-                          style={{ background: "rgba(12,11,9,0.15)", color: "#0c0b09" }}
-                        >
+                        <span className="inline-block mt-2 text-[11px] px-2 py-0.5 rounded-full font-semibold bg-black/15 text-[#0c0b09]">
                           {user?.role === "ADMIN" ? "👑 Admin" : "🎓 Student"}
                         </span>
                       </div>
 
-                      {/* Menu */}
-                      <div className="py-2">
+                      {/* Links */}
+                      <div className="py-1.5">
                         {user?.role === "ADMIN" ? (
                           <>
-                            <ProfileLink href="/admin" onClick={() => setProfileOpen(false)} icon={<LayoutDashboard className="w-3.5 h-3.5" style={{ color: "var(--gold)" }} />} label="Admin Dashboard" />
-                            <ProfileLink href="/admin?tab=orders" onClick={() => setProfileOpen(false)} icon={<ShoppingBag className="w-3.5 h-3.5" style={{ color: "var(--gold-soft)" }} />} label="Manage Orders" />
-                            <ProfileLink href="/admin?tab=products" onClick={() => setProfileOpen(false)} icon={<BookOpen className="w-3.5 h-3.5" style={{ color: "var(--gold)" }} />} label="Manage Products" />
+                            <ProfileLink href="/admin" onClick={() => setProfileOpen(false)} icon={<LayoutDashboard className="w-3.5 h-3.5" />} label="Admin Dashboard" />
+                            <ProfileLink href="/admin?tab=orders" onClick={() => setProfileOpen(false)} icon={<ShoppingBag className="w-3.5 h-3.5" />} label="Manage Orders" />
+                            <ProfileLink href="/admin?tab=products" onClick={() => setProfileOpen(false)} icon={<BookOpen className="w-3.5 h-3.5" />} label="Manage Products" />
                           </>
                         ) : (
                           <>
-                            <ProfileLink href="/dashboard" onClick={() => setProfileOpen(false)} icon={<LayoutDashboard className="w-3.5 h-3.5" style={{ color: "var(--gold)" }} />} label="Dashboard" />
-                            <ProfileLink href="/dashboard?tab=profile" onClick={() => setProfileOpen(false)} icon={<User className="w-3.5 h-3.5" style={{ color: "var(--gold-soft)" }} />} label="My Profile" />
-                            <ProfileLink href="/dashboard?tab=orders" onClick={() => setProfileOpen(false)} icon={<ShoppingBag className="w-3.5 h-3.5" style={{ color: "var(--gold-soft)" }} />} label="My Orders" />
-                            <ProfileLink href="/dashboard?tab=wishlist" onClick={() => setProfileOpen(false)} icon={<Heart className="w-3.5 h-3.5" style={{ color: "#e0897a" }} />} label="Wishlist" />
+                            <ProfileLink href="/dashboard" onClick={() => setProfileOpen(false)} icon={<LayoutDashboard className="w-3.5 h-3.5" />} label="Dashboard" />
+                            <ProfileLink href="/dashboard?tab=profile" onClick={() => setProfileOpen(false)} icon={<User className="w-3.5 h-3.5" />} label="My Profile" />
+                            <ProfileLink href="/dashboard?tab=orders" onClick={() => setProfileOpen(false)} icon={<ShoppingBag className="w-3.5 h-3.5" />} label="My Orders" />
+                            <ProfileLink href="/dashboard?tab=wishlist" onClick={() => setProfileOpen(false)} icon={<Heart className="w-3.5 h-3.5" />} label="Wishlist" />
                           </>
                         )}
                       </div>
 
                       {/* Logout */}
-                      <div className="py-2" style={{ borderTop: "1px solid var(--border)" }}>
+                      <div className="py-1.5 border-t border-white/[0.06]">
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition"
-                          style={{ color: "#e0897a" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(224,137,122,0.08)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#e0897a] hover:bg-[#e0897a]/8 transition"
                         >
-                          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(224,137,122,0.12)" }}>
-                            <LogOut className="w-3.5 h-3.5" style={{ color: "#e0897a" }} />
+                          <div className="w-7 h-7 rounded-lg bg-[#e0897a]/12 flex items-center justify-center">
+                            <LogOut className="w-3.5 h-3.5" />
                           </div>
                           Logout
                         </button>
@@ -433,24 +377,26 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="hidden md:flex items-center gap-2 ml-1">
-                  <Link href="/login" className="text-sm font-medium px-3 py-2 rounded-lg transition" style={{ color: "var(--muted)" }}>
+                  <Link
+                    href="/login"
+                    className="text-sm font-medium px-3 py-2 rounded-lg text-[#a89f8f] hover:text-[#f5f0e8] transition"
+                  >
                     Login
                   </Link>
                   <Link
                     href="/register"
-                    className="text-sm px-4 py-2 rounded-lg font-medium transition"
-                    style={{ background: "linear-gradient(135deg, var(--gold) 0%, #b8921f 100%)", color: "#0c0b09" }}
+                    className="text-sm px-4 py-2 rounded-lg font-semibold bg-gradient-to-r from-[#c9a227] to-[#b8921f] text-[#0c0b09] hover:from-[#d4b84a] hover:to-[#c9a227] transition"
                   >
                     Register
                   </Link>
                 </div>
               )}
 
-              {/* Mobile Menu Button */}
+              {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden w-[38px] h-[38px] rounded-lg flex items-center justify-center"
-                style={{ color: "var(--muted)", border: "1px solid var(--border)" }}
+                className="md:hidden w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[#a89f8f] border border-white/[0.08] hover:text-[#c9a227] hover:border-[#c9a227]/30 transition"
+                aria-label="Menu"
               >
                 {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
               </button>
@@ -459,17 +405,16 @@ export default function Navbar() {
 
           {/* Mobile Menu */}
           {menuOpen && (
-            <div className="md:hidden py-4 space-y-1" style={{ borderTop: "1px solid var(--border)" }}>
+            <div className="md:hidden py-4 space-y-1 border-t border-white/[0.06]">
               <form onSubmit={handleSearch} className="mb-3">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--dim)" }} />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b6358]" />
                   <input
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search books or gadgets..."
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm focus:outline-none"
-                    style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--text)" }}
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm bg-[#1c1915] border border-white/[0.08] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40"
                   />
                 </div>
               </form>
@@ -480,53 +425,50 @@ export default function Navbar() {
               <MobileLink href="/contact" onClick={() => setMenuOpen(false)}>Contact</MobileLink>
 
               {isAuthenticated ? (
-                <div className="pt-3 mt-2" style={{ borderTop: "1px solid var(--border)" }}>
+                <div className="pt-3 mt-2 border-t border-white/[0.06]">
                   <div className="flex items-center gap-3 mb-3 px-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold" style={{ background: "linear-gradient(135deg, var(--gold), #b8921f)", color: "#0c0b09" }}>
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#c9a227] to-[#b8921f] text-[#0c0b09] font-bold flex items-center justify-center">
                       {user?.name?.[0]?.toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-semibold text-sm" style={{ color: "var(--text)" }}>{user?.name}</p>
-                      <p className="text-xs" style={{ color: "var(--dim)" }}>{user?.role === "ADMIN" ? "👑 Admin" : "🎓 Student"}</p>
+                      <p className="font-semibold text-sm text-[#f5f0e8]">{user?.name}</p>
+                      <p className="text-xs text-[#6b6358]">{user?.role === "ADMIN" ? "👑 Admin" : "🎓 Student"}</p>
                     </div>
                   </div>
 
                   {user?.role === "ADMIN" ? (
                     <>
-                      <MobileIconLink href="/admin" onClick={() => setMenuOpen(false)} icon={<LayoutDashboard className="w-4 h-4" style={{ color: "var(--gold)" }} />}>Admin Dashboard</MobileIconLink>
-                      <MobileIconLink href="/admin?tab=orders" onClick={() => setMenuOpen(false)} icon={<ShoppingBag className="w-4 h-4" style={{ color: "var(--gold-soft)" }} />}>Manage Orders</MobileIconLink>
+                      <MobileIconLink href="/admin" onClick={() => setMenuOpen(false)} icon={<LayoutDashboard className="w-4 h-4 text-[#c9a227]" />}>Admin Dashboard</MobileIconLink>
+                      <MobileIconLink href="/admin?tab=orders" onClick={() => setMenuOpen(false)} icon={<ShoppingBag className="w-4 h-4 text-[#d4b84a]" />}>Manage Orders</MobileIconLink>
                     </>
                   ) : (
                     <>
-                      <MobileIconLink href="/dashboard" onClick={() => setMenuOpen(false)} icon={<LayoutDashboard className="w-4 h-4" style={{ color: "var(--gold)" }} />}>Dashboard</MobileIconLink>
-                      <MobileIconLink href="/dashboard?tab=orders" onClick={() => setMenuOpen(false)} icon={<ShoppingBag className="w-4 h-4" style={{ color: "var(--gold-soft)" }} />}>My Orders</MobileIconLink>
-                      <MobileIconLink href="/dashboard?tab=wishlist" onClick={() => setMenuOpen(false)} icon={<Heart className="w-4 h-4" style={{ color: "#e0897a" }} />}>Wishlist</MobileIconLink>
+                      <MobileIconLink href="/dashboard" onClick={() => setMenuOpen(false)} icon={<LayoutDashboard className="w-4 h-4 text-[#c9a227]" />}>Dashboard</MobileIconLink>
+                      <MobileIconLink href="/dashboard?tab=orders" onClick={() => setMenuOpen(false)} icon={<ShoppingBag className="w-4 h-4 text-[#d4b84a]" />}>My Orders</MobileIconLink>
+                      <MobileIconLink href="/dashboard?tab=wishlist" onClick={() => setMenuOpen(false)} icon={<Heart className="w-4 h-4 text-[#e0897a]" />}>Wishlist</MobileIconLink>
                     </>
                   )}
 
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2 text-sm py-2.5 px-3 rounded-xl w-full mt-1"
-                    style={{ color: "#e0897a" }}
+                    className="flex items-center gap-2 text-sm py-2.5 px-3 rounded-xl w-full mt-1 text-[#e0897a]"
                   >
                     <LogOut className="w-4 h-4" /> Logout
                   </button>
                 </div>
               ) : (
-                <div className="pt-3 mt-2 flex gap-2 px-1" style={{ borderTop: "1px solid var(--border)" }}>
+                <div className="pt-3 mt-2 flex gap-2 px-1 border-t border-white/[0.06]">
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="flex-1 text-center text-sm font-medium py-2.5 rounded-xl"
-                    style={{ border: "1px solid var(--border)", color: "var(--text)" }}
+                    className="flex-1 text-center text-sm font-medium py-2.5 rounded-xl border border-white/[0.08] text-[#f5f0e8]"
                   >
                     Login
                   </Link>
                   <Link
                     href="/register"
                     onClick={() => setMenuOpen(false)}
-                    className="flex-1 text-center text-sm py-2.5 rounded-xl font-medium"
-                    style={{ background: "linear-gradient(135deg, var(--gold) 0%, #b8921f 100%)", color: "#0c0b09" }}
+                    className="flex-1 text-center text-sm py-2.5 rounded-xl font-semibold bg-gradient-to-r from-[#c9a227] to-[#b8921f] text-[#0c0b09]"
                   >
                     Register
                   </Link>
@@ -536,21 +478,28 @@ export default function Navbar() {
           )}
         </div>
       </nav>
-    </div>
+    </>
   );
 }
 
-function ProfileLink({ href, onClick, icon, label }: { href: string; onClick: () => void; icon: React.ReactNode; label: string }) {
+function ProfileLink({
+  href,
+  onClick,
+  icon,
+  label,
+}: {
+  href: string;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      className="flex items-center gap-3 px-4 py-2.5 text-sm transition"
-      style={{ color: "var(--muted)" }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.color = "var(--text)"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--muted)"; }}
+      className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#a89f8f] hover:text-[#f5f0e8] hover:bg-white/[0.04] transition"
     >
-      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(201,162,39,0.1)" }}>
+      <div className="w-7 h-7 rounded-lg bg-[#c9a227]/10 flex items-center justify-center text-[#c9a227]">
         {icon}
       </div>
       {label}
@@ -558,30 +507,51 @@ function ProfileLink({ href, onClick, icon, label }: { href: string; onClick: ()
   );
 }
 
-function MobileLink({ href, onClick, active, children }: { href: string; onClick: () => void; active?: boolean; children: React.ReactNode }) {
+function MobileLink({
+  href,
+  onClick,
+  active,
+  children,
+}: {
+  href: string;
+  onClick: () => void;
+  active?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      className="flex items-center gap-2 text-sm font-medium py-2.5 px-3 rounded-xl"
-      style={{
-        color: active ? "var(--gold)" : "var(--muted)",
-        background: active ? "rgba(201,162,39,0.08)" : "transparent",
-      }}
+      className={`flex items-center gap-2 text-sm font-medium py-2.5 px-3 rounded-xl ${
+        active ? "text-[#c9a227] bg-[#c9a227]/10" : "text-[#a89f8f]"
+      }`}
     >
       {children}
     </Link>
   );
 }
 
-function MobileIconLink({ href, onClick, icon, children }: { href: string; onClick: () => void; icon: React.ReactNode; children: React.ReactNode }) {
+function MobileIconLink({
+  href,
+  onClick,
+  icon,
+  children,
+}: {
+  href: string;
+  onClick: () => void;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <Link href={href} onClick={onClick} className="flex items-center gap-2 text-sm py-2.5 px-3 rounded-xl" style={{ color: "var(--muted)" }}>
+    <Link
+      href={href}
+      onClick={onClick}
+      className="flex items-center gap-2 text-sm py-2.5 px-3 rounded-xl text-[#a89f8f]"
+    >
       {icon} {children}
     </Link>
   );
 }
-
 
 
 
