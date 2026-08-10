@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useCategories } from "@/lib/hooks";
-import { ChevronRight, Sparkles, BookOpen, Wrench } from "lucide-react";
+import { useRef } from "react";
+import { ChevronLeft, ChevronRight, Sparkles, BookOpen, Wrench } from "lucide-react";
 
 interface Category {
   id: string;
@@ -27,6 +28,18 @@ const GRADIENT_CYCLE = [
 
 export default function CategoriesSection() {
   const { data: categories, isLoading } = useCategories();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const card = scrollRef.current.querySelector("a");
+      const cardWidth = card ? card.clientWidth + 16 : 260;
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -cardWidth * 2 : cardWidth * 2,
+        behavior: "smooth",
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -36,11 +49,11 @@ export default function CategoriesSection() {
             <div className="h-4 bg-[#1a1815] rounded-full w-40 mx-auto mb-3 animate-pulse" />
             <div className="h-7 bg-[#1a1815] rounded-lg w-56 mx-auto animate-pulse" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
-            {[...Array(8)].map((_, i) => (
+          <div className="flex gap-4 overflow-hidden">
+            {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="aspect-[4/3] rounded-2xl border border-white/[0.06] bg-[#141210] p-[1.15rem] animate-pulse"
+                className="flex-shrink-0 w-[9.5rem] sm:w-44 aspect-[4/3] rounded-2xl border border-white/[0.06] bg-[#141210] animate-pulse"
               />
             ))}
           </div>
@@ -54,73 +67,101 @@ export default function CategoriesSection() {
   return (
     <section className="py-14 bg-[#0c0b09] text-[#f5f0e8]">
       <div className="max-w-6xl mx-auto px-5">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold tracking-widest uppercase text-[#c9a227] mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Browse by Category</span>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+          <div className="text-center sm:text-left">
+            <div className="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold tracking-widest uppercase text-[#c9a227] mb-3">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Browse by Category</span>
+            </div>
+            <h2 className="text-[1.75rem] font-semibold tracking-tight text-[#f5f0e8]">
+              Shop by Category
+            </h2>
+            <p className="text-sm text-[#6b6358] mt-2 max-w-md">
+              Find exactly what you need for your academic journey
+            </p>
           </div>
-          <h2 className="text-[1.75rem] font-semibold tracking-tight text-[#f5f0e8]">
-            Shop by Category
-          </h2>
-          <p className="text-sm text-[#6b6358] mt-2 max-w-md mx-auto">
-            Find exactly what you need for your academic journey
-          </p>
+
+          {/* nav arrows — visible on all sizes, but most useful with mouse/trackpad */}
+          <div className="hidden sm:flex items-center gap-2 self-end">
+            <button
+              onClick={() => handleScroll("left")}
+              className="p-2.5 rounded-xl bg-[#141210] border border-white/[0.08] text-[#f5f0e8] hover:border-[#c9a227]/30 hover:text-[#c9a227] transition-all duration-200 active:scale-95"
+              aria-label="Scroll Left"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => handleScroll("right")}
+              className="p-2.5 rounded-xl bg-[#141210] border border-white/[0.08] text-[#f5f0e8] hover:border-[#c9a227]/30 hover:text-[#c9a227] transition-all duration-200 active:scale-95"
+              aria-label="Scroll Right"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
-          {categories.map((cat: Category, index: number) => {
-            const gradient = GRADIENT_CYCLE[index % GRADIENT_CYCLE.length];
-            const href = `/products?categoryId=${cat.id}`;
-            const Icon = cat.type === "BOOK" ? BookOpen : Wrench;
-            const count = cat._count?.products;
+        <div className="relative">
+          {/* edge fades */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#0c0b09] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#0c0b09] to-transparent z-10 pointer-events-none" />
 
-            return (
-              <Link
-                key={cat.id}
-                href={href}
-                className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.06] bg-[#141210] flex flex-col justify-end p-[1.15rem] transition-all duration-300 hover:border-[#c9a227]/30 hover:shadow-[0_12px_36px_rgba(0,0,0,0.4)] hover:-translate-y-[3px]"
-              >
-                {/* gradient wash */}
-                <div
-                  className="absolute inset-0 z-0 opacity-90 transition-opacity duration-300 group-hover:opacity-100"
-                  style={{ background: gradient }}
-                />
+          <div
+            ref={scrollRef}
+            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {categories.map((cat: Category, index: number) => {
+              const gradient = GRADIENT_CYCLE[index % GRADIENT_CYCLE.length];
+              const href = `/products?categoryId=${cat.id}`;
+              const Icon = cat.type === "BOOK" ? BookOpen : Wrench;
+              const count = cat._count?.products;
 
-                {/* arrow, appears on hover */}
-                <div className="absolute top-4 right-4 z-10 w-7 h-7 rounded-full border border-white/[0.08] flex items-center justify-center text-[#c9a227] opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:border-[#c9a227]/30 group-hover:bg-[#c9a227]/10">
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </div>
+              return (
+                <Link
+                  key={cat.id}
+                  href={href}
+                  className="group relative flex-shrink-0 w-[9.5rem] sm:w-44 aspect-[4/3] snap-start rounded-2xl overflow-hidden border border-white/[0.06] bg-[#141210] flex flex-col justify-end p-[1.15rem] transition-all duration-300 hover:border-[#c9a227]/30 hover:shadow-[0_12px_36px_rgba(0,0,0,0.4)] hover:-translate-y-[3px]"
+                >
+                  {/* gradient wash */}
+                  <div
+                    className="absolute inset-0 z-0 opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+                    style={{ background: gradient }}
+                  />
 
-                {/* icon */}
-                <div className="relative z-10 w-11 h-11 rounded-xl bg-[#c9a227]/[0.12] border border-[#c9a227]/20 flex items-center justify-center mb-[0.85rem] transition-colors duration-200 group-hover:bg-[#c9a227]/20 group-hover:border-[#c9a227]/35">
-                  <Icon className="w-5 h-5 text-[#c9a227]" />
-                </div>
-
-                {/* content */}
-                <div className="relative z-10">
-                  <div className="text-[0.95rem] font-semibold text-[#f5f0e8] tracking-tight line-clamp-1 transition-colors group-hover:text-[#c9a227]">
-                    {cat.name}
+                  {/* arrow, appears on hover (desktop) */}
+                  <div className="absolute top-4 right-4 z-10 w-7 h-7 rounded-full border border-white/[0.08] flex items-center justify-center text-[#c9a227] opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:border-[#c9a227]/30 group-hover:bg-[#c9a227]/10">
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </div>
-                  {count !== undefined && (
-                    <div className="text-[0.7rem] text-[#6b6358] mt-0.5">
-                      {count} {cat.type === "BOOK" ? "books" : "items"}
+
+                  {/* icon */}
+                  <div className="relative z-10 w-11 h-11 rounded-xl bg-[#c9a227]/[0.12] border border-[#c9a227]/20 flex items-center justify-center mb-[0.85rem] transition-colors duration-200 group-hover:bg-[#c9a227]/20 group-hover:border-[#c9a227]/35">
+                    <Icon className="w-5 h-5 text-[#c9a227]" />
+                  </div>
+
+                  {/* content */}
+                  <div className="relative z-10">
+                    <div className="text-[0.95rem] font-semibold text-[#f5f0e8] tracking-tight line-clamp-1 transition-colors group-hover:text-[#c9a227]">
+                      {cat.name}
                     </div>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
+                    {count !== undefined && (
+                      <div className="text-[0.7rem] text-[#6b6358] mt-0.5">
+                        {count} {cat.type === "BOOK" ? "books" : "items"}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
-        <p className="text-center mt-8 text-sm text-[#6b6358]">
-          Hover on any category card
+        <p className="text-center mt-6 text-sm text-[#6b6358] sm:hidden">
+          Swipe to explore categories
         </p>
       </div>
     </section>
   );
 }
-
-
 
 
 
