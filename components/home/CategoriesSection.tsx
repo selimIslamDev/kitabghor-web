@@ -53,7 +53,7 @@ export default function CategoriesSection() {
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 w-[9.5rem] sm:w-44 aspect-[4/3] rounded-2xl border border-white/[0.06] bg-[#141210] animate-pulse"
+                className="flex-shrink-0 w-[9.5rem] sm:w-44 aspect-[4/3] rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[#141210] animate-pulse"
               />
             ))}
           </div>
@@ -85,14 +85,14 @@ export default function CategoriesSection() {
           <div className="hidden sm:flex items-center gap-2 self-end">
             <button
               onClick={() => handleScroll("left")}
-              className="p-2.5 rounded-xl bg-[#141210] border border-white/[0.08] text-[#f5f0e8] hover:border-[#c9a227]/30 hover:text-[#c9a227] transition-all duration-200 active:scale-95"
+              className="p-2.5 rounded-xl bg-[#141210] border border-[rgba(255,255,255,0.08)] text-[#f5f0e8] hover:border-[rgba(201,162,39,0.3)] hover:text-[#c9a227] transition-all duration-200 active:scale-95"
               aria-label="Scroll Left"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => handleScroll("right")}
-              className="p-2.5 rounded-xl bg-[#141210] border border-white/[0.08] text-[#f5f0e8] hover:border-[#c9a227]/30 hover:text-[#c9a227] transition-all duration-200 active:scale-95"
+              className="p-2.5 rounded-xl bg-[#141210] border border-[rgba(255,255,255,0.08)] text-[#f5f0e8] hover:border-[rgba(201,162,39,0.3)] hover:text-[#c9a227] transition-all duration-200 active:scale-95"
               aria-label="Scroll Right"
             >
               <ChevronRight className="w-5 h-5" />
@@ -120,7 +120,7 @@ export default function CategoriesSection() {
                 <Link
                   key={cat.id}
                   href={href}
-                  className="group relative flex-shrink-0 w-[9.5rem] sm:w-44 aspect-[4/3] snap-start rounded-2xl overflow-hidden border border-white/[0.06] bg-[#141210] flex flex-col justify-end p-[1.15rem] transition-all duration-300 hover:border-[#c9a227]/30 hover:shadow-[0_12px_36px_rgba(0,0,0,0.4)] hover:-translate-y-[3px]"
+                  className="group relative flex-shrink-0 w-[9.5rem] sm:w-44 aspect-[4/3] snap-start rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.06)] bg-[#141210] flex flex-col justify-end p-[1.15rem] transition-all duration-300 hover:border-[rgba(201,162,39,0.3)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.4)] hover:-translate-y-[3px]"
                 >
                   {/* gradient wash */}
                   <div
@@ -129,12 +129,12 @@ export default function CategoriesSection() {
                   />
 
                   {/* arrow, appears on hover (desktop) */}
-                  <div className="absolute top-4 right-4 z-10 w-7 h-7 rounded-full border border-white/[0.08] flex items-center justify-center text-[#c9a227] opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:border-[#c9a227]/30 group-hover:bg-[#c9a227]/10">
+                  <div className="absolute top-4 right-4 z-10 w-7 h-7 rounded-full border border-[rgba(255,255,255,0.08)] flex items-center justify-center text-[#c9a227] opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:border-[rgba(201,162,39,0.3)] group-hover:bg-[rgba(201,162,39,0.1)]">
                     <ChevronRight className="w-3.5 h-3.5" />
                   </div>
 
                   {/* icon */}
-                  <div className="relative z-10 w-11 h-11 rounded-xl bg-[#c9a227]/[0.12] border border-[#c9a227]/20 flex items-center justify-center mb-[0.85rem] transition-colors duration-200 group-hover:bg-[#c9a227]/20 group-hover:border-[#c9a227]/35">
+                  <div className="relative z-10 w-11 h-11 rounded-xl bg-[rgba(201,162,39,0.12)] border border-[rgba(201,162,39,0.2)] flex items-center justify-center mb-[0.85rem] transition-colors duration-200 group-hover:bg-[rgba(201,162,39,0.2)] group-hover:border-[rgba(201,162,39,0.35)]">
                     <Icon className="w-5 h-5 text-[#c9a227]" />
                   </div>
 
@@ -162,10 +162,6 @@ export default function CategoriesSection() {
     </section>
   );
 }
-
-
-
-
 
 
 
