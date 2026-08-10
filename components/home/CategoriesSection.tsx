@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useCategories } from "@/lib/hooks";
-import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, LayoutGrid, Sparkles, BookOpen, Wrench } from "lucide-react";
+import { ChevronRight, Sparkles, BookOpen, Wrench } from "lucide-react";
 
 interface Category {
   id: string;
@@ -14,46 +13,35 @@ interface Category {
   };
 }
 
-// Color cycles by position — no name guessing, works for any category the admin creates
-const COLOR_CYCLE = [
-  "from-blue-500 to-indigo-600",
-  "from-emerald-400 to-teal-600",
-  "from-amber-500 to-orange-600",
-  "from-purple-500 to-violet-700",
-  "from-pink-500 to-rose-600",
-  "from-cyan-500 to-blue-600",
+// Soft gradient wash cycled by position — works for any category the admin creates
+const GRADIENT_CYCLE = [
+  "linear-gradient(160deg, rgba(30,58,95,0.55) 0%, rgba(12,11,9,0.95) 70%)",
+  "linear-gradient(160deg, rgba(61,42,26,0.55) 0%, rgba(12,11,9,0.95) 70%)",
+  "linear-gradient(160deg, rgba(42,26,42,0.55) 0%, rgba(12,11,9,0.95) 70%)",
+  "linear-gradient(160deg, rgba(26,61,42,0.55) 0%, rgba(12,11,9,0.95) 70%)",
+  "linear-gradient(160deg, rgba(50,40,20,0.55) 0%, rgba(12,11,9,0.95) 70%)",
+  "linear-gradient(160deg, rgba(35,45,70,0.55) 0%, rgba(12,11,9,0.95) 70%)",
+  "linear-gradient(160deg, rgba(55,30,40,0.55) 0%, rgba(12,11,9,0.95) 70%)",
+  "linear-gradient(160deg, rgba(25,50,50,0.55) 0%, rgba(12,11,9,0.95) 70%)",
 ];
 
 export default function CategoriesSection() {
   const { data: categories, isLoading } = useCategories();
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const handleScroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = direction === "left" ? -280 : 280;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
 
   if (isLoading) {
     return (
-      <section className="py-20 bg-slate-50/50 dark:bg-slate-900/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded-full w-36 mx-auto mb-3 animate-pulse" />
-            <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-lg w-64 mx-auto animate-pulse" />
+      <section className="py-14 bg-[#0c0b09]">
+        <div className="max-w-6xl mx-auto px-5">
+          <div className="text-center mb-10">
+            <div className="h-4 bg-[#1a1815] rounded-full w-40 mx-auto mb-3 animate-pulse" />
+            <div className="h-7 bg-[#1a1815] rounded-lg w-56 mx-auto animate-pulse" />
           </div>
-          <div className="flex gap-4 overflow-hidden">
-            {[...Array(6)].map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
+            {[...Array(8)].map((_, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 w-36 h-40 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800 p-4 animate-pulse flex flex-col items-center justify-center space-y-3"
-              >
-                <div className="w-14 h-14 bg-slate-100 dark:bg-slate-700 rounded-2xl" />
-                <div className="h-4 bg-slate-100 dark:bg-slate-700 rounded w-3/4" />
-                <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded w-1/2" />
-              </div>
+                className="aspect-[4/3] rounded-2xl border border-white/[0.06] bg-[#141210] p-[1.15rem] animate-pulse"
+              />
             ))}
           </div>
         </div>
@@ -64,112 +52,259 @@ export default function CategoriesSection() {
   if (!categories || categories.length === 0) return null;
 
   return (
-    <section className="py-20 relative overflow-hidden bg-slate-50/50 dark:bg-slate-900/50">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40 mb-3 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Explore Top Subjects</span>
-            </div>
-            <h2
-              className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight"
-              style={{ fontFamily: "Poppins, sans-serif" }}
-            >
-              Browse by Category
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-              Find exactly what you need for your academic journey
-            </p>
+    <section className="py-14 bg-[#0c0b09] text-[#f5f0e8]">
+      <div className="max-w-6xl mx-auto px-5">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold tracking-widest uppercase text-[#c9a227] mb-3">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Browse by Category</span>
           </div>
-
-          <div className="hidden sm:flex items-center gap-2">
-            <button
-              onClick={() => handleScroll("left")}
-              className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200/80 dark:border-slate-700/80 text-gray-700 dark:text-gray-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 shadow-sm active:scale-95"
-              aria-label="Scroll Left"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => handleScroll("right")}
-              className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200/80 dark:border-slate-700/80 text-gray-700 dark:text-gray-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 shadow-sm active:scale-95"
-              aria-label="Scroll Right"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+          <h2 className="text-[1.75rem] font-semibold tracking-tight text-[#f5f0e8]">
+            Shop by Category
+          </h2>
+          <p className="text-sm text-[#6b6358] mt-2 max-w-md mx-auto">
+            Find exactly what you need for your academic journey
+          </p>
         </div>
 
-        <div className="relative group">
-          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-slate-50 dark:from-slate-900 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-50 dark:from-slate-900 to-transparent z-10 pointer-events-none" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
+          {categories.map((cat: Category, index: number) => {
+            const gradient = GRADIENT_CYCLE[index % GRADIENT_CYCLE.length];
+            const href = `/products?categoryId=${cat.id}`;
+            const Icon = cat.type === "BOOK" ? BookOpen : Wrench;
+            const count = cat._count?.products;
 
-          <div
-            ref={scrollRef}
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-            className="flex gap-5 overflow-x-auto scrollbar-none py-3 px-1 scroll-smooth"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {categories.map((cat: Category, index: number) => {
-              const color = COLOR_CYCLE[index % COLOR_CYCLE.length];
-              // Real category id drives the filter — every category links to its own products
-              const href = `/products?categoryId=${cat.id}`;
+            return (
+              <Link
+                key={cat.id}
+                href={href}
+                className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.06] bg-[#141210] flex flex-col justify-end p-[1.15rem] transition-all duration-300 hover:border-[#c9a227]/30 hover:shadow-[0_12px_36px_rgba(0,0,0,0.4)] hover:-translate-y-[3px]"
+              >
+                {/* gradient wash */}
+                <div
+                  className="absolute inset-0 z-0 opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+                  style={{ background: gradient }}
+                />
 
-              return (
-                <Link
-                  key={cat.id}
-                  href={href}
-                  className="group/card flex-shrink-0 flex flex-col items-center p-5 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-700/60 shadow-sm hover:shadow-xl hover:border-emerald-500/30 dark:hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1.5 w-36 sm:w-40 relative"
-                >
-                  {cat._count?.products !== undefined && cat._count.products > 0 && (
-                    <span className="absolute top-3 right-3 bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-slate-200/50 dark:border-slate-600">
-                      {cat._count.products}
-                    </span>
-                  )}
+                {/* arrow, appears on hover */}
+                <div className="absolute top-4 right-4 z-10 w-7 h-7 rounded-full border border-white/[0.08] flex items-center justify-center text-[#c9a227] opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-hover:border-[#c9a227]/30 group-hover:bg-[#c9a227]/10">
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </div>
 
-                  <div className="relative mb-4">
-                    <div
-                      className={`w-16 h-16 sm:w-18 sm:h-18 bg-gradient-to-tr ${color} rounded-2xl flex items-center justify-center shadow-lg shadow-gray-200 dark:shadow-none group-hover/card:scale-110 group-hover/card:rotate-3 transition-all duration-300`}
-                    >
-                      {cat.type === "BOOK" ? (
-                        <BookOpen className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-                      ) : (
-                        <Wrench className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-                      )}
-                    </div>
-                    <div className="absolute inset-0 rounded-2xl ring-2 ring-white/20 pointer-events-none" />
-                  </div>
+                {/* icon */}
+                <div className="relative z-10 w-11 h-11 rounded-xl bg-[#c9a227]/[0.12] border border-[#c9a227]/20 flex items-center justify-center mb-[0.85rem] transition-colors duration-200 group-hover:bg-[#c9a227]/20 group-hover:border-[#c9a227]/35">
+                  <Icon className="w-5 h-5 text-[#c9a227]" />
+                </div>
 
-                  <span className="text-sm font-bold text-gray-800 dark:text-gray-100 text-center line-clamp-1 group-hover/card:text-emerald-600 dark:group-hover/card:text-emerald-400 transition-colors">
+                {/* content */}
+                <div className="relative z-10">
+                  <div className="text-[0.95rem] font-semibold text-[#f5f0e8] tracking-tight line-clamp-1 transition-colors group-hover:text-[#c9a227]">
                     {cat.name}
-                  </span>
-
-                  <span className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 font-medium flex items-center gap-1">
-                    Explore <ChevronRight className="w-3 h-3 group-hover/card:translate-x-0.5 transition-transform" />
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
+                  </div>
+                  {count !== undefined && (
+                    <div className="text-[0.7rem] text-[#6b6358] mt-0.5">
+                      {count} {cat.type === "BOOK" ? "books" : "items"}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
-        <div className="mt-8 text-center sm:hidden">
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-4 py-2 rounded-xl border border-emerald-100 dark:border-emerald-900/30"
-          >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span>View All Categories</span>
-          </Link>
-        </div>
+        <p className="text-center mt-8 text-sm text-[#6b6358]">
+          Hover on any category card
+        </p>
       </div>
     </section>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import Link from "next/link";
+// import { useCategories } from "@/lib/hooks";
+// import { useRef, useState } from "react";
+// import { ChevronLeft, ChevronRight, LayoutGrid, Sparkles, BookOpen, Wrench } from "lucide-react";
+
+// interface Category {
+//   id: string;
+//   name: string;
+//   type: "BOOK" | "GADGET";
+//   _count?: {
+//     products: number;
+//   };
+// }
+
+// // Color cycles by position — no name guessing, works for any category the admin creates
+// const COLOR_CYCLE = [
+//   "from-blue-500 to-indigo-600",
+//   "from-emerald-400 to-teal-600",
+//   "from-amber-500 to-orange-600",
+//   "from-purple-500 to-violet-700",
+//   "from-pink-500 to-rose-600",
+//   "from-cyan-500 to-blue-600",
+// ];
+
+// export default function CategoriesSection() {
+//   const { data: categories, isLoading } = useCategories();
+//   const scrollRef = useRef<HTMLDivElement>(null);
+//   const [isPaused, setIsPaused] = useState(false);
+
+//   const handleScroll = (direction: "left" | "right") => {
+//     if (scrollRef.current) {
+//       const scrollAmount = direction === "left" ? -280 : 280;
+//       scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+//     }
+//   };
+
+//   if (isLoading) {
+//     return (
+//       <section className="py-20 bg-slate-50/50 dark:bg-slate-900/50">
+//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+//           <div className="text-center mb-12">
+//             <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded-full w-36 mx-auto mb-3 animate-pulse" />
+//             <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-lg w-64 mx-auto animate-pulse" />
+//           </div>
+//           <div className="flex gap-4 overflow-hidden">
+//             {[...Array(6)].map((_, i) => (
+//               <div
+//                 key={i}
+//                 className="flex-shrink-0 w-36 h-40 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800 p-4 animate-pulse flex flex-col items-center justify-center space-y-3"
+//               >
+//                 <div className="w-14 h-14 bg-slate-100 dark:bg-slate-700 rounded-2xl" />
+//                 <div className="h-4 bg-slate-100 dark:bg-slate-700 rounded w-3/4" />
+//                 <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded w-1/2" />
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       </section>
+//     );
+//   }
+
+//   if (!categories || categories.length === 0) return null;
+
+//   return (
+//     <section className="py-20 relative overflow-hidden bg-slate-50/50 dark:bg-slate-900/50">
+//       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent pointer-events-none" />
+
+//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+//         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+//           <div>
+//             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40 mb-3 shadow-sm">
+//               <Sparkles className="w-3.5 h-3.5" />
+//               <span>Explore Top Subjects</span>
+//             </div>
+//             <h2
+//               className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight"
+//               style={{ fontFamily: "Poppins, sans-serif" }}
+//             >
+//               Browse by Category
+//             </h2>
+//             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+//               Find exactly what you need for your academic journey
+//             </p>
+//           </div>
+
+//           <div className="hidden sm:flex items-center gap-2">
+//             <button
+//               onClick={() => handleScroll("left")}
+//               className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200/80 dark:border-slate-700/80 text-gray-700 dark:text-gray-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 shadow-sm active:scale-95"
+//               aria-label="Scroll Left"
+//             >
+//               <ChevronLeft className="w-5 h-5" />
+//             </button>
+//             <button
+//               onClick={() => handleScroll("right")}
+//               className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200/80 dark:border-slate-700/80 text-gray-700 dark:text-gray-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 shadow-sm active:scale-95"
+//               aria-label="Scroll Right"
+//             >
+//               <ChevronRight className="w-5 h-5" />
+//             </button>
+//           </div>
+//         </div>
+
+//         <div className="relative group">
+//           <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-slate-50 dark:from-slate-900 to-transparent z-10 pointer-events-none" />
+//           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-50 dark:from-slate-900 to-transparent z-10 pointer-events-none" />
+
+//           <div
+//             ref={scrollRef}
+//             onMouseEnter={() => setIsPaused(true)}
+//             onMouseLeave={() => setIsPaused(false)}
+//             className="flex gap-5 overflow-x-auto scrollbar-none py-3 px-1 scroll-smooth"
+//             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+//           >
+//             {categories.map((cat: Category, index: number) => {
+//               const color = COLOR_CYCLE[index % COLOR_CYCLE.length];
+//               // Real category id drives the filter — every category links to its own products
+//               const href = `/products?categoryId=${cat.id}`;
+
+//               return (
+//                 <Link
+//                   key={cat.id}
+//                   href={href}
+//                   className="group/card flex-shrink-0 flex flex-col items-center p-5 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-700/60 shadow-sm hover:shadow-xl hover:border-emerald-500/30 dark:hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1.5 w-36 sm:w-40 relative"
+//                 >
+//                   {cat._count?.products !== undefined && cat._count.products > 0 && (
+//                     <span className="absolute top-3 right-3 bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-slate-200/50 dark:border-slate-600">
+//                       {cat._count.products}
+//                     </span>
+//                   )}
+
+//                   <div className="relative mb-4">
+//                     <div
+//                       className={`w-16 h-16 sm:w-18 sm:h-18 bg-gradient-to-tr ${color} rounded-2xl flex items-center justify-center shadow-lg shadow-gray-200 dark:shadow-none group-hover/card:scale-110 group-hover/card:rotate-3 transition-all duration-300`}
+//                     >
+//                       {cat.type === "BOOK" ? (
+//                         <BookOpen className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+//                       ) : (
+//                         <Wrench className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+//                       )}
+//                     </div>
+//                     <div className="absolute inset-0 rounded-2xl ring-2 ring-white/20 pointer-events-none" />
+//                   </div>
+
+//                   <span className="text-sm font-bold text-gray-800 dark:text-gray-100 text-center line-clamp-1 group-hover/card:text-emerald-600 dark:group-hover/card:text-emerald-400 transition-colors">
+//                     {cat.name}
+//                   </span>
+
+//                   <span className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 font-medium flex items-center gap-1">
+//                     Explore <ChevronRight className="w-3 h-3 group-hover/card:translate-x-0.5 transition-transform" />
+//                   </span>
+//                 </Link>
+//               );
+//             })}
+//           </div>
+//         </div>
+
+//         <div className="mt-8 text-center sm:hidden">
+//           <Link
+//             href="/products"
+//             className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-4 py-2 rounded-xl border border-emerald-100 dark:border-emerald-900/30"
+//           >
+//             <LayoutGrid className="w-3.5 h-3.5" />
+//             <span>View All Categories</span>
+//           </Link>
+//         </div>
+//       </div>
+//     </section>
+//   );
+// }
 
 
 
