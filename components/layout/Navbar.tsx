@@ -85,6 +85,19 @@ export default function Navbar() {
 
   const profileRef = useRef<HTMLDivElement>(null);
   const megaRef = useRef<HTMLDivElement>(null);
+  const megaCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const openMega = () => {
+    if (megaCloseTimer.current) {
+      clearTimeout(megaCloseTimer.current);
+      megaCloseTimer.current = null;
+    }
+    setMegaOpen(true);
+  };
+
+  const closeMegaWithDelay = () => {
+    megaCloseTimer.current = setTimeout(() => setMegaOpen(false), 150);
+  };
 
   // Scroll effect
   useEffect(() => {
@@ -105,6 +118,13 @@ export default function Navbar() {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Cleanup pending hover-close timer on unmount
+  useEffect(() => {
+    return () => {
+      if (megaCloseTimer.current) clearTimeout(megaCloseTimer.current);
+    };
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -193,8 +213,13 @@ export default function Navbar() {
                 {isActive("/") && <span className="absolute left-1/2 -translate-x-1/2 bottom-0.5 w-4 h-0.5 rounded-full" style={{ background: "var(--gold)" }} />}
               </Link>
 
-              {/* Shop Mega Menu */}
-              <div className="relative" ref={megaRef}>
+              {/* Shop Mega Menu — opens on hover */}
+              <div
+                className="relative"
+                ref={megaRef}
+                onMouseEnter={openMega}
+                onMouseLeave={closeMegaWithDelay}
+              >
                 <button
                   onClick={() => setMegaOpen(!megaOpen)}
                   className="flex items-center gap-1.5 px-3.5 py-2 text-[0.8125rem] font-medium rounded-lg transition"
@@ -556,10 +581,6 @@ function MobileIconLink({ href, onClick, icon, children }: { href: string; onCli
     </Link>
   );
 }
-
-
-
-
 
 
 
