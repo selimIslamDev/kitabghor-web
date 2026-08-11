@@ -135,7 +135,7 @@ export default function CategoriesSection() {
                 <Link
                   key={cat.id}
                   href={href}
-                  className="group relative flex-shrink-0 w-60 sm:w-64 snap-start rounded-[1.5rem] overflow-hidden border border-[rgba(255,255,255,0.06)] bg-[#141210] flex flex-col justify-start p-6 transition-all duration-300 hover:border-[rgba(255,255,255,0.14)] hover:-translate-y-1"
+                  className="group relative flex-shrink-0 w-60 sm:w-64 snap-start rounded-[1.5rem] overflow-hidden border border-[rgba(255,255,255,0.14)] bg-[#141210] flex flex-col justify-start p-6 transition-all duration-300 hover:border-[rgba(255,255,255,0.22)] hover:-translate-y-1"
                 >
                   {/* accent wash */}
                   <div
@@ -175,8 +175,6 @@ export default function CategoriesSection() {
     </section>
   );
 }
-
-
 
 
 
