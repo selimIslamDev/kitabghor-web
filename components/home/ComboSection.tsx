@@ -83,18 +83,70 @@ export default function ComboSection() {
     return (
       <section className="py-16 bg-[#0c0b09]">
         <div className="max-w-6xl mx-auto px-5">
+          {/* Header skeleton */}
           <div className="text-center mb-12">
-            <div className="h-5 bg-[#1a1815] rounded-full w-36 mx-auto mb-4 animate-pulse" />
-            <div className="h-9 bg-[#1a1815] rounded-lg w-72 mx-auto mb-3 animate-pulse" />
-            <div className="h-4 bg-[#1a1815] rounded w-80 mx-auto animate-pulse" />
+            <div className="h-7 bg-[#1a1815] rounded-full w-36 mx-auto mb-5 animate-pulse" />
+            <div className="h-10 bg-[#1a1815] rounded-lg w-80 mx-auto mb-3 animate-pulse" />
+            <div className="h-4 bg-[#1a1815] rounded w-72 mx-auto animate-pulse" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          {/* Cards skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
-                className="h-[460px] rounded-2xl border border-white/5 bg-[#141210] animate-pulse"
-              />
+                className="rounded-2xl border border-white/[0.04] bg-[#141210] overflow-hidden"
+              >
+                <div className="p-6 space-y-5">
+                  {/* Icon */}
+                  <div className="w-14 h-14 rounded-2xl bg-[#1a1815] animate-pulse" />
+
+                  {/* Title + desc */}
+                  <div className="space-y-2">
+                    <div className="h-5 bg-[#1a1815] rounded-md w-3/4 animate-pulse" />
+                    <div className="h-3.5 bg-[#1a1815] rounded-md w-1/2 animate-pulse" />
+                  </div>
+
+                  {/* Accent line */}
+                  <div className="h-0.5 w-10 bg-[#1a1815] rounded-full animate-pulse" />
+
+                  {/* Includes */}
+                  <div className="space-y-2.5">
+                    <div className="h-3.5 bg-[#1a1815] rounded w-full animate-pulse" />
+                    <div className="h-3.5 bg-[#1a1815] rounded w-5/6 animate-pulse" />
+                    <div className="h-3.5 bg-[#1a1815] rounded w-4/6 animate-pulse" />
+                  </div>
+
+                  {/* Price */}
+                  <div className="space-y-2 pt-2">
+                    <div className="flex items-center gap-2">
+                      <div className="h-6 w-20 bg-[#1a1815] rounded-md animate-pulse" />
+                      <div className="h-4 w-12 bg-[#1a1815] rounded animate-pulse" />
+                      <div className="h-5 w-14 bg-[#1a1815] rounded animate-pulse" />
+                    </div>
+                    <div className="h-3.5 w-24 bg-[#1a1815] rounded animate-pulse" />
+                  </div>
+
+                  {/* Button */}
+                  <div className="h-11 w-full bg-[#1a1815] rounded-xl animate-pulse" />
+                </div>
+              </div>
             ))}
+          </div>
+
+          {/* Bottom features skeleton */}
+          <div className="rounded-2xl border border-white/5 bg-[#141210]/60 px-4 py-5 sm:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#1a1815] animate-pulse flex-shrink-0" />
+                  <div className="space-y-1.5 flex-1">
+                    <div className="h-3.5 bg-[#1a1815] rounded w-20 animate-pulse" />
+                    <div className="h-3 bg-[#1a1815] rounded w-28 animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -218,7 +270,7 @@ export default function ComboSection() {
           })}
         </div>
 
-        {/* Bottom Features - very soft border */}
+        {/* Bottom Features */}
         <div className="rounded-2xl border border-white/5 bg-[#141210]/60 px-4 py-5 sm:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
@@ -259,7 +311,6 @@ export default function ComboSection() {
     </section>
   );
 }
-
 
 
 
