@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   Tag,
   ArrowRight,
-  Package,
   Check,
   BookOpen,
   GraduationCap,
@@ -39,33 +38,36 @@ interface Bundle {
 
 const styleVariants = [
   {
-    border: "border-blue-500/30",
-    wash: "radial-gradient(ellipse at 30% 15%, rgba(59,130,246,0.22) 0%, transparent 65%)",
-    iconBg: "bg-blue-500/15 border-blue-400/30",
+    border: "border-blue-500/20",
+    hoverBorder: "hover:border-blue-500/40",
+    wash: "radial-gradient(ellipse at 30% 15%, rgba(59,130,246,0.18) 0%, transparent 65%)",
+    iconBg: "bg-blue-500/10 border-blue-400/25",
     iconColor: "text-blue-300",
     check: "text-blue-400",
-    button: "bg-blue-600 hover:bg-blue-500 shadow-blue-900/40",
+    button: "bg-blue-600 hover:bg-blue-500",
     accentLine: "bg-blue-500",
     Icon: BookOpen,
   },
   {
-    border: "border-emerald-500/40",
-    wash: "radial-gradient(ellipse at 30% 15%, rgba(16,185,129,0.22) 0%, transparent 65%)",
-    iconBg: "bg-emerald-500/15 border-emerald-400/30",
+    border: "border-emerald-500/25",
+    hoverBorder: "hover:border-emerald-500/45",
+    wash: "radial-gradient(ellipse at 30% 15%, rgba(16,185,129,0.18) 0%, transparent 65%)",
+    iconBg: "bg-emerald-500/10 border-emerald-400/25",
     iconColor: "text-emerald-300",
     check: "text-emerald-400",
-    button: "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40",
+    button: "bg-emerald-600 hover:bg-emerald-500",
     accentLine: "bg-emerald-500",
     Icon: GraduationCap,
     isPopular: true,
   },
   {
-    border: "border-purple-500/30",
-    wash: "radial-gradient(ellipse at 30% 15%, rgba(168,85,247,0.22) 0%, transparent 65%)",
-    iconBg: "bg-purple-500/15 border-purple-400/30",
+    border: "border-purple-500/20",
+    hoverBorder: "hover:border-purple-500/40",
+    wash: "radial-gradient(ellipse at 30% 15%, rgba(168,85,247,0.18) 0%, transparent 65%)",
+    iconBg: "bg-purple-500/10 border-purple-400/25",
     iconColor: "text-purple-300",
     check: "text-purple-400",
-    button: "bg-purple-600 hover:bg-purple-500 shadow-purple-900/40",
+    button: "bg-purple-600 hover:bg-purple-500",
     accentLine: "bg-purple-500",
     Icon: Gift,
   },
@@ -90,7 +92,7 @@ export default function ComboSection() {
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
-                className="h-[460px] rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[#141210] animate-pulse"
+                className="h-[460px] rounded-2xl border border-white/5 bg-[#141210] animate-pulse"
               />
             ))}
           </div>
@@ -112,8 +114,7 @@ export default function ComboSection() {
           </div>
 
           <h2 className="text-3xl sm:text-[2.6rem] font-extrabold tracking-tight text-white mb-3">
-            Save More with{" "}
-            <span className="text-blue-400">Bundles</span>
+            Save More with <span className="text-blue-400">Bundles</span>
           </h2>
           <p className="text-[#8b8378] max-w-lg mx-auto text-base">
             Curated bundles. Smarter savings. Stronger results.
@@ -130,7 +131,7 @@ export default function ComboSection() {
             return (
               <div
                 key={bundle.id}
-                className={`group relative rounded-2xl border ${style.border} bg-[#141210] overflow-hidden transition-all duration-300 hover:-translate-y-1.5`}
+                className={`group relative rounded-2xl border ${style.border} ${style.hoverBorder} bg-[#141210] overflow-hidden transition-all duration-300 hover:-translate-y-1.5`}
               >
                 {/* soft wash */}
                 <div
@@ -138,10 +139,10 @@ export default function ComboSection() {
                   style={{ background: style.wash }}
                 />
 
-                {/* Most Popular badge (only middle card) */}
+                {/* Most Popular badge */}
                 {style.isPopular && (
                   <div className="absolute -top-0 left-1/2 -translate-x-1/2 z-20">
-                    <div className="px-3 py-1 rounded-b-xl bg-[rgba(201,162,39,0.95)] text-[#0c0b09] text-[11px] font-bold flex items-center gap-1 shadow-lg">
+                    <div className="px-3 py-1 rounded-b-xl bg-[#c9a227] text-[#0c0b09] text-[11px] font-bold flex items-center gap-1 shadow-lg">
                       <span>★</span> Most Popular
                     </div>
                   </div>
@@ -193,7 +194,7 @@ export default function ComboSection() {
                       <span className="text-sm text-[#6b6358] line-through">
                         ৳{bundle.totalPrice}
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-[rgba(239,68,68,0.15)] border border-[rgba(239,68,68,0.3)] text-red-400 text-xs font-bold">
+                      <span className="px-2 py-0.5 rounded-md bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-bold">
                         {bundle.discountPercent}% OFF
                       </span>
                     </div>
@@ -206,7 +207,7 @@ export default function ComboSection() {
                   {/* CTA */}
                   <Link
                     href={`/bundles/${bundle.id}`}
-                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white font-semibold text-sm transition-all duration-200 active:scale-[0.98] shadow-lg ${style.button}`}
+                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white font-semibold text-sm transition-all duration-200 active:scale-[0.98] ${style.button}`}
                   >
                     Get This Bundle
                     <ArrowRight className="w-4 h-4" />
@@ -217,55 +218,47 @@ export default function ComboSection() {
           })}
         </div>
 
-        {/* Bottom Features */}
-        <div className="rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[#141210]/80 px-4 py-5 sm:px-8">
+        {/* Bottom Features - very soft border */}
+        <div className="rounded-2xl border border-white/5 bg-[#141210]/60 px-4 py-5 sm:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[rgba(201,162,39,0.12)] border border-[rgba(201,162,39,0.25)] flex items-center justify-center flex-shrink-0">
-                <BadgePercent className="w-5 h-5 text-[#c9a227]" />
+            {[
+              {
+                icon: BadgePercent,
+                title: "Best Price",
+                desc: "Unbeatable bundle rates",
+              },
+              {
+                icon: ShieldCheck,
+                title: "Quality Assured",
+                desc: "Trusted content, always",
+              },
+              {
+                icon: Truck,
+                title: "Safe Delivery",
+                desc: "Secure & reliable shipping",
+              },
+              {
+                icon: RotateCcw,
+                title: "Easy Returns",
+                desc: "Hassle-free returns",
+              },
+            ].map((item) => (
+              <div key={item.title} className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[rgba(201,162,39,0.1)] border border-[rgba(201,162,39,0.2)] flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-5 h-5 text-[#c9a227]" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">{item.title}</p>
+                  <p className="text-xs text-[#6b6358]">{item.desc}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-white">Best Price</p>
-                <p className="text-xs text-[#6b6358]">Unbeatable bundle rates</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[rgba(201,162,39,0.12)] border border-[rgba(201,162,39,0.25)] flex items-center justify-center flex-shrink-0">
-                <ShieldCheck className="w-5 h-5 text-[#c9a227]" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-white">Quality Assured</p>
-                <p className="text-xs text-[#6b6358]">Trusted content, always</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[rgba(201,162,39,0.12)] border border-[rgba(201,162,39,0.25)] flex items-center justify-center flex-shrink-0">
-                <Truck className="w-5 h-5 text-[#c9a227]" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-white">Safe Delivery</p>
-                <p className="text-xs text-[#6b6358]">Secure & reliable shipping</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[rgba(201,162,39,0.12)] border border-[rgba(201,162,39,0.25)] flex items-center justify-center flex-shrink-0">
-                <RotateCcw className="w-5 h-5 text-[#c9a227]" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-white">Easy Returns</p>
-                <p className="text-xs text-[#6b6358]">Hassle-free returns</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
     </section>
   );
 }
-
 
 
 
