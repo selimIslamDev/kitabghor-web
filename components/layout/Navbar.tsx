@@ -132,12 +132,8 @@ export default function Navbar() {
   return (
     <>
       {/* Promo Bar */}
-      {/*
-        BORDER FIX: border-[#c9a227]/20 arbitrary-opacity syntax ta thik render hocchilo na,
-        tai full-opaque white/gold line dekha jacchilo. rgba() diye explicit likhe dilam
-        jate 20% opacity guaranteed thake.
-      */}
-      <div className="h-9 flex items-center justify-center text-xs bg-gradient-to-r from-[#1a160f] via-[#2a2215] to-[#1a160f] border-b border-[rgba(201,162,39,0.2)] text-[#a89f8f]">
+      {/* BORDER REMOVED: age border-b diye ekta line dekha jacchilo, ekhon pura soriye dewa holo */}
+      <div className="h-9 flex items-center justify-center text-xs bg-gradient-to-r from-[#1a160f] via-[#2a2215] to-[#1a160f] text-[#a89f8f]">
         <span>
           ✦ Free shipping on orders above{" "}
           <strong className="text-[#c9a227] font-semibold">৳500</strong>
@@ -154,7 +150,7 @@ export default function Navbar() {
 
       {/* Main Navbar */}
       <nav
-        className={`sticky top-0 z-50 transition-all duration-300 border-b border-[rgba(255,255,255,0.06)] ${
+        className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled
             ? "bg-[#0c0b09]/95 shadow-[0_4px_24px_rgba(0,0,0,0.35)]"
             : "bg-[#0c0b09]/90"
@@ -235,7 +231,7 @@ export default function Navbar() {
                       ))}
                     </div>
 
-                    <div className="mt-5 pt-4 flex items-center justify-between border-t border-[rgba(255,255,255,0.06)]">
+                    <div className="mt-5 pt-4 flex items-center justify-between">
                       <p className="text-xs text-[#6b6358]">🔥 New arrivals every week</p>
                       <Link
                         href="/products"
@@ -369,7 +365,7 @@ export default function Navbar() {
                       </div>
 
                       {/* Logout */}
-                      <div className="py-1.5 border-t border-[rgba(255,255,255,0.06)]">
+                      <div className="py-1.5">
                         <button
                           onClick={handleLogout}
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#e0897a] hover:bg-[#e0897a]/8 transition"
@@ -413,7 +409,7 @@ export default function Navbar() {
 
           {/* Mobile Menu */}
           {menuOpen && (
-            <div className="md:hidden py-4 space-y-1 border-t border-[rgba(255,255,255,0.06)]">
+            <div className="md:hidden py-4 space-y-1">
               <form onSubmit={handleSearch} className="mb-3">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b6358]" />
@@ -433,7 +429,7 @@ export default function Navbar() {
               <MobileLink href="/contact" onClick={() => setMenuOpen(false)}>Contact</MobileLink>
 
               {isAuthenticated ? (
-                <div className="pt-3 mt-2 border-t border-[rgba(255,255,255,0.06)]">
+                <div className="pt-3 mt-2">
                   <div className="flex items-center gap-3 mb-3 px-3">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#c9a227] to-[#b8921f] text-[#0c0b09] font-bold flex items-center justify-center">
                       {user?.name?.[0]?.toUpperCase()}
@@ -465,7 +461,7 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <div className="pt-3 mt-2 flex gap-2 px-1 border-t border-[rgba(255,255,255,0.06)]">
+                <div className="pt-3 mt-2 flex gap-2 px-1">
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
@@ -560,7 +556,6 @@ function MobileIconLink({
     </Link>
   );
 }
-
 
 
 
