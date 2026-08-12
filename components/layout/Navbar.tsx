@@ -109,8 +109,11 @@ export default function Navbar() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (search.trim()) {
-      router.push(`/products?search=${search}`);
+    const trimmed = search.trim();
+    if (trimmed) {
+      // BUG FIX: raw search string diye URL banale special characters (&, ?, #, space)
+      // URL ke bhenge dey. encodeURIComponent diye safe kora holo.
+      router.push(`/products?search=${encodeURIComponent(trimmed)}`);
       setSearch("");
       setSearchOpen(false);
       setMenuOpen(false);
@@ -129,7 +132,12 @@ export default function Navbar() {
   return (
     <>
       {/* Promo Bar */}
-      <div className="h-9 flex items-center justify-center text-xs bg-gradient-to-r from-[#1a160f] via-[#2a2215] to-[#1a160f] border-b border-[#c9a227]/20 text-[#a89f8f]">
+      {/*
+        BORDER FIX: border-[#c9a227]/20 arbitrary-opacity syntax ta thik render hocchilo na,
+        tai full-opaque white/gold line dekha jacchilo. rgba() diye explicit likhe dilam
+        jate 20% opacity guaranteed thake.
+      */}
+      <div className="h-9 flex items-center justify-center text-xs bg-gradient-to-r from-[#1a160f] via-[#2a2215] to-[#1a160f] border-b border-[rgba(201,162,39,0.2)] text-[#a89f8f]">
         <span>
           ✦ Free shipping on orders above{" "}
           <strong className="text-[#c9a227] font-semibold">৳500</strong>
@@ -146,7 +154,7 @@ export default function Navbar() {
 
       {/* Main Navbar */}
       <nav
-        className={`sticky top-0 z-50 transition-all duration-300 border-b border-white/[0.06] ${
+        className={`sticky top-0 z-50 transition-all duration-300 border-b border-[rgba(255,255,255,0.06)] ${
           scrolled
             ? "bg-[#0c0b09]/95 shadow-[0_4px_24px_rgba(0,0,0,0.35)]"
             : "bg-[#0c0b09]/90"
@@ -187,7 +195,7 @@ export default function Navbar() {
                 onMouseLeave={closeMegaWithDelay}
               >
                 <button
-                  onClick={() => setMegaOpen(!megaOpen)}
+                  onClick={() => setMegaOpen((prev) => !prev)}
                   className={`flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-lg transition ${
                     pathname.startsWith("/products") || megaOpen
                       ? "text-[#c9a227]"
@@ -199,7 +207,7 @@ export default function Navbar() {
                 </button>
 
                 {megaOpen && (
-                  <div className="absolute left-0 top-12 w-[540px] rounded-2xl p-5 z-50 bg-[#141210] border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
+                  <div className="absolute left-0 top-12 w-[540px] rounded-2xl p-5 z-50 bg-[#141210] border border-[rgba(255,255,255,0.08)] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
                     <div className="grid grid-cols-3 gap-5">
                       {megaMenuCategories.map((cat) => (
                         <div key={cat.title}>
@@ -227,7 +235,7 @@ export default function Navbar() {
                       ))}
                     </div>
 
-                    <div className="mt-5 pt-4 flex items-center justify-between border-t border-white/[0.06]">
+                    <div className="mt-5 pt-4 flex items-center justify-between border-t border-[rgba(255,255,255,0.06)]">
                       <p className="text-xs text-[#6b6358]">🔥 New arrivals every week</p>
                       <Link
                         href="/products"
@@ -273,7 +281,7 @@ export default function Navbar() {
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search books..."
-                      className="w-48 px-3 py-2 rounded-lg text-sm bg-[#1c1915] border border-white/[0.08] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40"
+                      className="w-48 px-3 py-2 rounded-lg text-sm bg-[#1c1915] border border-[rgba(255,255,255,0.08)] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40"
                     />
                     <button type="button" onClick={() => setSearchOpen(false)} className="text-[#6b6358] hover:text-[#a89f8f]">
                       <X className="w-4 h-4" />
@@ -308,11 +316,11 @@ export default function Navbar() {
               {isAuthenticated ? (
                 <div className="hidden md:block relative ml-1" ref={profileRef}>
                   <button
-                    onClick={() => setProfileOpen(!profileOpen)}
+                    onClick={() => setProfileOpen((prev) => !prev)}
                     className={`flex items-center gap-2 pl-1 pr-2 py-1 rounded-full border transition ${
                       profileOpen
                         ? "border-[#c9a227]/30 bg-[#c9a227]/5"
-                        : "border-white/[0.06] hover:border-[#c9a227]/25"
+                        : "border-[rgba(255,255,255,0.06)] hover:border-[#c9a227]/25"
                     }`}
                   >
                     <div className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-[#c9a227] to-[#b8921f] text-[#0c0b09] text-xs font-bold flex items-center justify-center">
@@ -325,7 +333,7 @@ export default function Navbar() {
                   </button>
 
                   {profileOpen && (
-                    <div className="absolute right-0 top-12 w-60 rounded-2xl overflow-hidden z-50 bg-[#141210] border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
+                    <div className="absolute right-0 top-12 w-60 rounded-2xl overflow-hidden z-50 bg-[#141210] border border-[rgba(255,255,255,0.08)] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
                       {/* User header */}
                       <div className="px-4 py-4 bg-gradient-to-br from-[#c9a227] to-[#b8921f]">
                         <div className="flex items-center gap-3">
@@ -361,7 +369,7 @@ export default function Navbar() {
                       </div>
 
                       {/* Logout */}
-                      <div className="py-1.5 border-t border-white/[0.06]">
+                      <div className="py-1.5 border-t border-[rgba(255,255,255,0.06)]">
                         <button
                           onClick={handleLogout}
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#e0897a] hover:bg-[#e0897a]/8 transition"
@@ -394,8 +402,8 @@ export default function Navbar() {
 
               {/* Mobile Menu Toggle */}
               <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[#a89f8f] border border-white/[0.08] hover:text-[#c9a227] hover:border-[#c9a227]/30 transition"
+                onClick={() => setMenuOpen((prev) => !prev)}
+                className="md:hidden w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[#a89f8f] border border-[rgba(255,255,255,0.08)] hover:text-[#c9a227] hover:border-[#c9a227]/30 transition"
                 aria-label="Menu"
               >
                 {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -405,7 +413,7 @@ export default function Navbar() {
 
           {/* Mobile Menu */}
           {menuOpen && (
-            <div className="md:hidden py-4 space-y-1 border-t border-white/[0.06]">
+            <div className="md:hidden py-4 space-y-1 border-t border-[rgba(255,255,255,0.06)]">
               <form onSubmit={handleSearch} className="mb-3">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b6358]" />
@@ -414,7 +422,7 @@ export default function Navbar() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search books or gadgets..."
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm bg-[#1c1915] border border-white/[0.08] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm bg-[#1c1915] border border-[rgba(255,255,255,0.08)] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40"
                   />
                 </div>
               </form>
@@ -425,7 +433,7 @@ export default function Navbar() {
               <MobileLink href="/contact" onClick={() => setMenuOpen(false)}>Contact</MobileLink>
 
               {isAuthenticated ? (
-                <div className="pt-3 mt-2 border-t border-white/[0.06]">
+                <div className="pt-3 mt-2 border-t border-[rgba(255,255,255,0.06)]">
                   <div className="flex items-center gap-3 mb-3 px-3">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#c9a227] to-[#b8921f] text-[#0c0b09] font-bold flex items-center justify-center">
                       {user?.name?.[0]?.toUpperCase()}
@@ -457,11 +465,11 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <div className="pt-3 mt-2 flex gap-2 px-1 border-t border-white/[0.06]">
+                <div className="pt-3 mt-2 flex gap-2 px-1 border-t border-[rgba(255,255,255,0.06)]">
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="flex-1 text-center text-sm font-medium py-2.5 rounded-xl border border-white/[0.08] text-[#f5f0e8]"
+                    className="flex-1 text-center text-sm font-medium py-2.5 rounded-xl border border-[rgba(255,255,255,0.08)] text-[#f5f0e8]"
                   >
                     Login
                   </Link>
@@ -552,8 +560,6 @@ function MobileIconLink({
     </Link>
   );
 }
-
-
 
 
 
