@@ -253,7 +253,7 @@ export default function ProductsClient() {
           <div className="flex-1 min-w-0">
             {/* Loading */}
             {isLoading && (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-[1.15rem]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-[1.15rem]">
                 {[...Array(6)].map((_, i) => (
                   <div
                     key={i}
@@ -319,7 +319,7 @@ export default function ProductsClient() {
 
             {/* Grid */}
             {!isLoading && !isError && products.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-[1.15rem]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-[1.15rem]">
                 {products.map((product) => (
                   <ProductCard
                     key={product.id}
@@ -615,8 +615,6 @@ function ProductCard({
     </div>
   );
 }
-
-
 // "use client";
 
 // import { useState } from "react";
