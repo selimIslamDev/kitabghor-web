@@ -5,7 +5,7 @@ import { BookOpen, Share2, Globe, Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/[0.06] bg-[#0c0b09] mt-16">
+    <footer className="border-t border-white/[0.06] bg-[#0c0b09]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 lg:py-14">
 
         {/* Top grid */}
