@@ -108,7 +108,7 @@ export default function ProductsClient() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#141210] border border-white/5 text-sm text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[rgba(201,162,39,0.35)] transition"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#141210] text-sm text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:ring-1 focus:ring-[rgba(201,162,39,0.35)] transition"
             />
           </div>
 
@@ -116,7 +116,7 @@ export default function ProductsClient() {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="appearance-none w-full sm:w-48 pl-4 pr-10 py-2.5 rounded-xl bg-[#141210] border border-white/5 text-sm text-[#f5f0e8] focus:outline-none focus:border-[rgba(201,162,39,0.35)]"
+              className="appearance-none w-full sm:w-48 pl-4 pr-10 py-2.5 rounded-xl bg-[#141210] text-sm text-[#f5f0e8] focus:outline-none focus:ring-1 focus:ring-[rgba(201,162,39,0.35)]"
             >
               {sortOptions.map((o) => (
                 <option key={o} className="bg-[#141210]">
@@ -129,7 +129,7 @@ export default function ProductsClient() {
 
           <button
             onClick={() => setShowFilter(!showFilter)}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#141210] border border-white/5 text-sm font-medium text-[#f5f0e8] sm:hidden"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#141210] text-sm font-medium text-[#f5f0e8] sm:hidden"
           >
             <SlidersHorizontal className="w-4 h-4" />
             Filters
@@ -143,7 +143,7 @@ export default function ProductsClient() {
               showFilter ? "block" : "hidden"
             } sm:block w-full sm:w-60 lg:w-64 flex-shrink-0`}
           >
-            <div className="rounded-2xl border border-white/5 bg-[#141210] p-5 sticky top-20">
+            <div className="rounded-2xl bg-[#141210] p-5 sticky top-20">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-semibold text-white text-[15px]">Filters</h3>
                 <button
@@ -170,8 +170,8 @@ export default function ProductsClient() {
                       onClick={() => setType(t.key)}
                       className={`px-3 py-2 rounded-lg text-sm font-medium text-left transition ${
                         type === t.key
-                          ? "bg-[rgba(201,162,39,0.15)] text-[#c9a227] border border-[rgba(201,162,39,0.3)]"
-                          : "text-[#a89f8f] hover:bg-white/5 border border-transparent"
+                          ? "bg-[rgba(201,162,39,0.15)] text-[#c9a227]"
+                          : "text-[#a89f8f] hover:bg-white/5"
                       }`}
                     >
                       {t.label}
@@ -192,8 +192,8 @@ export default function ProductsClient() {
                       onClick={() => setClassLevel(c)}
                       className={`px-3 py-2 rounded-lg text-sm font-medium text-left transition ${
                         classLevel === c
-                          ? "bg-[rgba(201,162,39,0.15)] text-[#c9a227] border border-[rgba(201,162,39,0.3)]"
-                          : "text-[#a89f8f] hover:bg-white/5 border border-transparent"
+                          ? "bg-[rgba(201,162,39,0.15)] text-[#c9a227]"
+                          : "text-[#a89f8f] hover:bg-white/5"
                       }`}
                     >
                       {c}
@@ -214,8 +214,8 @@ export default function ProductsClient() {
                       onClick={() => setSubject(s)}
                       className={`px-3 py-2 rounded-lg text-sm font-medium text-left transition ${
                         subject === s
-                          ? "bg-[rgba(201,162,39,0.15)] text-[#c9a227] border border-[rgba(201,162,39,0.3)]"
-                          : "text-[#a89f8f] hover:bg-white/5 border border-transparent"
+                          ? "bg-[rgba(201,162,39,0.15)] text-[#c9a227]"
+                          : "text-[#a89f8f] hover:bg-white/5"
                       }`}
                     >
                       {s}
@@ -235,14 +235,14 @@ export default function ProductsClient() {
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
                     placeholder="Min"
-                    className="w-full px-3 py-2 rounded-lg bg-[#0c0b09] border border-white/5 text-sm text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[rgba(201,162,39,0.35)]"
+                    className="w-full px-3 py-2 rounded-lg bg-[#0c0b09] text-sm text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:ring-1 focus:ring-[rgba(201,162,39,0.35)]"
                   />
                   <input
                     type="number"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
                     placeholder="Max"
-                    className="w-full px-3 py-2 rounded-lg bg-[#0c0b09] border border-white/5 text-sm text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[rgba(201,162,39,0.35)]"
+                    className="w-full px-3 py-2 rounded-lg bg-[#0c0b09] text-sm text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:ring-1 focus:ring-[rgba(201,162,39,0.35)]"
                   />
                 </div>
               </div>
@@ -260,7 +260,6 @@ export default function ProductsClient() {
                     className="rounded-xl overflow-hidden animate-pulse"
                     style={{
                       background: "#141210",
-                      border: "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
                     <div
@@ -311,7 +310,7 @@ export default function ProductsClient() {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="px-6 py-2.5 rounded-xl bg-[rgba(201,162,39,0.15)] border border-[rgba(201,162,39,0.3)] text-[#c9a227] font-semibold text-sm hover:bg-[rgba(201,162,39,0.25)] transition"
+                  className="px-6 py-2.5 rounded-xl bg-[rgba(201,162,39,0.15)] text-[#c9a227] font-semibold text-sm hover:bg-[rgba(201,162,39,0.25)] transition"
                 >
                   Clear Filters
                 </button>
@@ -391,7 +390,6 @@ function ProductCard({
       className="group rounded-xl overflow-hidden flex flex-col relative transition-colors duration-200"
       style={{
         background: "#141210",
-        border: "1px solid rgba(255,255,255,0.06)",
       }}
     >
       {/* Image Area */}
@@ -441,7 +439,6 @@ function ProductCard({
               padding: "2px 6px",
               borderRadius: "4px",
               background: "rgba(201,162,39,0.15)",
-              border: "1px solid rgba(201,162,39,0.3)",
               color: "#c9a227",
               fontSize: "9px",
             }}
@@ -608,7 +605,6 @@ function ProductCard({
         className="w-full flex items-center justify-center font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:underline"
         style={{
           height: "2rem",
-          borderTop: "1px solid rgba(255,255,255,0.05)",
           background: "rgba(12,11,9,0.4)",
           fontSize: "11px",
           color: "#c9a227",
@@ -619,7 +615,6 @@ function ProductCard({
     </div>
   );
 }
-
 
 
 // "use client";
