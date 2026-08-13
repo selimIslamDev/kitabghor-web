@@ -107,7 +107,7 @@ export default function ContactPage() {
                   {contactInfo.map((info) => (
                     <div
                       key={info.label}
-                      className="flex items-start gap-4 bg-[#141210] rounded-2xl border border-[#c9a227]/15 p-4 transition hover:border-[#c9a227]/40"
+                      className="flex items-start gap-4 bg-[#141210] rounded-2xl p-4 transition"
                     >
                       <div className="w-11 h-11 shrink-0 rounded-full bg-gradient-to-br from-[#e4c65e] to-[#c9a227] flex items-center justify-center text-[#0c0b09]">
                         {info.icon}
@@ -131,7 +131,7 @@ export default function ContactPage() {
               </div>
 
               {/* Contact Form */}
-              <div className="lg:col-span-2 bg-[#141210] rounded-2xl border border-[#c9a227]/15 p-6 sm:p-8">
+              <div className="lg:col-span-2 bg-[#141210] rounded-2xl p-6 sm:p-8">
                 <h2
                   className="text-2xl text-[#f0e9d8] font-semibold mb-2"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
@@ -152,7 +152,7 @@ export default function ContactPage() {
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                         placeholder="Enter your name"
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-[#c9a227]/20 bg-[#0c0b09] text-[#f0e9d8] placeholder:text-[#5c574d] focus:outline-none focus:ring-1 focus:ring-[#c9a227] focus:border-[#c9a227] text-sm transition"
+                        className="w-full px-4 py-3 rounded-xl bg-[#0c0b09] text-[#f0e9d8] placeholder:text-[#5c574d] focus:outline-none focus:ring-1 focus:ring-[#c9a227] text-sm transition"
                       />
                     </div>
                     <div>
@@ -165,7 +165,7 @@ export default function ContactPage() {
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                         placeholder="Enter your email"
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-[#c9a227]/20 bg-[#0c0b09] text-[#f0e9d8] placeholder:text-[#5c574d] focus:outline-none focus:ring-1 focus:ring-[#c9a227] focus:border-[#c9a227] text-sm transition"
+                        className="w-full px-4 py-3 rounded-xl bg-[#0c0b09] text-[#f0e9d8] placeholder:text-[#5c574d] focus:outline-none focus:ring-1 focus:ring-[#c9a227] text-sm transition"
                       />
                     </div>
                   </div>
@@ -180,7 +180,7 @@ export default function ContactPage() {
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
                       placeholder="Enter subject"
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-[#c9a227]/20 bg-[#0c0b09] text-[#f0e9d8] placeholder:text-[#5c574d] focus:outline-none focus:ring-1 focus:ring-[#c9a227] focus:border-[#c9a227] text-sm transition"
+                      className="w-full px-4 py-3 rounded-xl bg-[#0c0b09] text-[#f0e9d8] placeholder:text-[#5c574d] focus:outline-none focus:ring-1 focus:ring-[#c9a227] text-sm transition"
                     />
                   </div>
 
@@ -194,7 +194,7 @@ export default function ContactPage() {
                       placeholder="Type your message here..."
                       required
                       rows={5}
-                      className="w-full px-4 py-3 rounded-xl border border-[#c9a227]/20 bg-[#0c0b09] text-[#f0e9d8] placeholder:text-[#5c574d] focus:outline-none focus:ring-1 focus:ring-[#c9a227] focus:border-[#c9a227] text-sm resize-none transition"
+                      className="w-full px-4 py-3 rounded-xl bg-[#0c0b09] text-[#f0e9d8] placeholder:text-[#5c574d] focus:outline-none focus:ring-1 focus:ring-[#c9a227] text-sm resize-none transition"
                     />
                   </div>
 
