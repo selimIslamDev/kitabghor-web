@@ -29,7 +29,7 @@ export default function NewsletterSection() {
           {/* Left Content */}
           <div className="text-center lg:text-left">
             {/* Small badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full border border-amber-500/30 bg-amber-500/10">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full bg-amber-500/10">
               <Crown className="w-3.5 h-3.5 text-amber-400" />
               <span className="text-amber-300 text-xs font-medium tracking-wide">
                 Exclusive for Book Lovers
@@ -51,7 +51,7 @@ export default function NewsletterSection() {
 
             {/* Form */}
             {submitted ? (
-              <div className="flex items-center justify-center lg:justify-start gap-3 bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm px-6 py-4 rounded-2xl max-w-md mx-auto lg:mx-0">
+              <div className="flex items-center justify-center lg:justify-start gap-3 bg-amber-500/10 backdrop-blur-sm px-6 py-4 rounded-2xl max-w-md mx-auto lg:mx-0">
                 <CheckCircle className="w-6 h-6 text-amber-400" />
                 <span className="text-amber-100 font-medium">
                   You're subscribed! Thank you 🎉
@@ -70,7 +70,7 @@ export default function NewsletterSection() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address"
                     required
-                    className="w-full pl-11 pr-5 py-4 rounded-xl bg-[#141414] border border-amber-500/20 text-amber-50 placeholder:text-amber-200/40 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition text-sm"
+                    className="w-full pl-11 pr-5 py-4 rounded-xl bg-[#141414] text-amber-50 placeholder:text-amber-200/40 focus:outline-none focus:ring-1 focus:ring-amber-500/30 transition text-sm"
                   />
                 </div>
 

@@ -5,7 +5,7 @@ import { BookOpen, Share2, Globe, Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/[0.06] bg-[#0c0b09]">
+    <footer className="bg-[#0c0b09]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 lg:py-14">
 
         {/* Top grid */}
@@ -110,7 +110,7 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Your email"
-                className="w-full px-3 py-2.5 rounded-lg text-sm bg-[#141210] border border-white/[0.08] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40 transition"
+                className="w-full px-3 py-2.5 rounded-lg text-sm bg-[#141210] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:ring-1 focus:ring-[#c9a227]/40 transition"
               />
               <button
                 type="submit"
@@ -123,14 +123,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-white/[0.06] mt-10 pt-6">
+        <div className="mt-10 pt-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 flex-wrap justify-center">
               <span className="text-[11px] text-[#6b6358] mr-1">We accept</span>
               {["bKash", "Nagad", "Card", "COD"].map((method) => (
                 <span
                   key={method}
-                  className="text-[11px] px-2 py-1 rounded border border-white/[0.06] text-[#a89f8f] bg-[#141210]"
+                  className="text-[11px] px-2 py-1 rounded text-[#a89f8f] bg-[#141210]"
                 >
                   {method}
                 </span>
