@@ -14,49 +14,31 @@ interface Category {
   };
 }
 
-// Soft radial wash + matching soft border glow per card
+// Soft radial wash per card — no border needed, the wash color alone tells cards apart
 const ACCENT_CYCLE = [
   {
     card: "radial-gradient(ellipse at 30% 25%, rgba(37, 84, 150, 0.42) 0%, rgba(12, 11, 9, 0.97) 68%)",
-    border: "rgba(70, 120, 200, 0.35)",
     iconBg: "rgba(37, 84, 150, 0.22)",
-    iconBorder: "rgba(100, 150, 220, 0.35)",
-    arrowBorder: "rgba(100, 150, 220, 0.45)",
   },
   {
     card: "radial-gradient(ellipse at 30% 25%, rgba(168, 104, 32, 0.42) 0%, rgba(12, 11, 9, 0.97) 68%)",
-    border: "rgba(200, 140, 60, 0.35)",
     iconBg: "rgba(168, 104, 32, 0.22)",
-    iconBorder: "rgba(220, 160, 80, 0.35)",
-    arrowBorder: "rgba(220, 160, 80, 0.45)",
   },
   {
     card: "radial-gradient(ellipse at 30% 25%, rgba(120, 55, 150, 0.42) 0%, rgba(12, 11, 9, 0.97) 68%)",
-    border: "rgba(160, 90, 200, 0.35)",
     iconBg: "rgba(120, 55, 150, 0.22)",
-    iconBorder: "rgba(180, 120, 220, 0.35)",
-    arrowBorder: "rgba(180, 120, 220, 0.45)",
   },
   {
     card: "radial-gradient(ellipse at 30% 25%, rgba(35, 110, 80, 0.42) 0%, rgba(12, 11, 9, 0.97) 68%)",
-    border: "rgba(60, 170, 120, 0.35)",
     iconBg: "rgba(35, 110, 80, 0.22)",
-    iconBorder: "rgba(80, 190, 140, 0.35)",
-    arrowBorder: "rgba(80, 190, 140, 0.45)",
   },
   {
     card: "radial-gradient(ellipse at 30% 25%, rgba(150, 60, 60, 0.42) 0%, rgba(12, 11, 9, 0.97) 68%)",
-    border: "rgba(200, 90, 90, 0.35)",
     iconBg: "rgba(150, 60, 60, 0.22)",
-    iconBorder: "rgba(220, 110, 110, 0.35)",
-    arrowBorder: "rgba(220, 110, 110, 0.45)",
   },
   {
     card: "radial-gradient(ellipse at 30% 25%, rgba(45, 90, 140, 0.42) 0%, rgba(12, 11, 9, 0.97) 68%)",
-    border: "rgba(80, 140, 200, 0.35)",
     iconBg: "rgba(45, 90, 140, 0.22)",
-    iconBorder: "rgba(100, 160, 220, 0.35)",
-    arrowBorder: "rgba(100, 160, 220, 0.45)",
   },
 ];
 
@@ -88,7 +70,7 @@ export default function CategoriesSection() {
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 w-60 sm:w-64 h-52 rounded-2xl border border-[rgba(255,255,255,0.05)] bg-[#141210] animate-pulse"
+                className="flex-shrink-0 w-60 sm:w-64 h-52 rounded-2xl bg-[#141210] animate-pulse"
               />
             ))}
           </div>
@@ -120,14 +102,14 @@ export default function CategoriesSection() {
           <div className="hidden sm:flex items-center gap-3 self-end mb-1">
             <button
               onClick={() => handleScroll("left")}
-              className="w-11 h-11 rounded-full border border-[rgba(255,255,255,0.12)] flex items-center justify-center text-[#f5f0e8] hover:border-[rgba(201,162,39,0.4)] hover:text-[#c9a227] transition-all duration-200 active:scale-95"
+              className="w-11 h-11 rounded-full flex items-center justify-center text-[#f5f0e8] bg-white/[0.04] hover:text-[#c9a227] transition-all duration-200 active:scale-95"
               aria-label="Scroll Left"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => handleScroll("right")}
-              className="w-11 h-11 rounded-full border border-[rgba(255,255,255,0.12)] flex items-center justify-center text-[#f5f0e8] hover:border-[rgba(201,162,39,0.4)] hover:text-[#c9a227] transition-all duration-200 active:scale-95"
+              className="w-11 h-11 rounded-full flex items-center justify-center text-[#f5f0e8] bg-white/[0.04] hover:text-[#c9a227] transition-all duration-200 active:scale-95"
               aria-label="Scroll Right"
             >
               <ChevronRight className="w-5 h-5" />
@@ -157,8 +139,7 @@ export default function CategoriesSection() {
                   href={href}
                   className="group relative flex-shrink-0 w-60 sm:w-64 snap-start rounded-2xl overflow-hidden bg-[#141210] flex flex-col justify-between p-6 transition-all duration-300 hover:-translate-y-1"
                   style={{
-                    border: `1px solid ${accent.border}`,
-                    boxShadow: `0 0 0 1px ${accent.border}, 0 8px 32px rgba(0,0,0,0.35)`,
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
                   }}
                 >
                   {/* soft radial wash */}
@@ -170,10 +151,7 @@ export default function CategoriesSection() {
                   {/* icon circle */}
                   <div
                     className="relative z-10 w-14 h-14 rounded-2xl flex items-center justify-center mb-8"
-                    style={{
-                      background: accent.iconBg,
-                      border: `1px solid ${accent.iconBorder}`,
-                    }}
+                    style={{ background: accent.iconBg }}
                   >
                     <Icon className="w-6 h-6 text-[#f0c14b]" strokeWidth={2} />
                   </div>
@@ -194,10 +172,7 @@ export default function CategoriesSection() {
                     {/* small circular arrow (always visible like the screenshot) */}
                     <div
                       className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:scale-110"
-                      style={{
-                        border: `1px solid ${accent.arrowBorder}`,
-                        background: "rgba(0,0,0,0.25)",
-                      }}
+                      style={{ background: "rgba(0,0,0,0.25)" }}
                     >
                       <ChevronRight className="w-3.5 h-3.5 text-[#f0c14b]" />
                     </div>
@@ -216,7 +191,6 @@ export default function CategoriesSection() {
     </section>
   );
 }
-
 
 // "use client";
 

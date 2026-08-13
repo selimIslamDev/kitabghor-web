@@ -38,10 +38,8 @@ interface Bundle {
 
 const styleVariants = [
   {
-    border: "border-blue-500/20",
-    hoverBorder: "hover:border-blue-500/40",
     wash: "radial-gradient(ellipse at 30% 15%, rgba(59,130,246,0.18) 0%, transparent 65%)",
-    iconBg: "bg-blue-500/10 border-blue-400/25",
+    iconBg: "bg-blue-500/10",
     iconColor: "text-blue-300",
     check: "text-blue-400",
     button: "bg-blue-600 hover:bg-blue-500",
@@ -49,10 +47,8 @@ const styleVariants = [
     Icon: BookOpen,
   },
   {
-    border: "border-emerald-500/25",
-    hoverBorder: "hover:border-emerald-500/45",
     wash: "radial-gradient(ellipse at 30% 15%, rgba(16,185,129,0.18) 0%, transparent 65%)",
-    iconBg: "bg-emerald-500/10 border-emerald-400/25",
+    iconBg: "bg-emerald-500/10",
     iconColor: "text-emerald-300",
     check: "text-emerald-400",
     button: "bg-emerald-600 hover:bg-emerald-500",
@@ -61,10 +57,8 @@ const styleVariants = [
     isPopular: true,
   },
   {
-    border: "border-purple-500/20",
-    hoverBorder: "hover:border-purple-500/40",
     wash: "radial-gradient(ellipse at 30% 15%, rgba(168,85,247,0.18) 0%, transparent 65%)",
-    iconBg: "bg-purple-500/10 border-purple-400/25",
+    iconBg: "bg-purple-500/10",
     iconColor: "text-purple-300",
     check: "text-purple-400",
     button: "bg-purple-600 hover:bg-purple-500",
@@ -95,7 +89,7 @@ export default function ComboSection() {
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-white/[0.04] bg-[#141210] overflow-hidden"
+                className="rounded-2xl bg-[#141210] overflow-hidden"
               >
                 <div className="p-6 space-y-5">
                   {/* Icon */}
@@ -135,7 +129,7 @@ export default function ComboSection() {
           </div>
 
           {/* Bottom features skeleton */}
-          <div className="rounded-2xl border border-white/5 bg-[#141210]/60 px-4 py-5 sm:px-8">
+          <div className="rounded-2xl bg-[#141210]/60 px-4 py-5 sm:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="flex items-center gap-3">
@@ -160,7 +154,7 @@ export default function ComboSection() {
       <div className="max-w-6xl mx-auto px-5">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[rgba(201,162,39,0.12)] border border-[rgba(201,162,39,0.3)] text-[#c9a227] text-sm font-semibold mb-5">
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[rgba(201,162,39,0.12)] text-[#c9a227] text-sm font-semibold mb-5">
             <span className="text-base">✦</span>
             Combo Offers
           </div>
@@ -179,11 +173,12 @@ export default function ComboSection() {
             const style = styleVariants[index % styleVariants.length];
             const savings = bundle.totalPrice - bundle.bundlePrice;
             const Icon = style.Icon;
+            const items = bundle.items || [];
 
             return (
               <div
                 key={bundle.id}
-                className={`group relative rounded-2xl border ${style.border} ${style.hoverBorder} bg-[#141210] overflow-hidden transition-all duration-300 hover:-translate-y-1.5`}
+                className="group relative rounded-2xl bg-[#141210] overflow-hidden transition-all duration-300 hover:-translate-y-1.5"
               >
                 {/* soft wash */}
                 <div
@@ -203,7 +198,7 @@ export default function ComboSection() {
                 <div className="relative p-6 flex flex-col h-full">
                   {/* Icon */}
                   <div
-                    className={`w-14 h-14 rounded-2xl border flex items-center justify-center mb-5 ${style.iconBg}`}
+                    className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 ${style.iconBg}`}
                   >
                     <Icon className={`w-7 h-7 ${style.iconColor}`} />
                   </div>
@@ -223,7 +218,7 @@ export default function ComboSection() {
 
                   {/* Includes */}
                   <ul className="space-y-2.5 mb-6 flex-1">
-                    {bundle.items.map((item) => (
+                    {items.map((item) => (
                       <li
                         key={item.id}
                         className="flex items-center gap-2.5 text-[14px] text-[#e8e0d5]"
@@ -246,7 +241,7 @@ export default function ComboSection() {
                       <span className="text-sm text-[#6b6358] line-through">
                         ৳{bundle.totalPrice}
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-bold">
+                      <span className="px-2 py-0.5 rounded-md bg-red-500/15 text-red-400 text-xs font-bold">
                         {bundle.discountPercent}% OFF
                       </span>
                     </div>
@@ -271,7 +266,7 @@ export default function ComboSection() {
         </div>
 
         {/* Bottom Features */}
-        <div className="rounded-2xl border border-white/5 bg-[#141210]/60 px-4 py-5 sm:px-8">
+        <div className="rounded-2xl bg-[#141210]/60 px-4 py-5 sm:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               {
@@ -296,7 +291,7 @@ export default function ComboSection() {
               },
             ].map((item) => (
               <div key={item.title} className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[rgba(201,162,39,0.1)] border border-[rgba(201,162,39,0.2)] flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[rgba(201,162,39,0.1)] flex items-center justify-center flex-shrink-0">
                   <item.icon className="w-5 h-5 text-[#c9a227]" />
                 </div>
                 <div>
@@ -311,7 +306,6 @@ export default function ComboSection() {
     </section>
   );
 }
-
 
 
 
