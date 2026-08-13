@@ -23,22 +23,36 @@ export default function ReviewForm({ productId }: { productId: string }) {
       toast.error("Please select a rating!");
       return;
     }
-    createReview.mutate({ rating, comment }, {
-      onSuccess: () => {
-        setRating(0);
-        setComment("");
-      },
-    });
+    createReview.mutate(
+      { rating, comment },
+      {
+        onSuccess: () => {
+          setRating(0);
+          setComment("");
+        },
+      }
+    );
   };
 
   return (
-    <div className="bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-200 dark:border-blue-800 p-5 mb-4">
-      <h3 className="font-bold text-gray-900 dark:text-white mb-4">Write a Review</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div
+      className="rounded-2xl p-6 sm:p-7 mb-5"
+      style={{
+        background: "#141210",
+        border: "1px solid rgba(201, 162, 39, 0.18)",
+      }}
+    >
+      <h3 className="text-lg font-semibold text-[#f5f0e8] mb-5">
+        Write a Review
+      </h3>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
         {/* Star Rating */}
         <div>
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rating *</p>
-          <div className="flex gap-1">
+          <p className="text-sm font-medium text-[#a89f8f] mb-2.5">
+            Rating <span className="text-[#c9a227]">*</span>
+          </p>
+          <div className="flex items-center gap-1.5">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
@@ -46,38 +60,68 @@ export default function ReviewForm({ productId }: { productId: string }) {
                 onClick={() => setRating(star)}
                 onMouseEnter={() => setHoverRating(star)}
                 onMouseLeave={() => setHoverRating(0)}
-                className="transition"
+                className="transition-transform hover:scale-110 active:scale-95"
               >
                 <Star
-                  className={`w-8 h-8 transition ${(hoverRating || rating) >= star ? "fill-amber-400 text-amber-400" : "text-gray-300"}`}
+                  className={`w-7 h-7 transition-colors ${
+                    (hoverRating || rating) >= star
+                      ? "fill-[#c9a227] text-[#c9a227]"
+                      : "text-[#3a3530]"
+                  }`}
                 />
               </button>
             ))}
+            {rating > 0 && (
+              <span className="ml-2 text-sm font-medium text-[#c9a227]">
+                {rating}.0
+              </span>
+            )}
           </div>
         </div>
 
         {/* Comment */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+          <label className="block text-sm font-medium text-[#a89f8f] mb-2.5">
             Comment
           </label>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Share your experience..."
-            rows={3}
-            className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-white dark:bg-slate-800 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none"
+            rows={4}
+            className="w-full px-4 py-3 rounded-xl text-sm text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none transition resize-none"
+            style={{
+              background: "#0c0b09",
+              border: "1px solid rgba(255,255,255,0.06)",
+            }}
+            onFocus={(e) =>
+              (e.currentTarget.style.border = "1px solid rgba(201,162,39,0.4)")
+            }
+            onBlur={(e) =>
+              (e.currentTarget.style.border = "1px solid rgba(255,255,255,0.06)")
+            }
           />
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={createReview.isPending || rating === 0}
-          className="flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            background: "linear-gradient(135deg, #c9a227 0%, #b8921f 100%)",
+            color: "#0c0b09",
+            boxShadow: "0 4px 16px rgba(201, 162, 39, 0.25)",
+          }}
         >
           {createReview.isPending ? (
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-          ) : "Submit Review ⭐"}
+            <div className="w-4 h-4 border-2 border-[#0c0b09] border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <>
+              Submit Review
+              <Star className="w-3.5 h-3.5 fill-current" />
+            </>
+          )}
         </button>
       </form>
     </div>
