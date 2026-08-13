@@ -111,8 +111,6 @@ export default function Navbar() {
     e.preventDefault();
     const trimmed = search.trim();
     if (trimmed) {
-      // BUG FIX: raw search string diye URL banale special characters (&, ?, #, space)
-      // URL ke bhenge dey. encodeURIComponent diye safe kora holo.
       router.push(`/products?search=${encodeURIComponent(trimmed)}`);
       setSearch("");
       setSearchOpen(false);
@@ -132,7 +130,6 @@ export default function Navbar() {
   return (
     <>
       {/* Promo Bar */}
-      {/* BORDER REMOVED: age border-b diye ekta line dekha jacchilo, ekhon pura soriye dewa holo */}
       <div className="h-9 flex items-center justify-center text-xs bg-gradient-to-r from-[#1a160f] via-[#2a2215] to-[#1a160f] text-[#a89f8f]">
         <span>
           ✦ Free shipping on orders above{" "}
@@ -141,7 +138,7 @@ export default function Navbar() {
         <span className="mx-3 opacity-30">|</span>
         <span>
           Use code{" "}
-          <span className="inline-flex items-center bg-[#c9a227]/10 border border-[#c9a227]/25 text-[#d4b84a] font-semibold text-[11px] px-2 py-0.5 rounded tracking-wide mx-1">
+          <span className="inline-flex items-center bg-[#c9a227]/10 text-[#d4b84a] font-semibold text-[11px] px-2 py-0.5 rounded tracking-wide mx-1">
             KITAB10
           </span>{" "}
           for 10% off
@@ -191,7 +188,7 @@ export default function Navbar() {
                 onMouseLeave={closeMegaWithDelay}
               >
                 <button
-                  onClick={() => setMegaOpen((prev) => !prev)}
+                  onClick={() => setMegaOpen(!megaOpen)}
                   className={`flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-lg transition ${
                     pathname.startsWith("/products") || megaOpen
                       ? "text-[#c9a227]"
@@ -203,7 +200,7 @@ export default function Navbar() {
                 </button>
 
                 {megaOpen && (
-                  <div className="absolute left-0 top-12 w-[540px] rounded-2xl p-5 z-50 bg-[#141210] border border-[rgba(255,255,255,0.08)] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
+                  <div className="absolute left-0 top-12 w-[540px] rounded-2xl p-5 z-50 bg-[#141210] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
                     <div className="grid grid-cols-3 gap-5">
                       {megaMenuCategories.map((cat) => (
                         <div key={cat.title}>
@@ -277,7 +274,7 @@ export default function Navbar() {
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search books..."
-                      className="w-48 px-3 py-2 rounded-lg text-sm bg-[#1c1915] border border-[rgba(255,255,255,0.08)] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40"
+                      className="w-48 px-3 py-2 rounded-lg text-sm bg-[#1c1915] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:ring-1 focus:ring-[#c9a227]/40"
                     />
                     <button type="button" onClick={() => setSearchOpen(false)} className="text-[#6b6358] hover:text-[#a89f8f]">
                       <X className="w-4 h-4" />
@@ -312,11 +309,9 @@ export default function Navbar() {
               {isAuthenticated ? (
                 <div className="hidden md:block relative ml-1" ref={profileRef}>
                   <button
-                    onClick={() => setProfileOpen((prev) => !prev)}
-                    className={`flex items-center gap-2 pl-1 pr-2 py-1 rounded-full border transition ${
-                      profileOpen
-                        ? "border-[#c9a227]/30 bg-[#c9a227]/5"
-                        : "border-[rgba(255,255,255,0.06)] hover:border-[#c9a227]/25"
+                    onClick={() => setProfileOpen(!profileOpen)}
+                    className={`flex items-center gap-2 pl-1 pr-2 py-1 rounded-full transition ${
+                      profileOpen ? "bg-[#c9a227]/10" : "hover:bg-white/[0.04]"
                     }`}
                   >
                     <div className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-[#c9a227] to-[#b8921f] text-[#0c0b09] text-xs font-bold flex items-center justify-center">
@@ -329,7 +324,7 @@ export default function Navbar() {
                   </button>
 
                   {profileOpen && (
-                    <div className="absolute right-0 top-12 w-60 rounded-2xl overflow-hidden z-50 bg-[#141210] border border-[rgba(255,255,255,0.08)] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
+                    <div className="absolute right-0 top-12 w-60 rounded-2xl overflow-hidden z-50 bg-[#141210] shadow-[0_24px_64px_rgba(0,0,0,0.55)]">
                       {/* User header */}
                       <div className="px-4 py-4 bg-gradient-to-br from-[#c9a227] to-[#b8921f]">
                         <div className="flex items-center gap-3">
@@ -398,8 +393,8 @@ export default function Navbar() {
 
               {/* Mobile Menu Toggle */}
               <button
-                onClick={() => setMenuOpen((prev) => !prev)}
-                className="md:hidden w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[#a89f8f] border border-[rgba(255,255,255,0.08)] hover:text-[#c9a227] hover:border-[#c9a227]/30 transition"
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="md:hidden w-[38px] h-[38px] rounded-lg flex items-center justify-center text-[#a89f8f] bg-white/[0.04] hover:text-[#c9a227] transition"
                 aria-label="Menu"
               >
                 {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -418,7 +413,7 @@ export default function Navbar() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search books or gadgets..."
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm bg-[#1c1915] border border-[rgba(255,255,255,0.08)] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm bg-[#1c1915] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:ring-1 focus:ring-[#c9a227]/40"
                   />
                 </div>
               </form>
@@ -465,7 +460,7 @@ export default function Navbar() {
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="flex-1 text-center text-sm font-medium py-2.5 rounded-xl border border-[rgba(255,255,255,0.08)] text-[#f5f0e8]"
+                    className="flex-1 text-center text-sm font-medium py-2.5 rounded-xl bg-white/[0.04] text-[#f5f0e8]"
                   >
                     Login
                   </Link>
@@ -556,7 +551,6 @@ function MobileIconLink({
     </Link>
   );
 }
-
 
 
 
