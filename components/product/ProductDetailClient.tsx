@@ -22,7 +22,7 @@ interface RelatedProduct {
 
 export default function RelatedProducts({ productId }: { productId: string }) {
   const { data, isLoading } = useRelatedProducts(productId);
-  const products: RelatedProduct[] = data?.data || data || [];
+  const products: RelatedProduct[] = data || [];
   const { addItem } = useCartWithAuth();
 
   const handleAddToCart = (e: MouseEvent<HTMLButtonElement>, product: RelatedProduct) => {
@@ -311,9 +311,6 @@ function RelatedCard({
     </div>
   );
 }
-
-
-
 
 
 
