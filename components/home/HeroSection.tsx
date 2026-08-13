@@ -18,10 +18,10 @@ interface Category {
 }
 
 const SPINES = [
-  "bg-[#c9a227]/15 border-[#c9a227]/25",
-  "bg-[#1c1915] border-white/[0.08]",
-  "bg-[#c9a227]/10 border-[#c9a227]/20",
-  "bg-[#161411] border-white/[0.06]",
+  "bg-[#c9a227]/15",
+  "bg-[#1c1915]",
+  "bg-[#c9a227]/10",
+  "bg-[#161411]",
 ];
 
 const TRUST_ITEMS = [
@@ -36,8 +36,9 @@ export default function HeroSection() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (search.trim()) {
-      router.push(`/products?search=${search}`);
+    const trimmed = search.trim();
+    if (trimmed) {
+      router.push(`/products?search=${encodeURIComponent(trimmed)}`);
       setSearch("");
     }
   };
@@ -97,7 +98,7 @@ export default function HeroSection() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search books, subjects, authors..."
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-white/[0.08] bg-[#141210] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:border-[#c9a227]/40 text-sm transition"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-[#141210] text-[#f5f0e8] placeholder:text-[#6b6358] focus:outline-none focus:ring-1 focus:ring-[#c9a227]/40 text-sm transition"
                 />
               </div>
               <button
@@ -121,7 +122,7 @@ export default function HeroSection() {
               </Link>
               <Link
                 href="/products?type=GADGET"
-                className="px-6 py-3 border border-white/[0.1] text-[#a89f8f] hover:text-[#f5f0e8] hover:border-[#c9a227]/30 rounded-xl font-semibold text-sm transition"
+                className="px-6 py-3 text-[#a89f8f] hover:text-[#f5f0e8] rounded-xl font-semibold text-sm transition"
               >
                 Explore Categories
               </Link>
@@ -152,7 +153,7 @@ export default function HeroSection() {
                   [0, 1, 2, 3].map((i) => (
                     <div
                       key={i}
-                      className="rounded-xl border border-white/[0.06] bg-[#161411] px-5 py-4 h-[52px] animate-pulse"
+                      className="rounded-xl bg-[#161411] px-5 py-4 h-[52px] animate-pulse"
                       style={{ marginLeft: `${i * 12}px`, marginRight: `${(3 - i) * 8}px` }}
                     />
                   ))
@@ -162,7 +163,7 @@ export default function HeroSection() {
                     return (
                       <div
                         key={cat.id}
-                        className={`${SPINES[i % SPINES.length]} rounded-xl border px-5 py-4 flex items-center justify-between backdrop-blur-sm transition hover:border-[#c9a227]/35`}
+                        className={`${SPINES[i % SPINES.length]} rounded-xl px-5 py-4 flex items-center justify-between backdrop-blur-sm transition`}
                         style={{ marginLeft: `${i * 12}px`, marginRight: `${(3 - i) * 8}px` }}
                       >
                         <span className="font-medium text-[#f5f0e8] text-sm">{cat.name}</span>
@@ -174,19 +175,19 @@ export default function HeroSection() {
                   })
                 ) : (
                   // Genuinely empty — no book categories yet
-                  <div className="rounded-xl border border-dashed border-white/[0.08] px-5 py-6 text-center">
+                  <div className="rounded-xl px-5 py-6 text-center bg-[#141210]">
                     <span className="text-xs text-[#6b6358]">No categories yet</span>
                   </div>
                 )}
               </div>
 
               {/* Floating testimonial card */}
-              <div className="absolute -bottom-8 -left-6 bg-[#141210] rounded-2xl border border-white/[0.08] shadow-[0_16px_40px_rgba(0,0,0,0.4)] p-4 w-56">
+              <div className="absolute -bottom-8 -left-6 bg-[#141210] rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.4)] p-4 w-56">
                 <div className="flex -space-x-2 mb-2.5">
                   {["bg-[#c9a227]", "bg-[#b8921f]", "bg-[#a67c1a]", "bg-[#8a7120]"].map((c, i) => (
                     <div
                       key={i}
-                      className={`w-7 h-7 rounded-full ${c} border-2 border-[#141210] flex items-center justify-center text-[#0c0b09] text-[10px] font-bold`}
+                      className={`w-7 h-7 rounded-full ${c} flex items-center justify-center text-[#0c0b09] text-[10px] font-bold`}
                     >
                       {String.fromCharCode(65 + i)}
                     </div>
@@ -198,7 +199,7 @@ export default function HeroSection() {
               </div>
 
               {/* Book count badge */}
-              <div className="absolute -top-5 -right-2 bg-[#141210] rounded-2xl border border-white/[0.08] shadow-[0_12px_32px_rgba(0,0,0,0.35)] px-4 py-3">
+              <div className="absolute -top-5 -right-2 bg-[#141210] rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.35)] px-4 py-3">
                 {bookCount != null ? (
                   <>
                     <div className="text-lg font-semibold text-[#c9a227] leading-none">{bookCount}+</div>
@@ -215,8 +216,6 @@ export default function HeroSection() {
     </section>
   );
 }
-
-
 
 
 

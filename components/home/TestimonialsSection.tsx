@@ -10,7 +10,7 @@ function TestimonialCard({ review }: { review: FeaturedReview }) {
   const initial = review.user.name?.[0]?.toUpperCase() || "U";
 
   return (
-    <div className="rounded-2xl border border-[rgba(201,162,39,0.15)] bg-[#141210] p-7 w-[300px] lg:w-auto flex-shrink-0 flex flex-col">
+    <div className="rounded-2xl bg-[#141210] p-7 w-[300px] lg:w-auto flex-shrink-0 flex flex-col">
       {/* Stars */}
       <div className="flex items-center gap-1 mb-4">
         {[...Array(5)].map((_, i) => (
@@ -35,7 +35,7 @@ function TestimonialCard({ review }: { review: FeaturedReview }) {
 
       {/* Author */}
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-[rgba(201,162,39,0.12)] border-2 border-[#c9a227] flex items-center justify-center text-[#c9a227] font-bold text-base">
+        <div className="w-12 h-12 rounded-full bg-[rgba(201,162,39,0.12)] flex items-center justify-center text-[#c9a227] font-bold text-base">
           {initial}
         </div>
         <div>
@@ -89,7 +89,7 @@ export default function TestimonialsSection() {
       <div className="max-w-6xl mx-auto px-5 relative z-10">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[rgba(201,162,39,0.12)] border border-[rgba(201,162,39,0.3)] text-[#c9a227] text-sm font-semibold mb-5">
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[rgba(201,162,39,0.12)] text-[#c9a227] text-sm font-semibold mb-5">
             <Star className="w-3.5 h-3.5 fill-[#c9a227]" />
             Testimonials
           </div>
@@ -109,7 +109,7 @@ export default function TestimonialsSection() {
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
-                className="h-56 rounded-2xl border border-white/5 bg-[#141210] animate-pulse"
+                className="h-56 rounded-2xl bg-[#141210] animate-pulse"
               />
             ))}
           </div>
