@@ -70,7 +70,6 @@ export default function AboutPage() {
               className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"
               style={{
                 background: "rgba(201,162,39,0.12)",
-                border: "1px solid rgba(201,162,39,0.3)",
               }}
             >
               <BookOpen className="w-8 h-8 text-[#c9a227]" />
@@ -95,7 +94,7 @@ export default function AboutPage() {
                 return (
                   <div
                     key={stat.label}
-                    className="rounded-2xl p-6 text-center border border-white/5 bg-[#141210]"
+                    className="rounded-2xl p-6 text-center bg-[#141210]"
                   >
                     <div className="flex justify-center mb-3">
                       <Icon className="w-6 h-6 text-[#c9a227]" />
@@ -112,7 +111,7 @@ export default function AboutPage() {
         </section>
 
         {/* Story */}
-        <section className="py-16 border-t border-white/5">
+        <section className="py-16">
           <div className="max-w-3xl mx-auto px-5 text-center">
             <h2 className="text-3xl font-extrabold text-white mb-6">
               Our Story
@@ -133,7 +132,7 @@ export default function AboutPage() {
         </section>
 
         {/* Values */}
-        <section className="py-16 border-t border-white/5">
+        <section className="py-16">
           <div className="max-w-6xl mx-auto px-5">
             <h2 className="text-3xl font-extrabold text-white text-center mb-12">
               Our Values
@@ -144,13 +143,12 @@ export default function AboutPage() {
                 return (
                   <div
                     key={value.title}
-                    className="rounded-2xl border border-white/5 bg-[#141210] p-6 hover:border-[rgba(201,162,39,0.25)] transition-all duration-300"
+                    className="rounded-2xl bg-[#141210] p-6 transition-all duration-300"
                   >
                     <div
                       className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                       style={{
                         background: "rgba(201,162,39,0.12)",
-                        border: "1px solid rgba(201,162,39,0.25)",
                       }}
                     >
                       <Icon className="w-6 h-6 text-[#c9a227]" />
@@ -169,7 +167,7 @@ export default function AboutPage() {
         </section>
 
         {/* Team */}
-        <section className="py-16 border-t border-white/5">
+        <section className="py-16">
           <div className="max-w-5xl mx-auto px-5">
             <h2 className="text-3xl font-extrabold text-white text-center mb-12">
               Meet the Team
@@ -181,7 +179,6 @@ export default function AboutPage() {
                     className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold"
                     style={{
                       background: "rgba(201,162,39,0.12)",
-                      border: "1px solid rgba(201,162,39,0.3)",
                       color: "#c9a227",
                     }}
                   >
