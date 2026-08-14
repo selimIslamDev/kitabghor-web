@@ -175,7 +175,7 @@ export default function CartClient() {
                             removeItem(item.id);
                             toast.success("Item removed!");
                           }}
-                          className="flex items-center gap-1.5 text-sm text-yellow-500/80 hover:text-yellow-400 transition"
+                          className="flex items-center gap-1.5 text-sm text-yellow-500/80 hover:text-yellow-400 transition cursor-pointer"
                         >
                           <Trash2 className="w-4 h-4" />
                           Remove
@@ -251,7 +251,7 @@ export default function CartClient() {
                   />
                   <button
                     onClick={handleApplyCoupon}
-                    className="px-5 py-3 rounded-xl text-sm font-semibold text-black bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 transition-all"
+                    className="px-5 py-3 rounded-xl text-sm font-semibold text-black bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 transition-all cursor-pointer"
                   >
                     Apply
                   </button>
