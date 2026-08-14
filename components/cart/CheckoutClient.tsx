@@ -6,7 +6,7 @@ import { useCreateOrder } from "@/lib/hooks";
 import {
   MapPin,
   CreditCard,
-  Smartphone,
+  Banknote,
   CheckCircle,
   ArrowLeft,
   ArrowRight,
@@ -19,21 +19,15 @@ type Step = "address" | "payment" | "confirm";
 const paymentMethods = [
   {
     id: "sslcommerz",
-    name: "Credit / Debit Card",
+    name: "Online Payment",
     icon: <CreditCard className="w-5 h-5" />,
-    description: "Visa, Mastercard, DBBL",
+    description: "Card, bKash, Nagad, Rocket & more",
   },
   {
-    id: "bkash",
-    name: "bKash",
-    icon: <Smartphone className="w-5 h-5" />,
-    description: "Mobile Banking",
-  },
-  {
-    id: "nagad",
-    name: "Nagad",
-    icon: <Smartphone className="w-5 h-5" />,
-    description: "Mobile Banking",
+    id: "cod",
+    name: "Cash on Delivery",
+    icon: <Banknote className="w-5 h-5" />,
+    description: "Pay when you receive your order",
   },
 ];
 
