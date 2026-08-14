@@ -16,6 +16,8 @@ export function useCartWithAuth() {
       discountPrice?: number;
       image: string;
       stock: number;
+      author?: string;
+      edition?: string;
     },
     quantity: number = 1
   ) => {

@@ -90,7 +90,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
     setBgPos({ x: bgX, y: bgY });
   };
 
-  const handleAddToCart = () => {
+const handleAddToCart = () => {
     if (!product) return;
     addItem(
       {
@@ -100,11 +100,12 @@ export default function ProductDetailClient({ id }: { id: string }) {
         discountPrice: product.discountPrice,
         image: product.images?.[0] || "📚",
         stock: product.stock,
+        author: product.author,
+        edition: product.edition,
       },
       quantity
     );
   };
-
   const handleWishlist = () => {
     if (!product) return;
     addToWishlist.mutate(product.id);

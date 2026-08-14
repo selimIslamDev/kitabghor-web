@@ -27,6 +27,8 @@ export default function RelatedProducts({ productId }: { productId: string }) {
       discountPrice: product.discountPrice ?? undefined,
       image: product.images?.[0] || "📚",
       stock: product.stock,
+      author: product.author ?? undefined,
+      edition: product.edition ?? undefined,
     });
     toast.success("Added to cart!");
   };

@@ -16,6 +16,7 @@ interface Book {
   stock: number;
   productType: string;
   author?: string | null;
+  edition?: string | null;
   subject?: string | null;
   classLevel?: string | null;
   _count?: {
@@ -44,6 +45,8 @@ export default function FeaturedBooks() {
       discountPrice: book.discountPrice ?? undefined,
       image: book.images?.[0] || "📚",
       stock: book.stock,
+      author: book.author ?? undefined,
+      edition: book.edition ?? undefined,
     });
     toast.success("Added to cart!");
   };
@@ -319,7 +322,6 @@ function BookCard({
     </div>
   );
 }
-
 
 
 
