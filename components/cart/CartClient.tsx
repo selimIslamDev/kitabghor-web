@@ -1,13 +1,21 @@
 "use client";
 
 import { useCartStore } from "@/store/cart.store";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag } from "lucide-react";
+import {
+  Minus,
+  Plus,
+  Trash2,
+  ShoppingBag,
+  ArrowRight,
+  Tag,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function CartClient() {
-  const { items, totalAmount, removeItem, updateQuantity, clearCart } = useCartStore();
+  const { items, totalAmount, removeItem, updateQuantity, clearCart } =
+    useCartStore();
   const [couponCode, setCouponCode] = useState("");
 
   const shipping = totalAmount > 500 ? 0 : 60;
@@ -34,7 +42,10 @@ export default function CartClient() {
         <div className="inline-flex items-center justify-center w-28 h-28 rounded-3xl bg-white/5 border border-yellow-500/20 mb-8">
           <span className="text-6xl">🛒</span>
         </div>
-        <h2 className="text-3xl font-bold text-white mb-3" style={{ fontFamily: "Georgia, serif" }}>
+        <h2
+          className="text-3xl font-bold text-white mb-3"
+          style={{ fontFamily: "Georgia, serif" }}
+        >
           Your cart is empty
         </h2>
         <p className="text-gray-400 mb-10">Add some books to get started!</p>
@@ -68,8 +79,8 @@ export default function CartClient() {
             const image = getItemImage(item.image);
 
             // Safe access (TypeScript error fix)
-            const author = (item as any).author || null;
-            const edition = (item as any).edition || null;
+            const author = item.author || null;
+            const edition = item.edition || null;
 
             return (
               <div
@@ -116,7 +127,9 @@ export default function CartClient() {
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1 bg-black/40 border border-yellow-500/20 rounded-lg p-1">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() =>
+                            updateQuantity(item.id, item.quantity - 1)
+                          }
                           className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-yellow-500/10 text-white transition"
                         >
                           <Minus className="w-3.5 h-3.5" />
@@ -125,7 +138,9 @@ export default function CartClient() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() =>
+                            updateQuantity(item.id, item.quantity + 1)
+                          }
                           disabled={item.quantity >= item.stock}
                           className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-yellow-500/10 text-white transition disabled:opacity-40"
                         >
@@ -154,22 +169,34 @@ export default function CartClient() {
         {/* Order Summary */}
         <div className="lg:col-span-1">
           <div className="sticky top-24 bg-[#121212] border border-yellow-500/40 rounded-2xl p-6 shadow-[0_0_30px_rgba(234,179,8,0.12)]">
-            <h2 className="text-xl font-semibold text-white mb-6">Order Summary</h2>
+            <h2 className="text-xl font-semibold text-white mb-6">
+              Order Summary
+            </h2>
 
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Subtotal</span>
-                <span className="text-white font-medium">৳{totalAmount.toLocaleString()}</span>
+                <span className="text-white font-medium">
+                  ৳{totalAmount.toLocaleString()}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Shipping</span>
-                <span className={shipping === 0 ? "text-emerald-400 font-medium" : "text-white"}>
+                <span
+                  className={
+                    shipping === 0
+                      ? "text-emerald-400 font-medium"
+                      : "text-white"
+                  }
+                >
                   {shipping === 0 ? "Free" : `৳${shipping}`}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Discount</span>
-                <span className="text-yellow-400">-৳{discount.toLocaleString()}</span>
+                <span className="text-yellow-400">
+                  -৳{discount.toLocaleString()}
+                </span>
               </div>
 
               <div className="border-t border-yellow-500/20 pt-4 flex justify-between items-center">
@@ -184,7 +211,9 @@ export default function CartClient() {
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
                 <Tag className="w-4 h-4 text-yellow-500" />
-                <span className="text-sm font-medium text-gray-300">Apply Coupon Code</span>
+                <span className="text-sm font-medium text-gray-300">
+                  Apply Coupon Code
+                </span>
               </div>
               <div className="flex gap-2">
                 <input
