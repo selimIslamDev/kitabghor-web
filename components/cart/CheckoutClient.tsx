@@ -40,13 +40,13 @@ const paymentMethods = [
 function ItemImage({ image, name }: { image: string; name: string }) {
   if (image && image.startsWith("http")) {
     return (
-      <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-yellow-500/20">
+      <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
         <img src={image} alt={name} className="w-full h-full object-cover" />
       </div>
     );
   }
   return (
-    <div className="w-12 h-12 rounded-lg bg-[#1a1a1a] flex-shrink-0 flex items-center justify-center border border-yellow-500/20">
+    <div className="w-12 h-12 rounded-lg bg-[#1a1a1a] flex-shrink-0 flex items-center justify-center">
       <span className="text-xl">{image || "📚"}</span>
     </div>
   );
@@ -130,12 +130,12 @@ export default function CheckoutClient() {
           {steps.map((s, i) => (
             <div key={s} className="flex items-center gap-3">
               <div
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border transition ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition ${
                   step === s
-                    ? "bg-yellow-500/15 text-yellow-400 border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+                    ? "bg-yellow-500/15 text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.2)]"
                     : i < steps.indexOf(step)
-                    ? "bg-green-500/10 text-green-400 border-green-500/30"
-                    : "bg-[#121212] text-gray-500 border-yellow-500/10"
+                    ? "bg-green-500/10 text-green-400"
+                    : "bg-[#121212] text-gray-500"
                 }`}
               >
                 {i < steps.indexOf(step) ? (
@@ -160,9 +160,9 @@ export default function CheckoutClient() {
           <div className="lg:col-span-3">
             {/* Step 1 — Address */}
             {step === "address" && (
-              <div className="bg-[#121212] border border-yellow-500/30 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,179,8,0.08)]">
+              <div className="bg-[#121212] rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,179,8,0.08)]">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-11 h-11 bg-yellow-500/10 rounded-xl flex items-center justify-center border border-yellow-500/20">
+                  <div className="w-11 h-11 bg-yellow-500/10 rounded-xl flex items-center justify-center">
                     <MapPin className="w-5 h-5 text-yellow-400" />
                   </div>
                   <div>
@@ -228,7 +228,7 @@ export default function CheckoutClient() {
                         onChange={(e) =>
                           setAddress({ ...address, [field.key]: e.target.value })
                         }
-                        className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-yellow-500/20 text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500/50 text-sm transition"
+                        className="w-full px-4 py-3.5 rounded-xl bg-black/40 text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-yellow-500/50 text-sm transition"
                       />
                     </div>
                   ))}
@@ -247,7 +247,7 @@ export default function CheckoutClient() {
                     }
                     setStep("payment");
                   }}
-                  className="w-full mt-8 flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20"
+                  className="w-full mt-8 flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 cursor-pointer"
                 >
                   Continue to Payment
                   <ArrowRight className="w-5 h-5" />
@@ -262,9 +262,9 @@ export default function CheckoutClient() {
 
             {/* Step 2 — Payment */}
             {step === "payment" && (
-              <div className="bg-[#121212] border border-yellow-500/30 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,179,8,0.08)]">
+              <div className="bg-[#121212] rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,179,8,0.08)]">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-11 h-11 bg-yellow-500/10 rounded-xl flex items-center justify-center border border-yellow-500/20">
+                  <div className="w-11 h-11 bg-yellow-500/10 rounded-xl flex items-center justify-center">
                     <CreditCard className="w-5 h-5 text-yellow-400" />
                   </div>
                   <div>
@@ -282,10 +282,10 @@ export default function CheckoutClient() {
                     <button
                       key={method.id}
                       onClick={() => setPaymentMethod(method.id)}
-                      className={`w-full flex items-center gap-4 p-4 rounded-xl border transition ${
+                      className={`w-full flex items-center gap-4 p-4 rounded-xl transition cursor-pointer ${
                         paymentMethod === method.id
-                          ? "border-yellow-500/60 bg-yellow-500/10 shadow-[0_0_15px_rgba(234,179,8,0.15)]"
-                          : "border-yellow-500/15 hover:border-yellow-500/30 bg-black/20"
+                          ? "bg-yellow-500/10 shadow-[0_0_15px_rgba(234,179,8,0.15)]"
+                          : "bg-black/20 hover:bg-black/30"
                       }`}
                     >
                       <div
@@ -315,13 +315,13 @@ export default function CheckoutClient() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setStep("address")}
-                    className="flex-1 py-4 border border-yellow-500/20 text-gray-300 rounded-xl font-semibold hover:bg-yellow-500/5 transition"
+                    className="flex-1 py-4 text-gray-300 rounded-xl font-semibold bg-black/20 hover:bg-yellow-500/5 transition cursor-pointer"
                   >
                     Back
                   </button>
                   <button
                     onClick={() => setStep("confirm")}
-                    className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 transition-all cursor-pointer"
                   >
                     Review Order
                     <ArrowRight className="w-5 h-5" />
@@ -332,9 +332,9 @@ export default function CheckoutClient() {
 
             {/* Step 3 — Confirm */}
             {step === "confirm" && (
-              <div className="bg-[#121212] border border-yellow-500/30 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,179,8,0.08)]">
+              <div className="bg-[#121212] rounded-2xl p-6 md:p-8 shadow-[0_0_30px_rgba(234,179,8,0.08)]">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-11 h-11 bg-green-500/10 rounded-xl flex items-center justify-center border border-green-500/20">
+                  <div className="w-11 h-11 bg-green-500/10 rounded-xl flex items-center justify-center">
                     <CheckCircle className="w-5 h-5 text-green-400" />
                   </div>
                   <div>
@@ -347,7 +347,7 @@ export default function CheckoutClient() {
                   </div>
                 </div>
 
-                <div className="bg-black/40 border border-yellow-500/15 rounded-xl p-5 mb-4">
+                <div className="bg-black/40 rounded-xl p-5 mb-4">
                   <p className="text-xs font-semibold text-yellow-500/80 uppercase tracking-wider mb-2">
                     Shipping To
                   </p>
@@ -359,7 +359,7 @@ export default function CheckoutClient() {
                   </p>
                 </div>
 
-                <div className="bg-black/40 border border-yellow-500/15 rounded-xl p-5 mb-6">
+                <div className="bg-black/40 rounded-xl p-5 mb-6">
                   <p className="text-xs font-semibold text-yellow-500/80 uppercase tracking-wider mb-2">
                     Payment Method
                   </p>
@@ -393,14 +393,14 @@ export default function CheckoutClient() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setStep("payment")}
-                    className="flex-1 py-4 border border-yellow-500/20 text-gray-300 rounded-xl font-semibold hover:bg-yellow-500/5 transition"
+                    className="flex-1 py-4 text-gray-300 rounded-xl font-semibold bg-black/20 hover:bg-yellow-500/5 transition cursor-pointer"
                   >
                     Back
                   </button>
                   <button
                     onClick={handlePlaceOrder}
                     disabled={createOrder.isPending}
-                    className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 disabled:opacity-70 transition-all shadow-lg shadow-yellow-500/20"
+                    className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg shadow-yellow-500/20 cursor-pointer"
                   >
                     {createOrder.isPending ? (
                       <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
@@ -418,7 +418,7 @@ export default function CheckoutClient() {
 
           {/* Right Side - Order Summary (2/5) */}
           <div className="lg:col-span-2">
-            <div className="sticky top-24 bg-[#121212] border border-yellow-500/40 rounded-2xl p-6 shadow-[0_0_40px_rgba(234,179,8,0.12)]">
+            <div className="lg:sticky lg:top-24 bg-[#121212] rounded-2xl p-6 shadow-[0_0_40px_rgba(234,179,8,0.12)]">
               <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2">
                 <span className="text-yellow-400">📋</span>
                 Order Summary
@@ -446,7 +446,7 @@ export default function CheckoutClient() {
                 ))}
               </div>
 
-              <div className="border-t border-yellow-500/20 pt-5 space-y-3">
+              <div className="pt-5 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Subtotal</span>
                   <span className="text-white font-medium">
@@ -465,7 +465,7 @@ export default function CheckoutClient() {
                     {shipping === 0 ? "Free" : `৳${shipping}`}
                   </span>
                 </div>
-                <div className="flex justify-between items-center pt-3 border-t border-yellow-500/20">
+                <div className="flex justify-between items-center pt-3">
                   <span className="font-semibold text-white text-lg">Total</span>
                   <span className="text-2xl font-bold text-yellow-400">
                     ৳{finalAmount.toLocaleString()}
@@ -473,7 +473,7 @@ export default function CheckoutClient() {
                 </div>
               </div>
 
-              <div className="mt-6 pt-5 border-t border-yellow-500/15">
+              <div className="mt-6 pt-5">
                 <div className="flex items-center gap-2 text-xs text-gray-400">
                   <Lock className="w-3.5 h-3.5 text-yellow-500" />
                   <span>Secure & Encrypted Checkout</span>
