@@ -152,7 +152,7 @@ export default function CartClient() {
                             onClick={() =>
                               updateQuantity(item.id, item.quantity - 1)
                             }
-                            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-yellow-500/10 text-white transition"
+                            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-yellow-500/10 text-white transition cursor-pointer"
                           >
                             <Minus className="w-3.5 h-3.5" />
                           </button>
@@ -164,7 +164,7 @@ export default function CartClient() {
                               updateQuantity(item.id, item.quantity + 1)
                             }
                             disabled={item.quantity >= item.stock}
-                            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-yellow-500/10 text-white transition disabled:opacity-40"
+                            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-yellow-500/10 text-white transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                           >
                             <Plus className="w-3.5 h-3.5" />
                           </button>
