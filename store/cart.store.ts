@@ -9,6 +9,8 @@ interface CartItem {
   image: string;
   quantity: number;
   stock: number;
+  author?: string;
+  edition?: string;
 }
 
 interface AddItemResult {
