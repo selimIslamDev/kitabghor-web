@@ -40,7 +40,7 @@ export default function CartClient() {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-          <div className="inline-flex items-center justify-center w-28 h-28 rounded-3xl bg-white/5 border border-yellow-500/20 mb-8">
+          <div className="inline-flex items-center justify-center w-28 h-28 rounded-3xl bg-white/5 mb-8">
             <span className="text-6xl">🛒</span>
           </div>
           <h2
@@ -88,47 +88,66 @@ export default function CartClient() {
               return (
                 <div
                   key={item.id}
-                  className="relative bg-[#121212] border border-yellow-500/30 rounded-2xl p-5 flex items-center gap-5 hover:border-yellow-400/50 transition-all duration-300 shadow-[0_0_20px_rgba(234,179,8,0.08)]"
+                  className="relative bg-[#121212] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 transition-all duration-300 shadow-[0_0_20px_rgba(234,179,8,0.08)] hover:shadow-[0_0_28px_rgba(234,179,8,0.16)]"
                 >
-                  {/* Book Cover */}
-                  <div className="w-20 h-28 sm:w-24 sm:h-32 rounded-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 flex-shrink-0 border border-yellow-500/20 shadow-lg">
-                    {image.type === "url" ? (
-                      <img
-                        src={image.src}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-4xl">
-                        {image.src}
-                      </div>
-                    )}
+                  <div className="flex items-center gap-4 sm:gap-5 w-full sm:w-auto">
+                    {/* Book Cover */}
+                    <div className="w-20 h-28 sm:w-24 sm:h-32 rounded-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 flex-shrink-0 shadow-lg">
+                      {image.type === "url" ? (
+                        <img
+                          src={image.src}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-4xl">
+                          {image.src}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Info (mobile: sits beside cover) */}
+                    <div className="flex-1 min-w-0 sm:hidden">
+                      <h3 className="font-semibold text-white text-lg leading-tight">
+                        {item.name}
+                      </h3>
+                      {author && (
+                        <p className="text-sm text-gray-400 mt-1">{author}</p>
+                      )}
+                      {edition && (
+                        <span className="inline-block mt-2 px-2.5 py-0.5 text-xs font-medium rounded-md bg-yellow-500/15 text-yellow-400">
+                          {edition}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white text-lg leading-tight">
-                      {item.name}
-                    </h3>
+                  {/* Info (desktop) + Price/Quantity row (all sizes) */}
+                  <div className="flex-1 min-w-0 w-full">
+                    <div className="hidden sm:block">
+                      <h3 className="font-semibold text-white text-lg leading-tight">
+                        {item.name}
+                      </h3>
 
-                    {author && (
-                      <p className="text-sm text-gray-400 mt-1">{author}</p>
-                    )}
+                      {author && (
+                        <p className="text-sm text-gray-400 mt-1">{author}</p>
+                      )}
 
-                    {edition && (
-                      <span className="inline-block mt-2 px-2.5 py-0.5 text-xs font-medium rounded-md bg-yellow-500/15 text-yellow-400 border border-yellow-500/30">
-                        {edition}
-                      </span>
-                    )}
+                      {edition && (
+                        <span className="inline-block mt-2 px-2.5 py-0.5 text-xs font-medium rounded-md bg-yellow-500/15 text-yellow-400">
+                          {edition}
+                        </span>
+                      )}
+                    </div>
 
                     {/* Price + Quantity */}
-                    <div className="flex items-center justify-between mt-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
                       <span className="text-xl font-bold text-yellow-400">
                         ৳{(item.discountPrice || item.price).toLocaleString()}
                       </span>
 
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 bg-black/40 border border-yellow-500/20 rounded-lg p-1">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <div className="flex items-center gap-1 bg-black/40 rounded-lg p-1">
                           <button
                             onClick={() =>
                               updateQuantity(item.id, item.quantity - 1)
@@ -171,7 +190,7 @@ export default function CartClient() {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24 bg-[#121212] border border-yellow-500/40 rounded-2xl p-6 shadow-[0_0_30px_rgba(234,179,8,0.12)]">
+            <div className="lg:sticky lg:top-24 bg-[#121212] rounded-2xl p-6 shadow-[0_0_30px_rgba(234,179,8,0.12)]">
               <h2 className="text-xl font-semibold text-white mb-6">
                 Order Summary
               </h2>
@@ -202,7 +221,7 @@ export default function CartClient() {
                   </span>
                 </div>
 
-                <div className="border-t border-yellow-500/20 pt-4 flex justify-between items-center">
+                <div className="pt-4 flex justify-between items-center">
                   <span className="font-semibold text-white text-lg">
                     Total
                   </span>
@@ -220,7 +239,7 @@ export default function CartClient() {
                     Apply Coupon Code
                   </span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     value={couponCode}
@@ -228,7 +247,7 @@ export default function CartClient() {
                       setCouponCode(e.target.value.toUpperCase())
                     }
                     placeholder="Enter coupon code"
-                    className="flex-1 px-4 py-3 rounded-xl bg-black/40 border border-yellow-500/20 text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-yellow-500/50 text-sm"
+                    className="flex-1 px-4 py-3 rounded-xl bg-black/40 text-white placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-yellow-500/50 text-sm"
                   />
                   <button
                     onClick={handleApplyCoupon}
