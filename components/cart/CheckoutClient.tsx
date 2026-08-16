@@ -410,7 +410,7 @@ export default function CheckoutClient() {
             )}
           </div>
 
-          {/* Right Side - Order Summary (2/5) */}
+          {/* Right Side - Order Summary  */}
           <div className="lg:col-span-2">
             <div className="lg:sticky lg:top-24 bg-[#121212] rounded-2xl p-6 shadow-[0_0_40px_rgba(234,179,8,0.12)]">
               <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2">
