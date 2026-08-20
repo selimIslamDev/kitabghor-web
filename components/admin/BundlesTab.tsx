@@ -86,51 +86,65 @@ export default function BundlesTab() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {bundles.map((bundle: Bundle) => (
-            <div
-              key={bundle.id}
-              className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5
-                hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center">
-                  <Package className="w-5 h-5 text-sky-600" />
-                </div>
-                <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200/60 text-[11px] font-semibold px-2.5 py-1 rounded-lg">
-                  <Tag className="w-3 h-3" /> {bundle.discountPercent}% OFF
-                </span>
-              </div>
+          {bundles.map((bundle: Bundle) => {
+            const thumbnail = bundle.items?.find((item) => item.product?.images?.[0])
+              ?.product.images[0];
 
-              <h3 className="font-semibold text-slate-800 mb-1 text-[15px]">{bundle.name}</h3>
-              <p className="text-xs text-slate-500 mb-3 line-clamp-2 leading-relaxed">
-                {bundle.description}
-              </p>
-              <p className="text-[11px] text-slate-400 font-medium mb-4">
-                {bundle.items?.length || 0} products
-              </p>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-semibold text-sky-600">৳{bundle.bundlePrice}</span>
-                  <span className="text-xs text-slate-400 line-through">৳{bundle.totalPrice}</span>
+            return (
+              <div
+                key={bundle.id}
+                className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5
+                  hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  {thumbnail ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={thumbnail}
+                      alt={bundle.name}
+                      className="w-10 h-10 rounded-xl object-cover border border-sky-100"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center">
+                      <Package className="w-5 h-5 text-sky-600" />
+                    </div>
+                  )}
+                  <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200/60 text-[11px] font-semibold px-2.5 py-1 rounded-lg">
+                    <Tag className="w-3 h-3" /> {bundle.discountPercent}% OFF
+                  </span>
                 </div>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => handleEdit(bundle)}
-                    className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(bundle.id)}
-                    className="p-2 rounded-xl hover:bg-rose-50 text-rose-500 transition"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+
+                <h3 className="font-semibold text-slate-800 mb-1 text-[15px]">{bundle.name}</h3>
+                <p className="text-xs text-slate-500 mb-3 line-clamp-2 leading-relaxed">
+                  {bundle.description}
+                </p>
+                <p className="text-[11px] text-slate-400 font-medium mb-4">
+                  {bundle.items?.length || 0} products
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-lg font-semibold text-sky-600">৳{bundle.bundlePrice}</span>
+                    <span className="text-xs text-slate-400 line-through">৳{bundle.totalPrice}</span>
+                  </div>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => handleEdit(bundle)}
+                      className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(bundle.id)}
+                      className="p-2 rounded-xl hover:bg-rose-50 text-rose-500 transition"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
