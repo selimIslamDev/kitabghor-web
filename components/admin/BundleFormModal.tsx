@@ -167,7 +167,18 @@ export default function BundleFormModal({ isOpen, onClose, editBundle }: BundleF
                       onChange={() => toggleProduct(product.id)}
                       className="w-4 h-4 accent-sky-500"
                     />
-                    <span className="text-lg">{product.images?.[0] || "📚"}</span>
+                    {product.images?.[0] ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="w-9 h-9 rounded-lg object-cover border border-slate-200/80 shrink-0"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-lg bg-slate-100 border border-slate-200/80 flex items-center justify-center text-base shrink-0">
+                        📚
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-800 truncate">
                         {product.name}
