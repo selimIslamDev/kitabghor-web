@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Plus, Pencil, Trash2, Package, Tag } from "lucide-react";
 import { useAdminBundles, useDeleteBundle } from "@/lib/hooks";
 import BundleFormModal from "./BundleFormModal";
-// import BundleFormModal from "./BundleFormModal";
 
 interface BundleProduct {
   id: string;
@@ -52,14 +51,14 @@ export default function BundlesTab() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white" style={{ fontFamily: "Poppins, sans-serif" }}>
+    <div className="space-y-6 max-w-[1400px] mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
           Bundles
         </h1>
         <button
           onClick={handleCreate}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition shadow-md shadow-sky-500/20"
         >
           <Plus className="w-4 h-4" />
           Create Bundle
@@ -69,16 +68,18 @@ export default function BundlesTab() {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-40 bg-[var(--muted)] rounded-2xl animate-pulse" />
+            <div key={i} className="h-44 rounded-2xl bg-white/50 animate-pulse" />
           ))}
         </div>
       ) : !bundles || bundles.length === 0 ? (
-        <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)]">
-          <span className="text-6xl mb-4 block">📦</span>
-          <p className="text-gray-500 dark:text-gray-400 mb-4">কোনো bundle নেই এখনো</p>
+        <div className="text-center py-20 rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
+          <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
+            <Package className="w-8 h-8 text-slate-400" />
+          </div>
+          <p className="text-slate-500 mb-5 font-medium">কোনো bundle নেই এখনো</p>
           <button
             onClick={handleCreate}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition"
+            className="px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition shadow-md shadow-sky-500/20"
           >
             প্রথম Bundle তৈরি করুন
           </button>
@@ -86,34 +87,43 @@ export default function BundlesTab() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {bundles.map((bundle: Bundle) => (
-            <div key={bundle.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-5">
+            <div
+              key={bundle.id}
+              className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5
+                hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition"
+            >
               <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-                  <Package className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center">
+                  <Package className="w-5 h-5 text-sky-600" />
                 </div>
-                <span className="inline-flex items-center gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-medium px-2 py-1 rounded-lg">
+                <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200/60 text-[11px] font-semibold px-2.5 py-1 rounded-lg">
                   <Tag className="w-3 h-3" /> {bundle.discountPercent}% OFF
                 </span>
               </div>
-              <h3 className="font-bold text-gray-900 dark:text-white mb-1">{bundle.name}</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">{bundle.description}</p>
-              <p className="text-xs text-gray-400 mb-4">{bundle.items?.length || 0} products</p>
+
+              <h3 className="font-semibold text-slate-800 mb-1 text-[15px]">{bundle.name}</h3>
+              <p className="text-xs text-slate-500 mb-3 line-clamp-2 leading-relaxed">
+                {bundle.description}
+              </p>
+              <p className="text-[11px] text-slate-400 font-medium mb-4">
+                {bundle.items?.length || 0} products
+              </p>
 
               <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-lg font-bold text-blue-600 dark:text-blue-400">৳{bundle.bundlePrice}</span>
-                  <span className="text-xs text-gray-400 line-through ml-2">৳{bundle.totalPrice}</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-lg font-semibold text-sky-600">৳{bundle.bundlePrice}</span>
+                  <span className="text-xs text-slate-400 line-through">৳{bundle.totalPrice}</span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-1">
                   <button
                     onClick={() => handleEdit(bundle)}
-                    className="p-2 rounded-lg hover:bg-[var(--muted)] text-gray-500 transition"
+                    className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition"
                   >
                     <Pencil className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(bundle.id)}
-                    className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition"
+                    className="p-2 rounded-xl hover:bg-rose-50 text-rose-500 transition"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
