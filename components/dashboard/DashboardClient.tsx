@@ -16,11 +16,31 @@ import ProfileTab from "./ProfileTab";
 type Tab = "overview" | "orders" | "wishlist" | "addresses" | "profile";
 
 const statusConfig = {
-  PENDING: { label: "Pending", icon: <Clock className="w-3 h-3" />, color: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300" },
-  CONFIRMED: { label: "Confirmed", icon: <CheckCircle className="w-3 h-3" />, color: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300" },
-  SHIPPED: { label: "Shipped", icon: <Truck className="w-3 h-3" />, color: "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300" },
-  DELIVERED: { label: "Delivered", icon: <CheckCircle className="w-3 h-3" />, color: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300" },
-  CANCELLED: { label: "Cancelled", icon: <XCircle className="w-3 h-3" />, color: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300" },
+  PENDING: {
+    label: "Pending",
+    icon: <Clock className="w-3 h-3" />,
+    color: "bg-amber-50 text-amber-700 border border-amber-200/60",
+  },
+  CONFIRMED: {
+    label: "Confirmed",
+    icon: <CheckCircle className="w-3 h-3" />,
+    color: "bg-sky-50 text-sky-700 border border-sky-200/60",
+  },
+  SHIPPED: {
+    label: "Shipped",
+    icon: <Truck className="w-3 h-3" />,
+    color: "bg-violet-50 text-violet-700 border border-violet-200/60",
+  },
+  DELIVERED: {
+    label: "Delivered",
+    icon: <CheckCircle className="w-3 h-3" />,
+    color: "bg-emerald-50 text-emerald-700 border border-emerald-200/60",
+  },
+  CANCELLED: {
+    label: "Cancelled",
+    icon: <XCircle className="w-3 h-3" />,
+    color: "bg-rose-50 text-rose-700 border border-rose-200/60",
+  },
 };
 
 const tabs = [
@@ -78,105 +98,317 @@ export default function DashboardClient() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div className="relative min-h-screen bg-[#f4f6f9]">
+      {/* Soft ambient background */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-sky-200/30 blur-3xl" />
+        <div className="absolute top-1/3 -left-24 w-72 h-72 rounded-full bg-violet-200/20 blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full bg-emerald-200/20 blur-3xl" />
+      </div>
 
-        {/* Sidebar */}
-        <aside className="lg:col-span-1">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white mb-4">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl mb-4">👤</div>
-            <h2 className="font-bold text-lg">{user?.name || "Student"}</h2>
-            <p className="text-blue-200 text-sm">{user?.email}</p>
-            <div className="mt-4 flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2">
-              <Star className="w-4 h-4 text-amber-300 fill-current" />
-              <span className="text-sm">Premium Member</span>
-            </div>
-          </div>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 lg:gap-8">
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            {[
-              { label: "Orders", value: orders?.length || 0, icon: "📦" },
-              { label: "Wishlist", value: wishlist?.length || 0, icon: "❤️" },
-            ].map((stat) => (
-              <div key={stat.label} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-4 text-center">
-                <div className="text-2xl mb-1">{stat.icon}</div>
-                <div className="text-xl font-bold text-gray-900 dark:text-white">{stat.value}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">{stat.label}</div>
+          {/* Sidebar */}
+          <aside className="lg:col-span-1 space-y-4">
+            {/* Profile Card */}
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 p-5 sm:p-6 text-white shadow-lg shadow-sky-500/20">
+              <div className="absolute -top-8 -right-8 w-28 h-28 rounded-full bg-white/10 blur-xl" />
+              <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 blur-lg" />
+              <div className="relative">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/25 flex items-center justify-center text-2xl sm:text-3xl mb-4 shadow-sm">
+                  👤
+                </div>
+                <h2 className="font-semibold text-base sm:text-lg tracking-tight">
+                  {user?.name || "Student"}
+                </h2>
+                <p className="text-sky-100 text-xs sm:text-sm mt-0.5 truncate">{user?.email}</p>
+                <div className="mt-4 inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-xl px-3 py-1.5">
+                  <Star className="w-3.5 h-3.5 text-amber-300 fill-current" />
+                  <span className="text-xs font-medium">Premium Member</span>
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] overflow-hidden">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as Tab)}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium transition border-b border-[var(--border)] last:border-0 ${
-                  activeTab === tab.id
-                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-[var(--muted)]"
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-                <ChevronRight className="w-4 h-4 ml-auto" />
-              </button>
-            ))}
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: "Orders", value: orders?.length || 0, icon: "📦", accent: "from-violet-400/15 to-purple-500/10" },
+                { label: "Wishlist", value: wishlist?.length || 0, icon: "❤️", accent: "from-rose-400/15 to-pink-500/10" },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-4 text-center"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.accent}`} />
+                  <div className="relative">
+                    <div className="text-xl mb-1">{stat.icon}</div>
+                    <div className="text-xl font-semibold text-slate-800 tracking-tight">{stat.value}</div>
+                    <div className="text-[11px] text-slate-500 font-medium mt-0.5">{stat.label}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Nav */}
+            <div className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">
+              {/* Mobile horizontal scroll tabs */}
+              <div className="lg:hidden flex overflow-x-auto scrollbar-none border-b border-slate-100/80">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as Tab)}
+                    className={`flex items-center gap-2 px-4 py-3 text-xs font-medium whitespace-nowrap transition shrink-0
+                      ${
+                        activeTab === tab.id
+                          ? "text-sky-600 border-b-2 border-sky-500 bg-sky-50/50"
+                          : "text-slate-500 hover:text-slate-700"
+                      }`}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Desktop vertical nav */}
+              <div className="hidden lg:block">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as Tab)}
+                    className={`w-full flex items-center gap-3 px-4 py-3.5 text-[13px] font-medium transition border-b border-slate-100/80 last:border-0
+                      ${
+                        activeTab === tab.id
+                          ? "bg-sky-50 text-sky-600"
+                          : "text-slate-600 hover:bg-slate-50/80 hover:text-slate-800"
+                      }`}
+                  >
+                    <span className={activeTab === tab.id ? "text-sky-500" : "text-slate-400"}>
+                      {tab.icon}
+                    </span>
+                    {tab.label}
+                    <ChevronRight
+                      className={`w-4 h-4 ml-auto transition ${
+                        activeTab === tab.id ? "text-sky-400" : "text-slate-300"
+                      }`}
+                    />
+                  </button>
+                ))}
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-4 py-3.5 text-[13px] font-medium text-rose-500 hover:bg-rose-50 transition"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile logout */}
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+              className="lg:hidden w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 text-[13px] font-medium text-rose-500 hover:bg-rose-50 transition shadow-sm"
             >
               <LogOut className="w-4 h-4" />
               Logout
             </button>
-          </div>
-        </aside>
+          </aside>
 
-        {/* Main */}
-        <main className="lg:col-span-3">
+          {/* Main */}
+          <main className="lg:col-span-3 min-w-0">
 
-          {/* Overview */}
-          {activeTab === "overview" && (
-            <div className="space-y-6">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white" style={{ fontFamily: "Poppins, sans-serif" }}>
-                Welcome back, {user?.name?.split(" ")[0]}! 👋
-              </h1>
-
-              {/* Recent Orders */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-bold text-gray-900 dark:text-white">Recent Orders</h2>
-                  <button onClick={() => setActiveTab("orders")} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                    View All
-                  </button>
+            {/* Overview */}
+            {activeTab === "overview" && (
+              <div className="space-y-5 sm:space-y-6">
+                <div>
+                  <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
+                    Welcome back, {user?.name?.split(" ")[0]}! 👋
+                  </h1>
+                  <p className="text-slate-500 text-sm mt-0.5">Here&apos;s what&apos;s happening with your account</p>
                 </div>
+
+                {/* Recent Orders */}
+                <div className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5 sm:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-semibold text-slate-800 text-[15px]">Recent Orders</h2>
+                    <button
+                      onClick={() => setActiveTab("orders")}
+                      className="text-[13px] font-medium text-sky-600 hover:text-sky-700 transition"
+                    >
+                      View All
+                    </button>
+                  </div>
+                  {ordersLoading ? (
+                    <div className="space-y-3">
+                      {[...Array(3)].map((_, i) => (
+                        <div key={i} className="h-16 rounded-xl bg-slate-100/80 animate-pulse" />
+                      ))}
+                    </div>
+                  ) : !orders?.length ? (
+                    <div className="text-center py-10">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
+                        <Package className="w-6 h-6 text-slate-400" />
+                      </div>
+                      <p className="text-sm text-slate-500">No orders yet.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {(orders as Order[])?.slice(0, 3).map((order) => {
+                        const status = statusConfig[order.status];
+                        return (
+                          <div
+                            key={order.id}
+                            className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-50/80 border border-slate-100/80 hover:bg-white transition"
+                          >
+                            <div className="min-w-0">
+                              <p className="font-medium text-slate-800 text-sm truncate">
+                                {order.id.slice(0, 16)}...
+                              </p>
+                              <p className="text-xs text-slate-500 mt-0.5 truncate">
+                                {order.items?.[0]?.productName}
+                                {order.items?.length > 1 ? ` +${order.items.length - 1} more` : ""}
+                              </p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <span
+                                className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold ${status?.color}`}
+                              >
+                                {status?.icon} {status?.label}
+                              </span>
+                              <p className="text-sm font-semibold text-sky-600 mt-1">
+                                ৳{order.finalAmount}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Wishlist Preview */}
+                <div className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5 sm:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-semibold text-slate-800 text-[15px]">Wishlist</h2>
+                    <button
+                      onClick={() => setActiveTab("wishlist")}
+                      className="text-[13px] font-medium text-sky-600 hover:text-sky-700 transition"
+                    >
+                      View All
+                    </button>
+                  </div>
+                  {wishlistLoading ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {[...Array(3)].map((_, i) => (
+                        <div key={i} className="h-16 rounded-xl bg-slate-100/80 animate-pulse" />
+                      ))}
+                    </div>
+                  ) : !wishlist?.length ? (
+                    <div className="text-center py-10">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
+                        <Heart className="w-6 h-6 text-slate-400" />
+                      </div>
+                      <p className="text-sm text-slate-500">No items in wishlist.</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {(wishlist as WishlistItem[])?.slice(0, 3).map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/80 border border-slate-100/80"
+                        >
+                          <span className="text-2xl shrink-0">{item.images?.[0] || "📚"}</span>
+                          <div className="min-w-0">
+                            <p className="text-xs font-medium text-slate-800 truncate">{item.name}</p>
+                            <p className="text-xs text-sky-600 font-semibold mt-0.5">
+                              ৳{item.discountPrice || item.price}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Orders Tab */}
+            {activeTab === "orders" && (
+              <div className="space-y-5 sm:space-y-6">
+                <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
+                  My Orders
+                </h1>
                 {ordersLoading ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-16 bg-[var(--muted)] rounded-xl animate-pulse" />
+                      <div key={i} className="h-32 rounded-2xl bg-white/50 animate-pulse" />
                     ))}
                   </div>
                 ) : !orders?.length ? (
-                  <p className="text-center text-gray-500 dark:text-gray-400 py-6">No orders yet.</p>
+                  <div className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] text-center py-16 sm:py-20">
+                    <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                      <Package className="w-8 h-8 text-slate-400" />
+                    </div>
+                    <p className="text-slate-500 mb-5 font-medium">No orders yet.</p>
+                    <Link
+                      href="/products"
+                      className="inline-flex px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition shadow-md shadow-sky-500/20"
+                    >
+                      Start Shopping
+                    </Link>
+                  </div>
                 ) : (
-                  <div className="space-y-3">
-                    {(orders as Order[])?.slice(0, 3).map((order) => {
+                  <div className="space-y-4">
+                    {(orders as Order[])?.map((order) => {
                       const status = statusConfig[order.status];
                       return (
-                        <div key={order.id} className="flex items-center justify-between p-3 bg-[var(--muted)] rounded-xl">
-                          <div>
-                            <p className="font-medium text-gray-900 dark:text-white text-sm">{order.id.slice(0, 16)}...</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {order.items?.[0]?.productName}
-                              {order.items?.length > 1 ? ` +${order.items.length - 1} more` : ""}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${status?.color}`}>
+                        <div
+                          key={order.id}
+                          className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.05)] transition"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                            <div>
+                              <p className="font-semibold text-slate-800 text-sm">
+                                {order.id.slice(0, 16)}...
+                              </p>
+                              <p className="text-xs text-slate-500 mt-0.5">
+                                {new Date(order.createdAt).toLocaleDateString("en-BD", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                })}
+                              </p>
+                            </div>
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold self-start sm:self-auto ${status?.color}`}
+                            >
                               {status?.icon} {status?.label}
                             </span>
-                            <p className="text-sm font-bold text-blue-600 dark:text-blue-400 mt-1">৳{order.finalAmount}</p>
+                          </div>
+                          <div className="rounded-xl bg-slate-50/80 border border-slate-100/80 p-3.5 mb-4 space-y-1.5">
+                            {order.items?.map((item) => (
+                              <p
+                                key={item.id}
+                                className="text-sm text-slate-600 flex items-center gap-2"
+                              >
+                                <Package className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                <span className="truncate">
+                                  {item.productName} ×{item.quantity}
+                                </span>
+                              </p>
+                            ))}
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-semibold text-sky-600">
+                              ৳{order.finalAmount}
+                            </span>
+                            <Link
+                              href={`/orders/${order.id}`}
+                              className="text-[13px] text-sky-600 hover:text-sky-700 font-medium transition"
+                            >
+                              View Details →
+                            </Link>
                           </div>
                         </div>
                       );
@@ -184,199 +416,126 @@ export default function DashboardClient() {
                   </div>
                 )}
               </div>
+            )}
 
-              {/* Wishlist Preview */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-bold text-gray-900 dark:text-white">Wishlist</h2>
-                  <button onClick={() => setActiveTab("wishlist")} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                    View All
-                  </button>
-                </div>
+            {/* Wishlist Tab */}
+            {activeTab === "wishlist" && (
+              <div className="space-y-5 sm:space-y-6">
+                <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
+                  My Wishlist
+                </h1>
                 {wishlistLoading ? (
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-16 bg-[var(--muted)] rounded-xl animate-pulse" />
+                      <div key={i} className="h-52 rounded-2xl bg-white/50 animate-pulse" />
                     ))}
                   </div>
                 ) : !wishlist?.length ? (
-                  <p className="text-center text-gray-500 dark:text-gray-400 py-6">No items in wishlist.</p>
+                  <div className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] text-center py-16 sm:py-20">
+                    <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                      <Heart className="w-8 h-8 text-slate-400" />
+                    </div>
+                    <p className="text-slate-500 font-medium">No items in wishlist.</p>
+                  </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {(wishlist as WishlistItem[])?.slice(0, 3).map((item) => (
-                      <div key={item.id} className="flex items-center gap-3 p-3 bg-[var(--muted)] rounded-xl">
-                        <span className="text-2xl">{item.images?.[0] || "📚"}</span>
-                        <div className="min-w-0">
-                          <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
-                          <p className="text-xs text-blue-600 dark:text-blue-400 font-bold">
-                            ৳{item.discountPrice || item.price}
-                          </p>
-                        </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {(wishlist as WishlistItem[])?.map((item) => (
+                      <div
+                        key={item.id}
+                        className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-4 hover:shadow-[0_8px_30px_rgba(0,0,0,0.05)] transition"
+                      >
+                        <Link href={`/products/${item.id}`}>
+                          <div className="rounded-xl bg-gradient-to-br from-sky-50 to-blue-50 border border-sky-100/50 h-32 flex items-center justify-center mb-3 overflow-hidden">
+                            {item.images?.[0] && item.images[0].startsWith("http") ? (
+                              <img
+                                src={item.images[0]}
+                                alt={item.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-5xl">{item.images?.[0] || "📚"}</span>
+                            )}
+                          </div>
+                          <h3 className="font-semibold text-slate-800 text-sm mb-2 line-clamp-2">
+                            {item.name}
+                          </h3>
+                          <div className="flex items-baseline gap-2 mb-3">
+                            <span className="font-semibold text-sky-600">
+                              ৳{item.discountPrice || item.price}
+                            </span>
+                            {item.discountPrice && (
+                              <span className="text-xs text-slate-400 line-through">
+                                ৳{item.price}
+                              </span>
+                            )}
+                          </div>
+                        </Link>
+                        <button
+                          onClick={() => {
+                            if (!item.stock) {
+                              toast.error("This product is out of stock!");
+                              return;
+                            }
+                            const success = addItem({
+                              id: item.id,
+                              name: item.name,
+                              price: item.price,
+                              discountPrice: item.discountPrice,
+                              image: item.images?.[0] || "📚",
+                              stock: item.stock,
+                            });
+                            if (success) toast.success(`${item.name} added to cart!`);
+                          }}
+                          disabled={!item.stock}
+                          className={`w-full py-2.5 rounded-xl text-sm font-semibold transition
+                            ${
+                              !item.stock
+                                ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                : "bg-sky-500 hover:bg-sky-600 text-white shadow-md shadow-sky-500/20"
+                            }`}
+                        >
+                          {!item.stock ? "Out of Stock" : "Add to Cart"}
+                        </button>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Orders Tab */}
-          {activeTab === "orders" && (
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>
-                My Orders
-              </h1>
-              {ordersLoading ? (
-                <div className="space-y-4">
-                  {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-32 bg-[var(--muted)] rounded-2xl animate-pulse" />
-                  ))}
-                </div>
-              ) : !orders?.length ? (
-                <div className="text-center py-20">
-                  <span className="text-6xl mb-4 block">📦</span>
-                  <p className="text-gray-500 dark:text-gray-400 mb-4">No orders yet.</p>
-                  <Link href="/products" className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">
-                    Start Shopping
-                  </Link>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {(orders as Order[])?.map((order) => {
-                    const status = statusConfig[order.status];
-                    return (
-                      <div key={order.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-5">
-                        <div className="flex items-center justify-between mb-3">
-                          <div>
-                            <p className="font-bold text-gray-900 dark:text-white">{order.id.slice(0, 16)}...</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {new Date(order.createdAt).toLocaleDateString()}
-                            </p>
-                          </div>
-                          <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium ${status?.color}`}>
-                            {status?.icon} {status?.label}
-                          </span>
-                        </div>
-                        <div className="bg-[var(--muted)] rounded-xl p-3 mb-3">
-                          {order.items?.map((item) => (
-                            <p key={item.id} className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
-                              <Package className="w-3 h-3" /> {item.productName} x{item.quantity}
-                            </p>
-                          ))}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-blue-600 dark:text-blue-400">৳{order.finalAmount}</span>
-                          <Link href={`/orders/${order.id}`} className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">
-                            View Details →
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
+            {/* Profile Tab */}
+            {activeTab === "profile" && <ProfileTab user={user} />}
 
-          {/* Wishlist Tab */}
-          {activeTab === "wishlist" && (
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>
-                My Wishlist
-              </h1>
-              {wishlistLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-48 bg-[var(--muted)] rounded-2xl animate-pulse" />
-                  ))}
-                </div>
-              ) : !wishlist?.length ? (
-                <div className="text-center py-20">
-                  <span className="text-6xl mb-4 block">❤️</span>
-                  <p className="text-gray-500 dark:text-gray-400">No items in wishlist.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {(wishlist as WishlistItem[])?.map((item) => (
-                    <div key={item.id} className="bg-white dark:bg-slate-800 rounded-2xl border border-[var(--border)] p-4">
-                      <Link href={`/products/${item.id}`}>
-                        <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-700 dark:to-slate-600 rounded-xl h-32 flex items-center justify-center mb-3 overflow-hidden">
-                          {item.images?.[0] && item.images[0].startsWith("http") ? (
-                            <img src={item.images[0]} alt={item.name} className="w-full h-full object-cover" />
-                          ) : (
-                            <span className="text-5xl">{item.images?.[0] || "📚"}</span>
-                          )}
-                        </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">{item.name}</h3>
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="font-bold text-blue-600 dark:text-blue-400">
-                            ৳{item.discountPrice || item.price}
-                          </span>
-                          {item.discountPrice && (
-                            <span className="text-xs text-gray-400 line-through">৳{item.price}</span>
-                          )}
-                        </div>
-                      </Link>
-                      <button
-                        onClick={() => {
-                          if (!item.stock) {
-                            toast.error("This product is out of stock!");
-                            return;
-                          }
-                          const success = addItem({
-                            id: item.id,
-                            name: item.name,
-                            price: item.price,
-                            discountPrice: item.discountPrice,
-                            image: item.images?.[0] || "📚",
-                            stock: item.stock,
-                          });
-                          if (success) toast.success(`${item.name} added to cart!`);
-                        }}
-                        disabled={!item.stock}
-                        className={`w-full py-2 rounded-xl text-sm font-semibold transition ${
-                          !item.stock
-                            ? "bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
-                            : "bg-blue-600 hover:bg-blue-700 text-white"
-                        }`}
-                      >
-                        {!item.stock ? "Out of Stock" : "Add to Cart"}
+            {/* Addresses Tab */}
+            {activeTab === "addresses" && (
+              <div className="space-y-5 sm:space-y-6">
+                <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
+                  My Addresses
+                </h1>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="rounded-2xl bg-white/70 backdrop-blur-xl border-2 border-sky-400/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[11px] font-semibold bg-sky-50 text-sky-600 border border-sky-200/60 px-2.5 py-1 rounded-lg">
+                        Default
+                      </span>
+                      <button className="text-xs font-medium text-sky-600 hover:text-sky-700 transition">
+                        Edit
                       </button>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Profile Tab */}
-          {activeTab === "profile" && <ProfileTab user={user} />}
-
-          {/* Addresses Tab */}
-          {activeTab === "addresses" && (
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6" style={{ fontFamily: "Poppins, sans-serif" }}>
-                My Addresses
-              </h1>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-blue-500 p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium px-2 py-1 rounded-lg">
-                      Default
-                    </span>
-                    <button className="text-xs text-blue-600 dark:text-blue-400 hover:underline">Edit</button>
+                    <p className="font-semibold text-slate-800 mb-1">{user?.name}</p>
+                    <p className="text-sm text-slate-500">Dhaka, Bangladesh</p>
                   </div>
-                  <p className="font-semibold text-gray-900 dark:text-white mb-1">{user?.name}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Dhaka, Bangladesh</p>
+                  <button className="rounded-2xl bg-white/50 backdrop-blur-xl border-2 border-dashed border-slate-200 p-5 flex flex-col items-center justify-center gap-2.5 hover:border-sky-400 hover:bg-sky-50/30 transition min-h-[120px]">
+                    <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-sky-500" />
+                    </div>
+                    <span className="text-sm font-medium text-slate-600">Add New Address</span>
+                  </button>
                 </div>
-                <button className="bg-[var(--muted)] rounded-2xl border-2 border-dashed border-[var(--border)] p-5 flex flex-col items-center justify-center gap-2 hover:border-blue-400 transition">
-                  <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Add New Address</span>
-                </button>
               </div>
-            </div>
-          )}
-        </main>
+            )}
+          </main>
+        </div>
       </div>
     </div>
   );
