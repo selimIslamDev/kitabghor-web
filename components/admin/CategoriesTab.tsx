@@ -81,7 +81,7 @@ export default function CategoriesTab() {
   const gadgets = categories?.filter((c) => c.type === "GADGET") || [];
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
           Categories
