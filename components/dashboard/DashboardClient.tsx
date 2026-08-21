@@ -318,7 +318,17 @@ export default function DashboardClient() {
                           key={item.id}
                           className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/80 border border-slate-100/80"
                         >
-                          <span className="text-2xl shrink-0">{item.images?.[0] || "📚"}</span>
+                          <div className="w-10 h-10 rounded-lg bg-white border border-slate-100/80 flex items-center justify-center overflow-hidden shrink-0">
+                            {item.images?.[0] && item.images[0].startsWith("http") ? (
+                              <img
+                                src={item.images[0]}
+                                alt={item.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-xl">{item.images?.[0] || "📚"}</span>
+                            )}
+                          </div>
                           <div className="min-w-0">
                             <p className="text-xs font-medium text-slate-800 truncate">{item.name}</p>
                             <p className="text-xs text-sky-600 font-semibold mt-0.5">
