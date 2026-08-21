@@ -247,7 +247,7 @@ export default function AdminClient() {
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">
           {/* Dashboard */}
           {activeTab === "dashboard" && (
-            <div className="space-y-6 max-w-[1400px] mx-auto">
+            <div className="space-y-6">
               <div>
                 <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
                   Dashboard
@@ -416,7 +416,7 @@ export default function AdminClient() {
 
           {/* Orders Tab */}
           {activeTab === "orders" && (
-            <div className="space-y-6 max-w-[1400px] mx-auto">
+            <div className="space-y-6 ">
               <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
                 Orders
               </h1>
@@ -543,7 +543,7 @@ export default function AdminClient() {
 
           {/* Products Tab */}
           {activeTab === "products" && (
-            <div className="space-y-6 max-w-[1400px] mx-auto">
+            <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
                   Products
@@ -750,7 +750,7 @@ export default function AdminClient() {
 
           {/* Users Tab */}
           {activeTab === "users" && (
-            <div className="space-y-6 max-w-[1400px] mx-auto">
+            <div className="space-y-6">
               <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
                 Users
               </h1>
@@ -847,7 +847,7 @@ export default function AdminClient() {
 
           {/* Analytics Tab */}
           {activeTab === "analytics" && (
-            <div className="space-y-6 max-w-[1400px] mx-auto">
+            <div className="space-y-6">
               <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
                 Analytics
               </h1>
