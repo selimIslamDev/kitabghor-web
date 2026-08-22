@@ -15,6 +15,8 @@ import ProfileTab from "./ProfileTab";
 
 type Tab = "overview" | "orders" | "wishlist" | "addresses" | "profile";
 
+const VALID_TABS: Tab[] = ["overview", "orders", "wishlist", "addresses", "profile"];
+
 const statusConfig = {
   PENDING: {
     label: "Pending",
@@ -74,23 +76,34 @@ interface WishlistItem {
   stock?: number;
 }
 
+function getTabFromParams(searchParams: URLSearchParams | null): Tab {
+  const tabParam = searchParams?.get("tab") as Tab | null;
+  return tabParam && VALID_TABS.includes(tabParam) ? tabParam : "overview";
+}
+
+/**
+ * Outer wrapper: reads the URL and re-mounts <DashboardClientInner> (via `key`)
+ * whenever the `?tab=` param changes to a different value. This is the React-docs
+ * recommended way to sync state from an external source (the URL) without ever
+ * calling setState inside an effect — remounting re-runs the initializer instead.
+ * https://react.dev/learn/you-might-not-need-an-effect#resetting-all-state-when-a-prop-changes
+ */
 export default function DashboardClient() {
-  const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const searchParams = useSearchParams();
+  const tabFromUrl = getTabFromParams(searchParams);
+
+  return <DashboardClientInner key={tabFromUrl} initialTab={tabFromUrl} />;
+}
+
+function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuthStore();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { addItem } = useCartWithAuth();
 
   const { data: orders, isLoading: ordersLoading } = useMyOrders();
   const { data: wishlist, isLoading: wishlistLoading } = useWishlist();
-
-  useEffect(() => {
-    const tabParam = searchParams.get("tab") as Tab | null;
-    if (tabParam && ["overview", "orders", "wishlist", "addresses", "profile"].includes(tabParam)) {
-      setActiveTab(tabParam);
-    }
-  }, [searchParams]);
 
   // Lock body scroll when mobile sidebar is open
   useEffect(() => {
@@ -564,12 +577,6 @@ export default function DashboardClient() {
     </div>
   );
 }
-
-
-
-
-
-
 
 
 
