@@ -130,11 +130,18 @@ export default function AdminClient() {
       </div>
 
       {/* Sidebar */}
+      {/*
+        FIX: On mobile this sidebar is `fixed` and floats ON TOP of the page content,
+        so it must be fully opaque there or the dashboard content behind it bleeds
+        through the blur/transparency (the "ghosting" bug from the screenshot).
+        On desktop (lg:) it sits statically next to the content, so the original
+        translucent glass effect is kept.
+      */}
       <aside
         className={`${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-[260px] flex flex-col transition-transform duration-300 ease-out
-        bg-white/70 backdrop-blur-2xl border-r border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)]`}
+        bg-white lg:bg-white/70 backdrop-blur-2xl border-r border-slate-200 lg:border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)]`}
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-200/60">
@@ -203,7 +210,7 @@ export default function AdminClient() {
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
         />
       )}
 
@@ -1289,8 +1296,6 @@ export default function AdminClient() {
     </div>
   );
 }
-
-
 
 
 
