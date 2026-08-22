@@ -140,7 +140,7 @@ export default function AdminClient() {
       <aside
         className={`${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-[260px] flex flex-col transition-transform duration-300 ease-out
+        } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-[100] w-[260px] flex flex-col transition-transform duration-300 ease-out
         bg-white lg:bg-white/70 backdrop-blur-2xl border-r border-slate-200 lg:border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)]`}
       >
         {/* Logo */}
@@ -153,8 +153,12 @@ export default function AdminClient() {
             <p className="text-[11px] text-slate-500 font-medium">Admin Panel</p>
           </div>
           <button
-            onClick={() => setSidebarOpen(false)}
-            className="ml-auto lg:hidden p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100/80 transition"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSidebarOpen(false);
+            }}
+            className="ml-auto lg:hidden p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100/80 transition relative z-[110]"
           >
             <X className="w-4 h-4" />
           </button>
@@ -210,7 +214,7 @@ export default function AdminClient() {
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] lg:hidden"
         />
       )}
 
@@ -219,6 +223,7 @@ export default function AdminClient() {
         {/* Top Bar */}
         <header className="bg-white/60 backdrop-blur-xl border-b border-white/50 px-4 sm:px-6 py-3.5 flex items-center gap-3 sm:gap-4">
           <button
+            type="button"
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-white/80 transition"
           >
@@ -1296,13 +1301,6 @@ export default function AdminClient() {
     </div>
   );
 }
-
-
-
-
-
-
-
 
 
 
