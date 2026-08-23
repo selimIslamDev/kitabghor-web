@@ -21,27 +21,27 @@ const statusConfig = {
   PENDING: {
     label: "Pending",
     icon: <Clock className="w-3 h-3" />,
-    color: "bg-amber-50 text-amber-700 border border-amber-200/60",
+    color: "bg-amber-500/15 text-amber-400 border border-amber-500/25",
   },
   CONFIRMED: {
     label: "Confirmed",
     icon: <CheckCircle className="w-3 h-3" />,
-    color: "bg-sky-50 text-sky-700 border border-sky-200/60",
+    color: "bg-sky-500/15 text-sky-400 border border-sky-500/25",
   },
   SHIPPED: {
     label: "Shipped",
     icon: <Truck className="w-3 h-3" />,
-    color: "bg-violet-50 text-violet-700 border border-violet-200/60",
+    color: "bg-violet-500/15 text-violet-400 border border-violet-500/25",
   },
   DELIVERED: {
     label: "Delivered",
     icon: <CheckCircle className="w-3 h-3" />,
-    color: "bg-emerald-50 text-emerald-700 border border-emerald-200/60",
+    color: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25",
   },
   CANCELLED: {
     label: "Cancelled",
     icon: <XCircle className="w-3 h-3" />,
-    color: "bg-rose-50 text-rose-700 border border-rose-200/60",
+    color: "bg-rose-500/15 text-rose-400 border border-rose-500/25",
   },
 };
 
@@ -83,10 +83,7 @@ function getTabFromParams(searchParams: URLSearchParams | null): Tab {
 
 /**
  * Outer wrapper: reads the URL and re-mounts <DashboardClientInner> (via `key`)
- * whenever the `?tab=` param changes to a different value. This is the React-docs
- * recommended way to sync state from an external source (the URL) without ever
- * calling setState inside an effect — remounting re-runs the initializer instead.
- * https://react.dev/learn/you-might-not-need-an-effect#resetting-all-state-when-a-prop-changes
+ * whenever the `?tab=` param changes to a different value.
  */
 export default function DashboardClient() {
   const searchParams = useSearchParams();
@@ -129,43 +126,48 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f4f6f9] overflow-hidden max-w-7xl mx-auto font-sans">
+    <div className="flex min-h-screen bg-[#0a0c10] overflow-hidden max-w-7xl mx-auto font-sans text-slate-200">
+      {/* Ambient glow orbs */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-sky-200/30 blur-3xl" />
-        <div className="absolute top-1/3 -left-24 w-72 h-72 rounded-full bg-violet-200/20 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full bg-emerald-200/20 blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-sky-600/10 blur-[100px]" />
+        <div className="absolute top-1/3 -left-32 w-80 h-80 rounded-full bg-violet-600/10 blur-[90px]" />
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 rounded-full bg-emerald-600/8 blur-[80px]" />
       </div>
 
-      {/* Sidebar - Admin style */}
+      {/* Sidebar - sticky on desktop */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-[260px] flex flex-col
+        className={`fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-50 w-[260px] flex flex-col
         transition-transform duration-300 ease-out will-change-transform
-        bg-white/80 backdrop-blur-2xl border-r border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.06)]
+        bg-[#0f1218]/90 backdrop-blur-2xl border-r border-white/[0.06]
+        shadow-[0_0_40px_rgba(0,0,0,0.4)]
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
       >
-        <div className="relative overflow-hidden mx-3 mt-3 mb-2 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 p-4 text-white shadow-md shadow-sky-500/20">
-          <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-white/10 blur-xl" />
+        {/* User card */}
+        <div className="relative overflow-hidden mx-3 mt-3 mb-2 rounded-2xl bg-gradient-to-br from-sky-600 to-blue-700 p-4 text-white shadow-lg shadow-sky-900/40">
+          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-blue-400/20 blur-xl" />
           <div className="relative flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm border border-white/25 flex items-center justify-center text-xl shrink-0">
+            <div className="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center text-xl shrink-0 shadow-inner">
               👤
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-sm truncate">{user?.name || "Student"}</p>
-              <p className="text-sky-100 text-[11px] truncate">{user?.email}</p>
+              <p className="font-semibold text-sm truncate tracking-tight">{user?.name || "Student"}</p>
+              <p className="text-sky-100/80 text-[11px] truncate">{user?.email}</p>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition shrink-0"
+              className="lg:hidden p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition shrink-0"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
-          <div className="relative mt-3 inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 rounded-lg px-2.5 py-1">
+          <div className="relative mt-3 inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/15 rounded-lg px-2.5 py-1">
             <Star className="w-3 h-3 text-amber-300 fill-current" />
-            <span className="text-[10px] font-medium">Premium Member</span>
+            <span className="text-[10px] font-medium tracking-wide">Premium Member</span>
           </div>
         </div>
 
+        {/* Stats */}
         <div className="grid grid-cols-2 gap-2 px-3 mb-2">
           {[
             { label: "Orders", value: orders?.length || 0, icon: "📦" },
@@ -173,15 +175,16 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
           ].map((stat) => (
             <div
               key={stat.label}
-              className="rounded-xl bg-white/60 border border-slate-200/50 p-2.5 text-center"
+              className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-2.5 text-center hover:bg-white/[0.05] transition"
             >
               <div className="text-base mb-0.5">{stat.icon}</div>
-              <div className="text-sm font-semibold text-slate-800">{stat.value}</div>
+              <div className="text-sm font-semibold text-white">{stat.value}</div>
               <div className="text-[10px] text-slate-500 font-medium">{stat.label}</div>
             </div>
           ))}
         </div>
 
+        {/* Nav */}
         <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -192,15 +195,15 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200
                   ${
                     isActive
-                      ? "bg-sky-500 text-white shadow-md shadow-sky-500/25"
-                      : "text-slate-600 hover:bg-white/80 hover:text-slate-900 hover:shadow-sm"
+                      ? "bg-sky-500/20 text-sky-300 border border-sky-500/30 shadow-[0_0_20px_rgba(14,165,233,0.15)]"
+                      : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200 border border-transparent"
                   }`}
               >
-                <span className={isActive ? "text-white" : "text-slate-400"}>{tab.icon}</span>
+                <span className={isActive ? "text-sky-400" : "text-slate-500"}>{tab.icon}</span>
                 {tab.label}
                 <ChevronRight
                   className={`w-3.5 h-3.5 ml-auto transition ${
-                    isActive ? "text-white/70" : "text-slate-300"
+                    isActive ? "text-sky-400/70" : "text-slate-600"
                   }`}
                 />
               </button>
@@ -208,10 +211,11 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
           })}
         </nav>
 
-        <div className="px-3 py-3 border-t border-slate-200/60">
+        {/* Logout */}
+        <div className="px-3 py-3 border-t border-white/[0.06]">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-rose-600 hover:bg-rose-50 transition"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition border border-transparent hover:border-rose-500/20"
           >
             <LogOut className="w-4 h-4" />
             Logout
@@ -219,27 +223,29 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
         </div>
       </aside>
 
-      {/* Mobile sidebar overlay */}
+      {/* Mobile overlay */}
       <div
         onClick={() => setSidebarOpen(false)}
         className={`fixed inset-0 z-40 lg:hidden transition-all duration-300
           ${sidebarOpen
-            ? "bg-slate-900/30 backdrop-blur-sm opacity-100 pointer-events-auto"
+            ? "bg-black/60 backdrop-blur-sm opacity-100 pointer-events-auto"
             : "bg-transparent opacity-0 pointer-events-none"
           }`}
         aria-hidden={!sidebarOpen}
       />
 
+      {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden relative z-10 min-w-0">
-        <header className="lg:hidden bg-white/60 backdrop-blur-xl border-b border-white/50 px-4 py-3 flex items-center gap-3">
+        {/* Mobile header */}
+        <header className="lg:hidden bg-[#0f1218]/80 backdrop-blur-xl border-b border-white/[0.06] px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-white/80 transition"
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.06] transition"
           >
             <Menu className="w-5 h-5" />
           </button>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-slate-800 truncate">
+            <p className="text-sm font-semibold text-white truncate">
               {tabs.find((t) => t.id === activeTab)?.label}
             </p>
             <p className="text-[11px] text-slate-500 truncate">{user?.name}</p>
@@ -247,10 +253,11 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
         </header>
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+          {/* ── Overview ── */}
           {activeTab === "overview" && (
             <div className="space-y-5 sm:space-y-6 max-w-5xl">
               <div>
-                <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
+                <h1 className="text-2xl sm:text-[26px] font-semibold text-white tracking-tight">
                   Welcome back, {user?.name?.split(" ")[0]}! 👋
                 </h1>
                 <p className="text-slate-500 text-sm mt-0.5">
@@ -258,12 +265,13 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5 sm:p-6">
+              {/* Recent Orders card */}
+              <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-semibold text-slate-800 text-[15px]">Recent Orders</h2>
+                  <h2 className="font-semibold text-white text-[15px]">Recent Orders</h2>
                   <button
                     onClick={() => switchTab("orders")}
-                    className="text-[13px] font-medium text-sky-600 hover:text-sky-700 transition"
+                    className="text-[13px] font-medium text-sky-400 hover:text-sky-300 transition"
                   >
                     View All
                   </button>
@@ -271,13 +279,13 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                 {ordersLoading ? (
                   <div className="space-y-3">
                     {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-16 rounded-xl bg-slate-100/80 animate-pulse" />
+                      <div key={i} className="h-16 rounded-xl bg-white/[0.04] animate-pulse" />
                     ))}
                   </div>
                 ) : !orders?.length ? (
                   <div className="text-center py-10">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
-                      <Package className="w-6 h-6 text-slate-400" />
+                    <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-3">
+                      <Package className="w-6 h-6 text-slate-500" />
                     </div>
                     <p className="text-sm text-slate-500">No orders yet.</p>
                   </div>
@@ -288,10 +296,10 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                       return (
                         <div
                           key={order.id}
-                          className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-50/80 border border-slate-100/80 hover:bg-white transition"
+                          className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.05] hover:border-white/[0.08] transition"
                         >
                           <div className="min-w-0">
-                            <p className="font-medium text-slate-800 text-sm truncate">
+                            <p className="font-medium text-slate-200 text-sm truncate">
                               {order.id.slice(0, 16)}...
                             </p>
                             <p className="text-xs text-slate-500 mt-0.5 truncate">
@@ -305,7 +313,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                             >
                               {status?.icon} {status?.label}
                             </span>
-                            <p className="text-sm font-semibold text-sky-600 mt-1">
+                            <p className="text-sm font-semibold text-sky-400 mt-1">
                               ৳{order.finalAmount}
                             </p>
                           </div>
@@ -316,12 +324,13 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                 )}
               </div>
 
-              <div className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5 sm:p-6">
+              {/* Wishlist preview card */}
+              <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-semibold text-slate-800 text-[15px]">Wishlist</h2>
+                  <h2 className="font-semibold text-white text-[15px]">Wishlist</h2>
                   <button
                     onClick={() => switchTab("wishlist")}
-                    className="text-[13px] font-medium text-sky-600 hover:text-sky-700 transition"
+                    className="text-[13px] font-medium text-sky-400 hover:text-sky-300 transition"
                   >
                     View All
                   </button>
@@ -329,13 +338,13 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                 {wishlistLoading ? (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-16 rounded-xl bg-slate-100/80 animate-pulse" />
+                      <div key={i} className="h-16 rounded-xl bg-white/[0.04] animate-pulse" />
                     ))}
                   </div>
                 ) : !wishlist?.length ? (
                   <div className="text-center py-10">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
-                      <Heart className="w-6 h-6 text-slate-400" />
+                    <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-3">
+                      <Heart className="w-6 h-6 text-slate-500" />
                     </div>
                     <p className="text-sm text-slate-500">No items in wishlist.</p>
                   </div>
@@ -344,9 +353,9 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                     {(wishlist as WishlistItem[])?.slice(0, 3).map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-slate-50/80 border border-slate-100/80"
+                        className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]"
                       >
-                        <div className="w-10 h-10 rounded-lg bg-white border border-slate-100/80 flex items-center justify-center overflow-hidden shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center overflow-hidden shrink-0">
                           {item.images?.[0] && item.images[0].startsWith("http") ? (
                             <img
                               src={item.images[0]}
@@ -358,8 +367,8 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-medium text-slate-800 truncate">{item.name}</p>
-                          <p className="text-xs text-sky-600 font-semibold mt-0.5">
+                          <p className="text-xs font-medium text-slate-200 truncate">{item.name}</p>
+                          <p className="text-xs text-sky-400 font-semibold mt-0.5">
                             ৳{item.discountPrice || item.price}
                           </p>
                         </div>
@@ -371,26 +380,27 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
             </div>
           )}
 
+          {/* ── Orders ── */}
           {activeTab === "orders" && (
             <div className="space-y-5 sm:space-y-6 max-w-5xl">
-              <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
+              <h1 className="text-2xl sm:text-[26px] font-semibold text-white tracking-tight">
                 My Orders
               </h1>
               {ordersLoading ? (
                 <div className="space-y-4">
                   {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-32 rounded-2xl bg-white/50 animate-pulse" />
+                    <div key={i} className="h-32 rounded-2xl bg-[#12151c]/60 animate-pulse" />
                   ))}
                 </div>
               ) : !orders?.length ? (
-                <div className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] text-center py-16 sm:py-20">
-                  <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
-                    <Package className="w-8 h-8 text-slate-400" />
+                <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] text-center py-16 sm:py-20">
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+                    <Package className="w-8 h-8 text-slate-500" />
                   </div>
                   <p className="text-slate-500 mb-5 font-medium">No orders yet.</p>
                   <Link
                     href="/products"
-                    className="inline-flex px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition shadow-md shadow-sky-500/20"
+                    className="inline-flex px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white rounded-xl font-semibold transition shadow-lg shadow-sky-500/20"
                   >
                     Start Shopping
                   </Link>
@@ -402,11 +412,11 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                     return (
                       <div
                         key={order.id}
-                        className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.05)] transition"
+                        className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5 hover:border-white/[0.1] hover:shadow-[0_8px_40px_rgba(0,0,0,0.35)] transition"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                           <div>
-                            <p className="font-semibold text-slate-800 text-sm">
+                            <p className="font-semibold text-white text-sm">
                               {order.id.slice(0, 16)}...
                             </p>
                             <p className="text-xs text-slate-500 mt-0.5">
@@ -423,13 +433,13 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                             {status?.icon} {status?.label}
                           </span>
                         </div>
-                        <div className="rounded-xl bg-slate-50/80 border border-slate-100/80 p-3.5 mb-4 space-y-1.5">
+                        <div className="rounded-xl bg-white/[0.03] border border-white/[0.05] p-3.5 mb-4 space-y-1.5">
                           {order.items?.map((item) => (
                             <p
                               key={item.id}
-                              className="text-sm text-slate-600 flex items-center gap-2"
+                              className="text-sm text-slate-400 flex items-center gap-2"
                             >
-                              <Package className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <Package className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                               <span className="truncate">
                                 {item.productName} ×{item.quantity}
                               </span>
@@ -437,12 +447,12 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                           ))}
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-lg font-semibold text-sky-600">
+                          <span className="text-lg font-semibold text-sky-400">
                             ৳{order.finalAmount}
                           </span>
                           <Link
                             href={`/orders/${order.id}`}
-                            className="text-[13px] text-sky-600 hover:text-sky-700 font-medium transition"
+                            className="text-[13px] text-sky-400 hover:text-sky-300 font-medium transition"
                           >
                             View Details →
                           </Link>
@@ -455,21 +465,22 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
             </div>
           )}
 
+          {/* ── Wishlist ── */}
           {activeTab === "wishlist" && (
             <div className="space-y-5 sm:space-y-6 max-w-5xl">
-              <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
+              <h1 className="text-2xl sm:text-[26px] font-semibold text-white tracking-tight">
                 My Wishlist
               </h1>
               {wishlistLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-52 rounded-2xl bg-white/50 animate-pulse" />
+                    <div key={i} className="h-52 rounded-2xl bg-[#12151c]/60 animate-pulse" />
                   ))}
                 </div>
               ) : !wishlist?.length ? (
-                <div className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] text-center py-16 sm:py-20">
-                  <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
-                    <Heart className="w-8 h-8 text-slate-400" />
+                <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] text-center py-16 sm:py-20">
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+                    <Heart className="w-8 h-8 text-slate-500" />
                   </div>
                   <p className="text-slate-500 font-medium">No items in wishlist.</p>
                 </div>
@@ -478,10 +489,10 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                   {(wishlist as WishlistItem[])?.map((item) => (
                     <div
                       key={item.id}
-                      className="rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-4 hover:shadow-[0_8px_30px_rgba(0,0,0,0.05)] transition"
+                      className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-4 hover:border-white/[0.1] hover:shadow-[0_8px_40px_rgba(0,0,0,0.35)] transition"
                     >
                       <Link href={`/products/${item.id}`}>
-                        <div className="rounded-xl bg-gradient-to-br from-sky-50 to-blue-50 border border-sky-100/50 h-32 flex items-center justify-center mb-3 overflow-hidden">
+                        <div className="rounded-xl bg-gradient-to-br from-sky-950/60 to-blue-950/40 border border-sky-500/10 h-32 flex items-center justify-center mb-3 overflow-hidden">
                           {item.images?.[0] && item.images[0].startsWith("http") ? (
                             <img
                               src={item.images[0]}
@@ -492,15 +503,15 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                             <span className="text-5xl">{item.images?.[0] || "📚"}</span>
                           )}
                         </div>
-                        <h3 className="font-semibold text-slate-800 text-sm mb-2 line-clamp-2">
+                        <h3 className="font-semibold text-white text-sm mb-2 line-clamp-2">
                           {item.name}
                         </h3>
                         <div className="flex items-baseline gap-2 mb-3">
-                          <span className="font-semibold text-sky-600">
+                          <span className="font-semibold text-sky-400">
                             ৳{item.discountPrice || item.price}
                           </span>
                           {item.discountPrice && (
-                            <span className="text-xs text-slate-400 line-through">
+                            <span className="text-xs text-slate-600 line-through">
                               ৳{item.price}
                             </span>
                           )}
@@ -526,8 +537,8 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                         className={`w-full py-2.5 rounded-xl text-sm font-semibold transition
                           ${
                             !item.stock
-                              ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                              : "bg-sky-500 hover:bg-sky-600 text-white shadow-md shadow-sky-500/20"
+                              ? "bg-white/[0.04] text-slate-600 cursor-not-allowed border border-white/[0.04]"
+                              : "bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/20"
                           }`}
                       >
                         {!item.stock ? "Out of Stock" : "Add to Cart"}
@@ -539,35 +550,37 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
             </div>
           )}
 
+          {/* ── Profile ── */}
           {activeTab === "profile" && (
             <div className="max-w-5xl">
               <ProfileTab user={user} />
             </div>
           )}
 
+          {/* ── Addresses ── */}
           {activeTab === "addresses" && (
             <div className="space-y-5 sm:space-y-6 max-w-5xl">
-              <h1 className="text-2xl sm:text-[26px] font-semibold text-slate-800 tracking-tight">
+              <h1 className="text-2xl sm:text-[26px] font-semibold text-white tracking-tight">
                 My Addresses
               </h1>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl bg-white/70 backdrop-blur-xl border-2 border-sky-400/60 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-5">
+                <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border-2 border-sky-500/40 shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-[11px] font-semibold bg-sky-50 text-sky-600 border border-sky-200/60 px-2.5 py-1 rounded-lg">
+                    <span className="text-[11px] font-semibold bg-sky-500/15 text-sky-400 border border-sky-500/25 px-2.5 py-1 rounded-lg">
                       Default
                     </span>
-                    <button className="text-xs font-medium text-sky-600 hover:text-sky-700 transition">
+                    <button className="text-xs font-medium text-sky-400 hover:text-sky-300 transition">
                       Edit
                     </button>
                   </div>
-                  <p className="font-semibold text-slate-800 mb-1">{user?.name}</p>
+                  <p className="font-semibold text-white mb-1">{user?.name}</p>
                   <p className="text-sm text-slate-500">Dhaka, Bangladesh</p>
                 </div>
-                <button className="rounded-2xl bg-white/50 backdrop-blur-xl border-2 border-dashed border-slate-200 p-5 flex flex-col items-center justify-center gap-2.5 hover:border-sky-400 hover:bg-sky-50/30 transition min-h-[120px]">
-                  <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-sky-500" />
+                <button className="rounded-2xl bg-[#12151c]/50 backdrop-blur-xl border-2 border-dashed border-white/[0.08] p-5 flex flex-col items-center justify-center gap-2.5 hover:border-sky-500/40 hover:bg-sky-500/5 transition min-h-[120px]">
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center">
+                    <MapPin className="w-5 h-5 text-sky-400" />
                   </div>
-                  <span className="text-sm font-medium text-slate-600">Add New Address</span>
+                  <span className="text-sm font-medium text-slate-400">Add New Address</span>
                 </button>
               </div>
             </div>
@@ -577,7 +590,6 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
     </div>
   );
 }
-
 
 
 
