@@ -129,7 +129,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f4f6f9] overflow-hidden max-w-7xl me-auto font-sans">
+    <div className="flex min-h-screen bg-[#f4f6f9] overflow-hidden max-w-7xl mx-auto font-sans">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-sky-200/30 blur-3xl" />
         <div className="absolute top-1/3 -left-24 w-72 h-72 rounded-full bg-violet-200/20 blur-3xl" />
@@ -577,9 +577,6 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
     </div>
   );
 }
-
-
-
 
 
 
