@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import {
   ShoppingBag, Heart, MapPin, User, Package,
-  Star, ChevronRight, LogOut, Settings,
+  Star, ChevronRight, Settings,
   CheckCircle, Clock, Truck, XCircle, Menu, X,
   Trash2, Bell, ShieldCheck, RotateCcw, Headset, ShoppingCart,
 } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useMyOrders, useWishlist, useCartWithAuth } from "@/lib/hooks";
+import { useSearchParams } from "next/navigation";
+import { useMyOrders, useWishlist, useCartWithAuth, useRemoveFromWishlist } from "@/lib/hooks";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import ProfileTab from "./ProfileTab";
@@ -99,31 +99,32 @@ export default function DashboardClient() {
 function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
   const [activeTab, setActiveTab] = useState<Tab>(initialTab);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, logout } = useAuthStore();
-  const router = useRouter();
+  const { user } = useAuthStore();
   const { addItem } = useCartWithAuth();
 
   const { data: orders, isLoading: ordersLoading } = useMyOrders();
   const { data: wishlist, isLoading: wishlistLoading } = useWishlist();
 
-  // Optimistic local hide-list for the wishlist UI.
-  // NOTE: this only hides items visually — it does NOT call a delete API.
-  // Wire this up to a real mutation (e.g. useRemoveFromWishlist) once that
-  // hook exists in @/lib/hooks, otherwise removed items will reappear on refresh.
-  const [removedWishlistIds, setRemovedWishlistIds] = useState<Set<string>>(new Set());
-  const visibleWishlist = ((wishlist as WishlistItem[]) || []).filter(
-    (item) => !removedWishlistIds.has(item.id)
-  );
+  // Real backend-backed removal — invalidates the wishlist query on success
+  // so the UI stays in sync with the server (see lib/hooks.ts).
+  const removeFromWishlistMutation = useRemoveFromWishlist();
 
-  const handleRemoveFromWishlist = (id: string, name: string) => {
-    setRemovedWishlistIds((prev) => new Set(prev).add(id));
-    toast.success(`Removed "${name}" from wishlist`);
+  const visibleWishlist = (wishlist as WishlistItem[]) || [];
+
+  // useRemoveFromWishlist (lib/hooks/useWishlist.ts) already shows its own
+  // success/error toast and invalidates the ["wishlist"] query — no need to
+  // duplicate that here.
+  const handleRemoveFromWishlist = (id: string) => {
+    removeFromWishlistMutation.mutate(id);
   };
 
   const handleClearWishlist = () => {
-    if (!wishlist?.length) return;
-    setRemovedWishlistIds(new Set((wishlist as WishlistItem[]).map((i) => i.id)));
-    toast.success("Wishlist cleared");
+    if (!visibleWishlist.length) return;
+    // Fire sequentially so we don't spam the wishlist endpoint / toasts all at once.
+    visibleWishlist.reduce(
+      (chain, item) => chain.then(() => removeFromWishlistMutation.mutateAsync(item.id)),
+      Promise.resolve()
+    );
   };
 
   // Lock body scroll when mobile sidebar is open
@@ -137,12 +138,6 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
       document.body.style.overflow = "";
     };
   }, [sidebarOpen]);
-
-  const handleLogout = () => {
-    logout();
-    toast.success("Logged out successfully!");
-    router.push("/");
-  };
 
   const switchTab = (tab: Tab) => {
     setActiveTab(tab);
@@ -196,7 +191,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
         <div className="grid grid-cols-2 gap-2 px-3 mb-2">
           {[
             { label: "Orders", value: orders?.length || 0, icon: "📦" },
-            { label: "Wishlist", value: wishlist?.length || 0, icon: "❤️" },
+            { label: "Wishlist", value: visibleWishlist.length || 0, icon: "❤️" },
           ].map((stat) => (
             <div
               key={stat.label}
@@ -235,17 +230,6 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
             );
           })}
         </nav>
-
-        {/* Logout */}
-        <div className="px-3 py-3">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            Logout
-          </button>
-        </div>
       </aside>
 
       {/* Mobile overlay */}
@@ -366,7 +350,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                       <div key={i} className="h-16 rounded-xl bg-white/[0.04] animate-pulse" />
                     ))}
                   </div>
-                ) : !wishlist?.length ? (
+                ) : !visibleWishlist.length ? (
                   <div className="text-center py-10">
                     <div className="w-12 h-12 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-3">
                       <Heart className="w-6 h-6 text-slate-500" />
@@ -375,7 +359,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {(wishlist as WishlistItem[])?.slice(0, 3).map((item) => (
+                    {visibleWishlist.slice(0, 3).map((item) => (
                       <div
                         key={item.id}
                         className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03]"
@@ -425,7 +409,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                   <p className="text-slate-500 mb-5 font-medium">No orders yet.</p>
                   <Link
                     href="/products"
-                    className="inline-flex px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white rounded-xl font-semibold transition shadow-lg shadow-sky-500/20"
+                    className="inline-flex px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-full font-semibold transition"
                   >
                     Start Shopping
                   </Link>
@@ -506,7 +490,8 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                 {visibleWishlist.length > 0 && (
                   <button
                     onClick={handleClearWishlist}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-rose-400 bg-rose-500/10 hover:bg-rose-500/15 transition cursor-pointer"
+                    disabled={removeFromWishlistMutation.isPending}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium text-rose-400 bg-rose-500/10 hover:bg-rose-500/15 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Trash2 className="w-4 h-4" />
                     Clear Wishlist
@@ -594,15 +579,10 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                           <div className="flex sm:flex-col items-end gap-3 shrink-0">
                             <div className="flex items-center gap-2">
                               <button
-                                aria-label="Favorited"
-                                className="w-9 h-9 rounded-lg flex items-center justify-center text-rose-400 bg-rose-500/10 hover:bg-rose-500/15 transition cursor-pointer"
-                              >
-                                <Heart className="w-4 h-4 fill-current" />
-                              </button>
-                              <button
-                                onClick={() => handleRemoveFromWishlist(item.id, item.name)}
+                                onClick={() => handleRemoveFromWishlist(item.id)}
+                                disabled={removeFromWishlistMutation.isPending}
                                 aria-label="Remove from wishlist"
-                                className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white transition cursor-pointer"
+                                className="w-9 h-9 rounded-lg flex items-center justify-center text-rose-400 bg-rose-500/10 hover:bg-rose-500/15 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -621,7 +601,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                                   });
                                   if (success) toast.success(`${item.name} added to cart!`);
                                 }}
-                                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-500/25 transition cursor-pointer whitespace-nowrap"
+                                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-violet-600 hover:bg-violet-700 transition cursor-pointer whitespace-nowrap"
                               >
                                 <ShoppingCart className="w-4 h-4" />
                                 Add to Cart
@@ -725,7 +705,6 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
     </div>
   );
 }
-
 
 
 
