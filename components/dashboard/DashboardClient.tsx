@@ -126,6 +126,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
   };
 
   return (
+    <div className="min-h-screen w-full bg-[#0a0c10]">
     <div className="flex min-h-screen bg-[#0a0c10] overflow-hidden max-w-7xl mx-auto font-sans text-slate-200">
       {/* Ambient glow orbs */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
@@ -588,9 +589,9 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
         </main>
       </div>
     </div>
+    </div>
   );
 }
-
 // "use client";
 
 // import { useState, useEffect } from "react";
