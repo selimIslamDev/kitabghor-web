@@ -21,27 +21,27 @@ const statusConfig = {
   PENDING: {
     label: "Pending",
     icon: <Clock className="w-3 h-3" />,
-    color: "bg-amber-500/15 text-amber-400 border border-amber-500/25",
+    color: "bg-amber-500/15 text-amber-400",
   },
   CONFIRMED: {
     label: "Confirmed",
     icon: <CheckCircle className="w-3 h-3" />,
-    color: "bg-sky-500/15 text-sky-400 border border-sky-500/25",
+    color: "bg-sky-500/15 text-sky-400",
   },
   SHIPPED: {
     label: "Shipped",
     icon: <Truck className="w-3 h-3" />,
-    color: "bg-violet-500/15 text-violet-400 border border-violet-500/25",
+    color: "bg-violet-500/15 text-violet-400",
   },
   DELIVERED: {
     label: "Delivered",
     icon: <CheckCircle className="w-3 h-3" />,
-    color: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25",
+    color: "bg-emerald-500/15 text-emerald-400",
   },
   CANCELLED: {
     label: "Cancelled",
     icon: <XCircle className="w-3 h-3" />,
-    color: "bg-rose-500/15 text-rose-400 border border-rose-500/25",
+    color: "bg-rose-500/15 text-rose-400",
   },
 };
 
@@ -138,7 +138,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
       <aside
         className={`fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-50 w-[260px] flex flex-col
         transition-transform duration-300 ease-out will-change-transform
-        bg-[#0f1218]/90 backdrop-blur-2xl border-r border-white/[0.06]
+        bg-[#0f1218]/90 backdrop-blur-2xl
         shadow-[0_0_40px_rgba(0,0,0,0.4)]
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
       >
@@ -147,7 +147,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
           <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-blue-400/20 blur-xl" />
           <div className="relative flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center text-xl shrink-0 shadow-inner">
+            <div className="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center text-xl shrink-0 shadow-inner">
               👤
             </div>
             <div className="min-w-0 flex-1">
@@ -156,12 +156,12 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition shrink-0"
+              className="lg:hidden p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition shrink-0 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
-          <div className="relative mt-3 inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/15 rounded-lg px-2.5 py-1">
+          <div className="relative mt-3 inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-1">
             <Star className="w-3 h-3 text-amber-300 fill-current" />
             <span className="text-[10px] font-medium tracking-wide">Premium Member</span>
           </div>
@@ -175,7 +175,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
           ].map((stat) => (
             <div
               key={stat.label}
-              className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-2.5 text-center hover:bg-white/[0.05] transition"
+              className="rounded-xl bg-white/[0.03] p-2.5 text-center hover:bg-white/[0.05] transition"
             >
               <div className="text-base mb-0.5">{stat.icon}</div>
               <div className="text-sm font-semibold text-white">{stat.value}</div>
@@ -192,11 +192,11 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
               <button
                 key={tab.id}
                 onClick={() => switchTab(tab.id as Tab)}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 cursor-pointer
                   ${
                     isActive
-                      ? "bg-sky-500/20 text-sky-300 border border-sky-500/30 shadow-[0_0_20px_rgba(14,165,233,0.15)]"
-                      : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200 border border-transparent"
+                      ? "bg-sky-500/20 text-sky-300 shadow-[0_0_20px_rgba(14,165,233,0.15)]"
+                      : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
                   }`}
               >
                 <span className={isActive ? "text-sky-400" : "text-slate-500"}>{tab.icon}</span>
@@ -212,10 +212,10 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
         </nav>
 
         {/* Logout */}
-        <div className="px-3 py-3 border-t border-white/[0.06]">
+        <div className="px-3 py-3">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition border border-transparent hover:border-rose-500/20"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             Logout
@@ -237,10 +237,10 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden relative z-10 min-w-0">
         {/* Mobile header */}
-        <header className="lg:hidden bg-[#0f1218]/80 backdrop-blur-xl border-b border-white/[0.06] px-4 py-3 flex items-center gap-3">
+        <header className="lg:hidden bg-[#0f1218]/80 backdrop-blur-xl px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.06] transition"
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.06] transition cursor-pointer"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -266,12 +266,12 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
               </div>
 
               {/* Recent Orders card */}
-              <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5 sm:p-6">
+              <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-semibold text-white text-[15px]">Recent Orders</h2>
                   <button
                     onClick={() => switchTab("orders")}
-                    className="text-[13px] font-medium text-sky-400 hover:text-sky-300 transition"
+                    className="text-[13px] font-medium text-sky-400 hover:text-sky-300 transition cursor-pointer"
                   >
                     View All
                   </button>
@@ -284,7 +284,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                   </div>
                 ) : !orders?.length ? (
                   <div className="text-center py-10">
-                    <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-3">
                       <Package className="w-6 h-6 text-slate-500" />
                     </div>
                     <p className="text-sm text-slate-500">No orders yet.</p>
@@ -296,7 +296,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                       return (
                         <div
                           key={order.id}
-                          className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.05] hover:border-white/[0.08] transition"
+                          className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.05] transition"
                         >
                           <div className="min-w-0">
                             <p className="font-medium text-slate-200 text-sm truncate">
@@ -325,12 +325,12 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
               </div>
 
               {/* Wishlist preview card */}
-              <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5 sm:p-6">
+              <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-semibold text-white text-[15px]">Wishlist</h2>
                   <button
                     onClick={() => switchTab("wishlist")}
-                    className="text-[13px] font-medium text-sky-400 hover:text-sky-300 transition"
+                    className="text-[13px] font-medium text-sky-400 hover:text-sky-300 transition cursor-pointer"
                   >
                     View All
                   </button>
@@ -343,7 +343,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                   </div>
                 ) : !wishlist?.length ? (
                   <div className="text-center py-10">
-                    <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-3">
                       <Heart className="w-6 h-6 text-slate-500" />
                     </div>
                     <p className="text-sm text-slate-500">No items in wishlist.</p>
@@ -353,9 +353,9 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                     {(wishlist as WishlistItem[])?.slice(0, 3).map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]"
+                        className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03]"
                       >
-                        <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center overflow-hidden shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-white/[0.04] flex items-center justify-center overflow-hidden shrink-0">
                           {item.images?.[0] && item.images[0].startsWith("http") ? (
                             <img
                               src={item.images[0]}
@@ -393,8 +393,8 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                   ))}
                 </div>
               ) : !orders?.length ? (
-                <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] text-center py-16 sm:py-20">
-                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+                <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.25)] text-center py-16 sm:py-20">
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
                     <Package className="w-8 h-8 text-slate-500" />
                   </div>
                   <p className="text-slate-500 mb-5 font-medium">No orders yet.</p>
@@ -412,7 +412,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                     return (
                       <div
                         key={order.id}
-                        className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5 hover:border-white/[0.1] hover:shadow-[0_8px_40px_rgba(0,0,0,0.35)] transition"
+                        className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5 hover:shadow-[0_8px_40px_rgba(0,0,0,0.35)] transition"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                           <div>
@@ -433,7 +433,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                             {status?.icon} {status?.label}
                           </span>
                         </div>
-                        <div className="rounded-xl bg-white/[0.03] border border-white/[0.05] p-3.5 mb-4 space-y-1.5">
+                        <div className="rounded-xl bg-white/[0.03] p-3.5 mb-4 space-y-1.5">
                           {order.items?.map((item) => (
                             <p
                               key={item.id}
@@ -478,8 +478,8 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                   ))}
                 </div>
               ) : !wishlist?.length ? (
-                <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] text-center py-16 sm:py-20">
-                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+                <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.25)] text-center py-16 sm:py-20">
+                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
                     <Heart className="w-8 h-8 text-slate-500" />
                   </div>
                   <p className="text-slate-500 font-medium">No items in wishlist.</p>
@@ -489,10 +489,10 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                   {(wishlist as WishlistItem[])?.map((item) => (
                     <div
                       key={item.id}
-                      className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-4 hover:border-white/[0.1] hover:shadow-[0_8px_40px_rgba(0,0,0,0.35)] transition"
+                      className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-4 hover:shadow-[0_8px_40px_rgba(0,0,0,0.35)] transition"
                     >
                       <Link href={`/products/${item.id}`}>
-                        <div className="rounded-xl bg-gradient-to-br from-sky-950/60 to-blue-950/40 border border-sky-500/10 h-32 flex items-center justify-center mb-3 overflow-hidden">
+                        <div className="rounded-xl bg-gradient-to-br from-sky-950/60 to-blue-950/40 h-32 flex items-center justify-center mb-3 overflow-hidden">
                           {item.images?.[0] && item.images[0].startsWith("http") ? (
                             <img
                               src={item.images[0]}
@@ -534,10 +534,10 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                           if (success) toast.success(`${item.name} added to cart!`);
                         }}
                         disabled={!item.stock}
-                        className={`w-full py-2.5 rounded-xl text-sm font-semibold transition
+                        className={`w-full py-2.5 rounded-xl text-sm font-semibold transition cursor-pointer
                           ${
                             !item.stock
-                              ? "bg-white/[0.04] text-slate-600 cursor-not-allowed border border-white/[0.04]"
+                              ? "bg-white/[0.04] text-slate-600 cursor-not-allowed"
                               : "bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/20"
                           }`}
                       >
@@ -564,20 +564,20 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                 My Addresses
               </h1>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl border-2 border-sky-500/40 shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5">
+                <div className="rounded-2xl bg-[#12151c]/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.25)] p-5">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-[11px] font-semibold bg-sky-500/15 text-sky-400 border border-sky-500/25 px-2.5 py-1 rounded-lg">
+                    <span className="text-[11px] font-semibold bg-sky-500/15 text-sky-400 px-2.5 py-1 rounded-lg">
                       Default
                     </span>
-                    <button className="text-xs font-medium text-sky-400 hover:text-sky-300 transition">
+                    <button className="text-xs font-medium text-sky-400 hover:text-sky-300 transition cursor-pointer">
                       Edit
                     </button>
                   </div>
                   <p className="font-semibold text-white mb-1">{user?.name}</p>
                   <p className="text-sm text-slate-500">Dhaka, Bangladesh</p>
                 </div>
-                <button className="rounded-2xl bg-[#12151c]/50 backdrop-blur-xl border-2 border-dashed border-white/[0.08] p-5 flex flex-col items-center justify-center gap-2.5 hover:border-sky-500/40 hover:bg-sky-500/5 transition min-h-[120px]">
-                  <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center">
+                <button className="rounded-2xl bg-[#12151c]/50 backdrop-blur-xl p-5 flex flex-col items-center justify-center gap-2.5 hover:bg-sky-500/5 transition min-h-[120px] cursor-pointer">
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center">
                     <MapPin className="w-5 h-5 text-sky-400" />
                   </div>
                   <span className="text-sm font-medium text-slate-400">Add New Address</span>
@@ -590,9 +590,6 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
     </div>
   );
 }
-
-
-
 
 // "use client";
 
