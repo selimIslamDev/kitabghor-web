@@ -189,13 +189,13 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
         {/* Sidebar - sticky on desktop */}
         <aside
           className={`
-    fixed inset-y-0 left-0 z-50
+    fixed inset-y-0 left-0 z-[100]
     w-[260px]
     flex flex-col
     transition-transform duration-300 ease-out
     will-change-transform
 
-    bg-[#0f1218]/90 backdrop-blur-2xl
+    bg-[#0f1218] lg:bg-[#0f1218]/90 backdrop-blur-2xl
     shadow-[0_0_40px_rgba(0,0,0,0.4)]
 
     ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
@@ -208,8 +208,8 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
         >
           {/* User card */}
           <div className="relative overflow-hidden mx-3 mt-3 mb-2 rounded-2xl bg-gradient-to-br from-sky-600 to-blue-700 p-4 text-white shadow-lg shadow-sky-900/40">
-            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/10 blur-2xl" />
-            <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-blue-400/20 blur-xl" />
+            <div className="pointer-events-none absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/10 blur-2xl" />
+            <div className="pointer-events-none absolute bottom-0 left-0 w-16 h-16 rounded-full bg-blue-400/20 blur-xl" />
             <div className="relative flex items-center gap-3">
               <div className="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center text-xl shrink-0 shadow-inner">
                 👤
@@ -223,11 +223,15 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
                 </p>
               </div>
               <button
-  onClick={() => setSidebarOpen(false)}
-  className="lg:hidden p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition shrink-0 cursor-pointer"
->
-  <X className="w-4 h-4" />
-</button>
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSidebarOpen(false);
+                }}
+                className="lg:hidden relative z-[110] p-2 -m-1 rounded-lg text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 transition shrink-0 cursor-pointer touch-manipulation"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
             <div className="relative mt-3 inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm rounded-lg px-2.5 py-1">
               <Star className="w-3 h-3 text-amber-300 fill-current" />
@@ -297,7 +301,7 @@ function DashboardClientInner({ initialTab }: { initialTab: Tab }) {
         {/* Mobile overlay */}
         <div
           onClick={() => setSidebarOpen(false)}
-          className={`fixed inset-0 z-40 lg:hidden transition-all duration-300
+          className={`fixed inset-0 z-[90] lg:hidden transition-all duration-300
           ${
             sidebarOpen
               ? "bg-black/60 backdrop-blur-sm opacity-100 pointer-events-auto"
