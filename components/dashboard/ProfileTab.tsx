@@ -37,7 +37,7 @@ export default function ProfileTab({ user }: { user: any }) {
       {/* Header */}
       <div className="mb-7">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 shadow-[0_0_25px_rgba(59,130,246,0.15)]">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 shadow-[0_0_25px_rgba(59,130,246,0.15)]">
             <Settings2 className="w-5 h-5 text-blue-400" />
           </div>
 
@@ -61,7 +61,6 @@ export default function ProfileTab({ user }: { user: any }) {
         className="
           relative overflow-hidden
           rounded-3xl
-          border border-blue-500/30
           bg-slate-900/50
           backdrop-blur-2xl
           shadow-[0_0_50px_rgba(15,23,42,0.45)]
@@ -73,7 +72,7 @@ export default function ProfileTab({ user }: { user: any }) {
 
         <div className="relative p-5 sm:p-7 md:p-9">
           {/* Profile Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-5 pb-7 border-b border-white/10">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-5 pb-7">
             {/* Avatar */}
             <div
               className="
@@ -108,7 +107,6 @@ export default function ProfileTab({ user }: { user: any }) {
                   text-xs font-semibold
                   text-blue-300
                   bg-blue-500/10
-                  border border-blue-500/20
                 "
               >
                 {user?.role === "ADMIN" ? "👑 Admin" : "🎓 Student"}
@@ -124,7 +122,6 @@ export default function ProfileTab({ user }: { user: any }) {
                   w-12 h-12 rounded-full
                   flex items-center justify-center
                   bg-blue-500/10
-                  border border-blue-500/20
                 "
               >
                 <User className="w-5 h-5 text-blue-400" />
@@ -177,14 +174,13 @@ export default function ProfileTab({ user }: { user: any }) {
                         h-14
                         pl-12 pr-4
                         rounded-xl
-                        border border-white/10
                         bg-slate-950/40
                         text-white
                         placeholder:text-slate-600
                         outline-none
                         transition-all
-                        focus:border-blue-500/60
                         focus:bg-slate-950/60
+                        focus:ring-1 focus:ring-blue-500/60
                         focus:shadow-[0_0_25px_rgba(59,130,246,0.12)]
                       "
                     />
@@ -223,14 +219,13 @@ export default function ProfileTab({ user }: { user: any }) {
                         h-14
                         pl-12 pr-4
                         rounded-xl
-                        border border-white/10
                         bg-slate-950/40
                         text-white
                         placeholder:text-slate-600
                         outline-none
                         transition-all
-                        focus:border-blue-500/60
                         focus:bg-slate-950/60
+                        focus:ring-1 focus:ring-blue-500/60
                         focus:shadow-[0_0_25px_rgba(59,130,246,0.12)]
                       "
                     />
@@ -255,7 +250,6 @@ export default function ProfileTab({ user }: { user: any }) {
                         h-14
                         pl-12 pr-12
                         rounded-xl
-                        border border-white/10
                         bg-slate-950/30
                         text-slate-500
                         outline-none
@@ -275,7 +269,6 @@ export default function ProfileTab({ user }: { user: any }) {
                   flex items-start gap-3
                   p-4
                   rounded-xl
-                  border border-blue-500/20
                   bg-blue-500/[0.06]
                 "
               >
@@ -298,7 +291,7 @@ export default function ProfileTab({ user }: { user: any }) {
                     justify-center
                     gap-2.5
                     min-w-[180px]
-                    h-13
+                    h-14
                     px-7
                     rounded-xl
                     font-semibold
@@ -311,6 +304,7 @@ export default function ProfileTab({ user }: { user: any }) {
                     active:scale-[0.98]
                     disabled:opacity-60
                     disabled:cursor-not-allowed
+                    cursor-pointer
                     transition-all duration-300
                   "
                 >
