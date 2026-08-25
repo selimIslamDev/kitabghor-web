@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { MouseEvent, useEffect, useRef, useState } from "react";
-import { BookOpen, Sparkles, ArrowRight } from "lucide-react";
+import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import { BookOpen, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCartWithAuth, useFeaturedProducts } from "@/lib/hooks";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import toast from "react-hot-toast";
 
 interface Book {
@@ -29,7 +31,40 @@ export default function FeaturedBooks() {
   const { data: products, isLoading } = useFeaturedProducts();
 
   const books: Book[] =
-    (products as Book[] | undefined)?.filter((p) => p.productType === "BOOK").slice(0, 4) || [];
+    (products as Book[] | undefined)?.filter((p) => p.productType === "BOOK").slice(0, 6) || [];
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, align: "start", slidesToScroll: 1, dragFree: false },
+    [Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })]
+  );
+
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  const onSelect = useCallback((api: NonNullable<typeof emblaApi>) => {
+    setCanScrollPrev(api.canScrollPrev());
+    setCanScrollNext(api.canScrollNext());
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    // Defer the initial sync so setState isn't called synchronously
+    // within the effect body (react-hooks/set-state-in-effect).
+    const rafId = requestAnimationFrame(() => onSelect(emblaApi));
+
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
+  }, [emblaApi, onSelect]);
 
   const handleAddToCart = (e: MouseEvent<HTMLButtonElement>, book: Book) => {
     e.preventDefault();
@@ -73,20 +108,59 @@ export default function FeaturedBooks() {
             </p>
           </div>
 
-          <Link
-            href="/products?type=BOOK"
-            className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 group"
-            style={{ color: "#d4b84a", background: "rgba(201,162,39,0.08)", border: "1px solid rgba(201,162,39,0.2)" }}
-          >
-            <span>View All Books</span>
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/products?type=BOOK"
+              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 group"
+              style={{ color: "#d4b84a", background: "rgba(201,162,39,0.08)", border: "1px solid rgba(201,162,39,0.2)" }}
+            >
+              <span>View All Books</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+
+            {!isLoading && books.length > 0 && (
+              <div className="hidden sm:flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={scrollPrev}
+                  disabled={!canScrollPrev}
+                  aria-label="Previous books"
+                  className="flex items-center justify-center rounded-full transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{
+                    width: "2.25rem",
+                    height: "2.25rem",
+                    background: "rgba(201,162,39,0.08)",
+                    border: "1px solid rgba(201,162,39,0.2)",
+                    color: "#d4b84a",
+                  }}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={scrollNext}
+                  disabled={!canScrollNext}
+                  aria-label="Next books"
+                  className="flex items-center justify-center rounded-full transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{
+                    width: "2.25rem",
+                    height: "2.25rem",
+                    background: "rgba(201,162,39,0.08)",
+                    border: "1px solid rgba(201,162,39,0.2)",
+                    color: "#d4b84a",
+                  }}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Skeleton Loading */}
         {isLoading && (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-[1.15rem]">
-            {[...Array(4)].map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-[1.15rem]">
+            {[...Array(6)].map((_, i) => (
               <div key={i} className="rounded-xl overflow-hidden animate-pulse" style={{ background: "#141210", border: "1px solid rgba(255,255,255,0.06)" }}>
                 <div className="h-[11.5rem]" style={{ background: "rgba(255,255,255,0.04)" }} />
                 <div className="p-3 space-y-2">
@@ -99,25 +173,32 @@ export default function FeaturedBooks() {
           </div>
         )}
 
-        {/* Product Grid */}
+        {/* Product Slider */}
         {!isLoading && (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-[1.15rem]">
-            {books.length > 0 ? (
-              books.map((book) => (
-                <BookCard key={book.id} book={book} onAddToCart={handleAddToCart} />
-              ))
-            ) : (
-              <div
-                className="col-span-full text-center py-12 rounded-2xl"
-                style={{ background: "#141210", border: "1px dashed rgba(255,255,255,0.08)" }}
-              >
-                <BookOpen className="w-10 h-10 mx-auto mb-2" style={{ color: "#6b6358" }} />
-                <p className="text-sm font-medium" style={{ color: "#a89f8f" }}>
-                  No books available at the moment.
-                </p>
+          books.length > 0 ? (
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex -ml-4">
+                {books.map((book) => (
+                  <div
+                    key={book.id}
+                    className="pl-4 shrink-0 basis-1/2 sm:basis-1/3 lg:basis-1/6"
+                  >
+                    <BookCard book={book} onAddToCart={handleAddToCart} />
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div
+              className="text-center py-12 rounded-2xl"
+              style={{ background: "#141210", border: "1px dashed rgba(255,255,255,0.08)" }}
+            >
+              <BookOpen className="w-10 h-10 mx-auto mb-2" style={{ color: "#6b6358" }} />
+              <p className="text-sm font-medium" style={{ color: "#a89f8f" }}>
+                No books available at the moment.
+              </p>
+            </div>
+          )
         )}
 
       </div>
@@ -215,7 +296,7 @@ function BookCard({
                 src={src}
                 alt={book.name}
                 fill
-                sizes="(max-width: 768px) 40vw, (max-width: 1200px) 20vw, 20vw"
+                sizes="(max-width: 768px) 40vw, (max-width: 1200px) 20vw, 16vw"
                 className={`object-contain transition-all duration-300 ease-in-out p-1 ${
                   idx === activeIndex ? "opacity-100" : "opacity-0"
                 }`}
@@ -322,12 +403,6 @@ function BookCard({
     </div>
   );
 }
-
-
-
-
-
-
 
 
 // "use client";
