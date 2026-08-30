@@ -33,7 +33,7 @@ const sortMap: Record<string, string> = {
   "Most Popular": "popular",
 };
 
-const PAGE_SIZE = 15; // 5 cards per row x 3 rows
+const PAGE_SIZE = 15; 
 
 export default function ProductsClient() {
   const searchParams = useSearchParams();
