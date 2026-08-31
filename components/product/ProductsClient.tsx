@@ -134,7 +134,7 @@ export default function ProductsClient() {
           <p className="text-sm text-[#8b8378]">{total} products found</p>
         </div>
 
-        {/* Search + Sort + Mobile Filter */}
+      
         <div className="flex flex-col sm:flex-row gap-3 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b6358]" />
