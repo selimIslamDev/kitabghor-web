@@ -23,7 +23,7 @@ export default function Footer() {
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-    // TODO: wire to newsletter endpoint
+    
     setSubscribed(true);
     setEmail("");
   };
