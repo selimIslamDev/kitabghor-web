@@ -77,7 +77,7 @@ export default function ComboSection() {
     return (
       <section className="py-16 bg-[#0c0b09]">
         <div className="max-w-6xl mx-auto px-5">
-          {/* Header skeleton */}
+    
           <div className="text-center mb-12">
             <div className="h-7 bg-[#1a1815] rounded-full w-36 mx-auto mb-5 animate-pulse" />
             <div className="h-10 bg-[#1a1815] rounded-lg w-80 mx-auto mb-3 animate-pulse" />
